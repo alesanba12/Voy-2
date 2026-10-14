@@ -29,6 +29,14 @@ public class PartyEntity {
     @JoinColumn(name = "id_organizador", nullable = false)
     private UserEntity organizer;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "party_co_organizers",
+            joinColumns = @JoinColumn(name = "id_party"),
+            inverseJoinColumns = @JoinColumn(name = "id_usuario")
+    )
+    private List<UserEntity> coOrganizer = new ArrayList<>();
+
     @Column(name = "titulo", nullable = false,unique = true)
     private String title;
 
