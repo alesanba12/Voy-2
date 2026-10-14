@@ -1,4 +1,6 @@
 package com.grupo12.Voy.features.users.Dto;
 
-public record UserFollowDto(String username) {
+import java.util.UUID;
+
+public record UserFollowDto(UUID externalId, String username) {
 }

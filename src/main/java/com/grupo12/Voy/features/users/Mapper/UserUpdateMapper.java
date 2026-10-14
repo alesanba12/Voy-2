@@ -5,11 +5,8 @@ import com.grupo12.Voy.features.users.models.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "Spring")
+@Mapper(componentModel = "spring")
 public interface UserUpdateMapper {
     @Mapping(source = "password", target = "credentials.password")
     UserEntity toEntity (UserUpdateDto userUpdateDto);
-
-    @Mapping(source = "credentials.password", target = "password")
-    UserUpdateDto toDto (UserEntity userEntity);
 }

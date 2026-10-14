@@ -31,3 +31,29 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Antigravity & AI Agents ###
+AGENTS.md
+GEMINI.md
+.agents/
+.agent/
+_agents/
+_agent/
+.gemini/
+*_agent.py
+generate_pdf.py
+
+### Agent-Generated Documentation ###
+docs/
+
+### Python & Environment Config ###
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+*.log

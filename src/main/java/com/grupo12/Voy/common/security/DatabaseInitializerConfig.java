@@ -61,8 +61,8 @@ public class DatabaseInitializerConfig {
             roleRepository.save(roleAdmin);
 
             RoleEntity roleOrganizer = new RoleEntity(Roles.ROLE_ORGANIZATOR);
-            roleAdmin.getPermits().add(altaProd);
-            roleRepository.save(roleAdmin);
+            roleOrganizer.getPermits().add(altaProd);
+            roleRepository.save(roleOrganizer);
 
             // 4. Crear los 10 usuarios de prueba en un bucle
             String passwordPlano = "Password123#";

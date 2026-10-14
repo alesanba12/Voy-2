@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,11 +27,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final HandlerExceptionResolver resolver;
 
     public JwtAuthenticationFilter(JwtService jwtService,
-                                   UserDetailsService userDetailsService) {
+                                   UserDetailsService userDetailsService,
+                                   @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.resolver = resolver;
     }
 
     @Override
@@ -50,56 +55,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring(7);
-        final String username = jwtService.extractUsername(jwt);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            final String username = jwtService.extractUsername(jwt);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (username != null && authentication == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (username != null && authentication == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                List<GrantedAuthority> authorities = jwtService.extractAuthorities(jwt);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    List<GrantedAuthority> authorities = jwtService.extractAuthorities(jwt);
 
-                // ↓ LOGS TEMPORALES - borrar después
-                System.out.println(">>> isTokenValid: true");
-                System.out.println(">>> Authorities del TOKEN: " + authorities);
-                System.out.println(">>> Authorities del USER: " + userDetails.getAuthorities());
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        authorities
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                System.out.println(">>> Authentication seteado: " + SecurityContextHolder.getContext().getAuthentication());
-
-            } else {
-                // ↓ Si entra acá, el token no pasa la validación
-                System.out.println(">>> isTokenValid: FALSE");
-                System.out.println(">>> username del token: " + username);
-                System.out.println(">>> isEnabled: " + userDetails.isEnabled());
-                System.out.println(">>> isAccountNonLocked: " + userDetails.isAccountNonLocked());
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            authorities
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
 
             filterChain.doFilter(request, response);
-
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                // Roles tomados del token directamente
-                List<GrantedAuthority> authorities = jwtService.extractAuthorities(jwt);
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        authorities
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
+        } catch (Exception ex) {
+            resolver.resolveException(request, response, null, ex);
         }
-
     }
-
-
 }

@@ -80,7 +80,7 @@ public class UserController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('USER')")
-    ResponseEntity<UserUpdateDto> updateUser(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal,
+    ResponseEntity<UserDto> updateUser(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal,
                                              @RequestBody @Valid UserUpdateDto userUpdateDto){
         return ResponseEntity.ok(userService.updateUser(idExternal, userUpdateDto));
     }

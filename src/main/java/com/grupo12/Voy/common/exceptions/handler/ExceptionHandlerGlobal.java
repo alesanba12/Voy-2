@@ -2,8 +2,12 @@ package com.grupo12.Voy.common.exceptions.handler;
 
 import com.grupo12.Voy.common.exceptions.*;
 import com.grupo12.Voy.common.exceptions.models.ErrorDetails;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,6 +18,46 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ExceptionHandlerGlobal {
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ErrorDetails> handlerJwtException(JwtException ex, WebRequest request){
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .message("Token inválido o expirado: " + ex.getMessage())
+                .endpoint(request.getDescription(false))
+                .dateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDetails> handlerBadCredentialsException(BadCredentialsException ex, WebRequest request){
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .message("Credenciales inválidas")
+                .endpoint(request.getDescription(false))
+                .dateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handlerUsernameNotFoundException(UsernameNotFoundException ex, WebRequest request){
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .message("Credenciales inválidas")
+                .endpoint(request.getDescription(false))
+                .dateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorDetails> handlerAccessDeniedException(AccessDeniedException ex, WebRequest request){
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .message("Acceso denegado: permisos insuficientes")
+                .endpoint(request.getDescription(false))
+                .dateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+    }
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<ErrorDetails> handlerAlreadyExistsException(AlreadyExistsException ex, WebRequest request){
         ErrorDetails errorDetails = errorBuilder(ex,request);

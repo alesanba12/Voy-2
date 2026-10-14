@@ -72,7 +72,20 @@ public class PartyEntity {
 
     @PrePersist
     public void onSave() {
+        if (externalId == null) externalId = UUID.randomUUID();
         if (state == null) state = true;
         if (logicState == null) logicState = true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PartyEntity that)) return false;
+        return externalId != null && externalId.equals(that.externalId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

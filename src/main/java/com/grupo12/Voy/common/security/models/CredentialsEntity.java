@@ -35,6 +35,7 @@ public class CredentialsEntity implements UserDetails {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", unique = true)
     private UserEntity usuario;
 
+    @Builder.Default
     @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinTable(
             name = "credentials_roles",
@@ -46,8 +47,16 @@ public class CredentialsEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        roles.forEach(rol -> authorities.add(
-                new SimpleGrantedAuthority(rol.getRole().name())));
+        roles.forEach(rol -> {
+            authorities.add(new SimpleGrantedAuthority(rol.getRole().name()));
+            if (rol.getPermits() != null) {
+                rol.getPermits().forEach(permit -> {
+                    if (permit.getPermit() != null) {
+                        authorities.add(new SimpleGrantedAuthority(permit.getPermit().name()));
+                    }
+                });
+            }
+        });
         return authorities;
     }
 

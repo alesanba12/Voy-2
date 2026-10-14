@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
-    @Value("${JWT.SECRET}")
+    @Value("${jwt.secret:${JWT.SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}}")
     private String jwtSecretKey;
 
-    @Value("${JWT.EXPIRATION}")
+    @Value("${jwt.expiration:${JWT.EXPIRATION:86400000}}")
     private Long jwtExpiration;
 
     public String extractUsername(String token) {
