@@ -3,6 +3,7 @@ package com.grupo12.Voy.features.users.Service;
 
 import com.grupo12.Voy.common.exceptions.EntityDuplicatedException;
 import com.grupo12.Voy.common.exceptions.EntityNotFoundException;
+import com.grupo12.Voy.common.exceptions.NotAllowedException;
 import com.grupo12.Voy.common.security.enums.Roles;
 import com.grupo12.Voy.common.security.models.CredentialsEntity;
 import com.grupo12.Voy.common.security.models.RoleEntity;
@@ -27,7 +28,7 @@ import com.grupo12.Voy.features.users.UserRepository;
 import com.grupo12.Voy.features.users.models.UserEntity;
 import com.grupo12.Voy.features.users.Dto.UserDto;
 import com.grupo12.Voy.features.users.specification.UserSpecification;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,28 +40,30 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UsersService implements IUsersService{
-    private UserRepository userRepository;
-    private PartyRepository partyRepository;
-    private UserMapper userMapper;
-    private NewUserDtoMapper newUserDtoMapper;
-    private UserFollowMapper userFollowMapper;
-    private UserUpdateMapper userUpdateMapper;
-    private TicketMapper ticketMapper;
-    private ReceiptMapper receiptMapper;
-    private PartyMapper partyMapper;
+    private final UserRepository userRepository;
+    private final PartyRepository partyRepository;
+    private final UserMapper userMapper;
+    private final NewUserDtoMapper newUserDtoMapper;
+    private final UserFollowMapper userFollowMapper;
+    private final UserUpdateMapper userUpdateMapper;
+    private final TicketMapper ticketMapper;
+    private final ReceiptMapper receiptMapper;
+    private final PartyMapper partyMapper;
 
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
-    private CredentialsRepository credentialsRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final CredentialsRepository credentialsRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto findByExternalId(UUID userUuid){
         return userMapper.userToDto(getUser(userUuid));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAll(String username, String email){
         PredicateSpecification<UserEntity> spec = PredicateSpecification.allOf(
                 UserSpecification.usernameContains(username),
@@ -72,6 +75,7 @@ public class UsersService implements IUsersService{
 
 
     @Override
+    @Transactional
     public void deleteUser(UUID externalId){
         userRepository.delete(getUser(externalId));
     }
@@ -105,37 +109,56 @@ public class UsersService implements IUsersService{
 
     @Override
     @Transactional
-    public UserUpdateDto updateUser(UUID userUuid, UserUpdateDto userUpdateDto){
+    public UserDto updateUser(UUID userUuid, UserUpdateDto userUpdateDto){
        UserEntity user = getUser(userUuid);
-       user.setUsername(userUpdateDto.username());
-       CredentialsEntity credential = CredentialsEntity.builder()
-               .enabled(true)
-               .username(userUpdateDto.username())
-               .usuario(user)
-               .roles(user.getCredentials().getRoles())
-               .password(passwordEncoder.encode(userUpdateDto.password()))
-               .build();
+       if (!user.getUsername().equals(userUpdateDto.username())) {
+           if (userRepository.existsByUsername(userUpdateDto.username())) {
+               throw new EntityDuplicatedException("El nombre de usuario ya se encuentra registrado");
+           }
+           user.setUsername(userUpdateDto.username());
+       }
 
-       user.setCredentials(credential);
-       return userUpdateMapper.toDto(userRepository.save(user));
+       CredentialsEntity credentials = user.getCredentials();
+       if (credentials != null) {
+           credentials.setUsername(userUpdateDto.username());
+           credentials.setPassword(passwordEncoder.encode(userUpdateDto.password()));
+           credentialsRepository.save(credentials);
+       }
+
+       return userMapper.userToDto(userRepository.save(user));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserFollowDto> listFollowList(UUID userUuid){
           UserEntity user = getUser(userUuid);
           return user.getFollowsList().stream().map(userFollowMapper::toDto).toList();
     }
 
+    @Override
+    @Transactional
     public List<UserFollowDto> alterFollow(UUID userId, UUID otherUserId){
         if(userId.equals(otherUserId)){
-            throw new EntityDuplicatedException("No puede un usuario seguirse a si mismo");
+            throw new NotAllowedException("No puede un usuario seguirse a si mismo");
         }
         UserEntity user = getUser(userId);
         UserEntity otherUser = getUser(otherUserId);
-        if(user.getFollowsList().contains(otherUser))
+
+        boolean isOrganizer = otherUser.getCredentials() != null &&
+                otherUser.getCredentials().getRoles().stream()
+                        .anyMatch(role -> role.getRole() == Roles.ROLE_ORGANIZATOR);
+        if (!isOrganizer) {
+            throw new NotAllowedException("Solo es posible seguir a usuarios con rol de organizador");
+        }
+
+        if(user.getFollowsList().contains(otherUser)) {
             user.getFollowsList().remove(otherUser);
-        else
+            otherUser.getFollowersList().remove(user);
+        } else {
             user.getFollowsList().add(otherUser);
+            otherUser.getFollowersList().add(user);
+        }
+        userRepository.save(otherUser);
         return userRepository
                 .save(user)
                 .getFollowsList()
@@ -145,31 +168,35 @@ public class UsersService implements IUsersService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserFollowDto> listFollowersList(UUID userUuid){
         UserEntity  user = getUser(userUuid);
         return user.getFollowersList().stream().map(userFollowMapper::toDto).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PartyUsersDto> listFollowedParties(UUID userUuid){
         UserEntity user = getUser(userUuid);
         return user.getFollowedParties().stream().map(partyMapper::toUserFromEntity).toList();
     }
 
     @Override
+    @Transactional
     public List<PartyUsersDto> alterFollowParty(UUID userId, UUID partyId){
         UserEntity user = getUser(userId);
         PartyEntity party = partyRepository
                 .findByExternalIdAndLogicStateTrue(partyId)
                 .orElseThrow(()-> new EntityNotFoundException("Evento no encontrado"));
         if(userId.equals(party.getOrganizer().getExternalId())){
-            throw new EntityDuplicatedException("No puede un usuario seguir sus propias fiestas");
+            throw new NotAllowedException("No puede un usuario seguir sus propias fiestas");
         }
         if(user.getFollowedParties().contains(party))
             user.getFollowedParties().remove(party);
         else
             user.getFollowedParties().add(party);
-        return user
+        return userRepository
+                .save(user)
                 .getFollowedParties()
                 .stream()
                 .map(partyMapper::toUserFromEntity)
@@ -177,33 +204,43 @@ public class UsersService implements IUsersService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PartyUsersDto> listMyParties(UUID userId){
         UserEntity user = getUser(userId);
         return user.getMyParties().stream().map(partyMapper::toUserFromEntity).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TicketUsersDto> listTickets(UUID userUuid){
         UserEntity user = getUser(userUuid);
         return user.getMyTickets().stream().map(ticketMapper::toUsersDto).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ReceiptResponseDTO> listReceipt(UUID userUuid){
         UserEntity user = getUser(userUuid);
         return user.getMyReceipts().stream().map(receiptMapper::toResponseDTO).toList();
     }
 
     @Override
+    @Transactional
     public UserDto userToPublic(UUID userId){
         UserEntity user = userRepository
                 .findByExternalId(userId)
                 .orElseThrow(()->new EntityNotFoundException("Usuario no encontrado"));
         user.setAccesibilityUser(true);
-        RoleEntity rol = new RoleEntity(Roles.ROLE_ORGANIZATOR);
 
-        user.getCredentials().getRoles().remove(Roles.ROLE_USER);
-        user.getCredentials().getRoles().add(rol);
+        RoleEntity organizerRole = roleRepository.findByRole(Roles.ROLE_ORGANIZATOR);
+        if (organizerRole == null) {
+            throw new EntityNotFoundException("El rol de organizador no existe en el sistema");
+        }
+
+        if (user.getCredentials() != null) {
+            user.getCredentials().getRoles().removeIf(r -> r.getRole() == Roles.ROLE_USER);
+            user.getCredentials().getRoles().add(organizerRole);
+        }
 
         return userMapper.userToDto(userRepository.save(user));
     }

@@ -8,7 +8,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -38,33 +41,39 @@ public class UserEntity {
     @Column(name = "fecha_nacimiento",nullable = false)
     private LocalDate birthdate;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "usuarios_seguidos",
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_seguido")
     )
-    private List<UserEntity> followsList;
+    private Set<UserEntity> followsList = new HashSet<>();
 
+    @Builder.Default
     @ManyToMany(mappedBy = "followsList")
-    private List<UserEntity> followersList;
+    private Set<UserEntity> followersList = new HashSet<>();
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "eventos_seguidos",
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_evento")
     )
-    private List<PartyEntity> followedParties;
+    private Set<PartyEntity> followedParties = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "organizer")
-    private List<PartyEntity> myParties;
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "organizer")
+    private List<PartyEntity> myParties = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "user")
-    private List<TicketEntity> myTickets;
-
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<ReceiptEntity> myReceipts;
+    private List<TicketEntity> myTickets = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<ReceiptEntity> myReceipts = new ArrayList<>();
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private CredentialsEntity credentials;
@@ -75,4 +84,15 @@ public class UserEntity {
         if(accesibilityUser==null) accesibilityUser = false;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity that)) return false;
+        return externalId != null && externalId.equals(that.externalId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
