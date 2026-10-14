@@ -26,4 +26,8 @@ public interface IPartyService {
     void removeTag(UUID id, TagsDTO nameTag);
 
     void delete(UUID idExternal);
+
+    PartyResDTO addCoOrganizrer(UUID user, UUID idExternal, UUID coOrg);
+
+    PartyResDTO removeCoOrganizrer(UUID user, UUID idExternal, UUID coOrg);
 }

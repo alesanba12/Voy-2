@@ -186,4 +186,47 @@ public class PartyService implements IPartyService {
         return false;
     }
 
+    @Transactional
+    @Override
+    public PartyResDTO addCoOrganizrer(UUID user, UUID idExternal, UUID coOrg){
+        PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(idExternal)
+                .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
+        UserEntity creator = userRepository.findByExternalId(user)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        UserEntity coOrganizer = userRepository.findByExternalId(coOrg)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        if(!party.getOrganizer().equals(creator)){
+            throw new NotAllowedException("Solo el organizador principal puede modificar esta lista");
+        }
+        if(user.equals(coOrg)){
+            throw new NotAllowedException("El organizador no puede incluirse en la lista de coorganizadores");
+        }
+        if(!coOrganizer.getAccesibilityUser()){
+            throw new NotAllowedException("El usuario debe estar registrado como creador de eventos");
+        }
+        if(party.getCoOrganizer().contains(coOrganizer)){
+            throw new AlreadyExistsException("El organizador ya está en esta la lista");
+        }
+        party.getCoOrganizer().add(coOrganizer);
+        return partyMapper.toResDTO(party);
+    }
+
+    @Transactional
+    @Override
+    public PartyResDTO removeCoOrganizrer(UUID user, UUID idExternal, UUID coOrg){
+        PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(idExternal)
+                .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
+        UserEntity creator = userRepository.findByExternalId(user)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        UserEntity coOrganizer = userRepository.findByExternalId(coOrg)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        if(!party.getOrganizer().equals(creator)){
+            throw new NotAllowedException("Solo el organizador principal puede modificar esta lista");
+        }
+        if(!party.getCoOrganizer().contains(coOrganizer)){
+            throw new AlreadyExistsException("El organizador no está en esta lista");
+        }
+        party.getCoOrganizer().remove(coOrganizer);
+        return partyMapper.toResDTO(party);
+    }
 }
