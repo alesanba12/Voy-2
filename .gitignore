@@ -1,0 +1,11 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ
+.idea/
+*.iml
+
+# Archivos locales
+.env
+application-local.properties
