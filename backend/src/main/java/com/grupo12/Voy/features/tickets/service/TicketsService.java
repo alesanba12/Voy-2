@@ -31,6 +31,7 @@ import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -196,6 +197,9 @@ public class TicketsService  implements ITicketsService{
         }
         if(ticket.getReceiptEntity().getFinalPrice().intValue() > 0.0){
             throw new NotAllowedException("Solo se pueden devolver los tickets gratuitos, cualquier cosa comunicarse con el creador del evento");
+        }
+        if(ticket.getParty().getDateTime().isBefore(LocalDateTime.now().plusDays(1))){
+            throw new NotAllowedException("No se pueden devolver tickets cuando faltan menos de 24hs para el evento");
         }
         ticketRepository.delete(ticket);
     }
