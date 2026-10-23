@@ -242,13 +242,13 @@ public class PartiesController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/coOrganizers")
+    @PatchMapping("/{id}/coOrganizers/add")
     public ResponseEntity<PartyResDTO> addCoOrganizer(@AuthenticationPrincipal(expression = "usuario.externalId")UUID userExtId,
                                                       @PathVariable UUID id, @RequestParam UUID otherUserExtId) {
         return ResponseEntity.ok(partyService.addCoOrganizrer(userExtId, id, otherUserExtId));
     }
 
-    @DeleteMapping("/{id}/coOrganizers")
+    @PatchMapping("/{id}/coOrganizers/remove")
     public ResponseEntity<PartyResDTO> removeCoOrganizer(@AuthenticationPrincipal(expression = "usuario.externalId")UUID userExtId,
                                                          @PathVariable UUID id, @RequestParam UUID otherUserExtId) {
         return ResponseEntity.ok(partyService.removeCoOrganizrer(userExtId, id, otherUserExtId));
