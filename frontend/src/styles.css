@@ -1,1 +1,70 @@
-/* You can add global styles to this file, and also import other style files */
+/* ==========================================================================
+   styles.css — Estilos globales (Angular) · Voy
+   Solo variables necesarias + base mínima
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+
+  /* ---------- Backgrounds ---------- */
+  --background-principal:  #0f0f12; /* fondo de la página, navbar, footer */
+  --background-secundario: #1b1b1f; /* cards y paneles */
+  --background-terciario:  #26262b; /* elementos dentro de una card (filas, inputs, stats) */
+
+  /* ---------- Bordes ---------- */
+  --borde: #2e2e33;
+
+  /* ---------- Textos ---------- */
+  --texto-principal:  #f2f0f6;
+  --texto-secundario: #a9a8af;
+  --texto-sobre-primario: #1b0050; /* texto encima de botones/badges violeta claro */
+
+  /* ---------- Colores de marca ---------- */
+  --color-primario:       #8b5cf6; /* violeta base: links, acentos, barras */
+  --color-primario-claro: #d4c4ff; /* botón principal, badges, avatar */
+  --color-terciario:      #ffb562; /* ámbar: "Alta demanda", "Últimas entradas", espera */
+
+  /* ---------- Estados ---------- */
+  --color-exito:   #34d399; /* Publicado, +14%, Activo */
+  --color-peligro: #ffb4ab; /* Cancelar evento, eliminar */
+
+  /* ---------- Tipografía ---------- */
+  --fuente-principal: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* ---------- Radios ---------- */
+  --radio-sm:   6px;
+  --radio-md:   12px;
+  --radio-lg:   20px;
+  --radio-pill: 999px;
+}
+
+/* ==========================================================================
+   Base mínima
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--background-principal);
+  color: var(--texto-principal);
+  font-family: var(--fuente-principal);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--color-primario-claro);
+  text-decoration: none;
+}
