@@ -143,11 +143,11 @@ public class PartyService implements IPartyService {
 
         TagEntity tag = tagsRepository.findByName(nameTag.name())
                 .orElseThrow(() -> new EntityNotFoundException("La etiqueta no existe"));
-
-        boolean removed = party.getTagsList().removeIf(t -> t.getTagsId().equals(tag.getTagsId()));
         if(party.getTagsList().size() <= 1){
             throw new NotAllowedException("El evento debe tener por lo menos una etiqueta");
         }
+        boolean removed = party.getTagsList().removeIf(t -> t.getTagsId().equals(tag.getTagsId()));
+
         if (!removed)
             throw new EntityNotFoundException("No se encuentra esa etiqueta en el evento");
 
