@@ -257,7 +257,8 @@ public class UsersService implements IUsersService{
 
     private boolean isAdmin() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null && AuthorityUtils.authorityListToSet(auth.getAuthorities())
-                .contains("ROLE_ADMIN");
+        return auth != null && auth.isAuthenticated() 
+        && auth.getAuthorities().stream()
+               .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 }
