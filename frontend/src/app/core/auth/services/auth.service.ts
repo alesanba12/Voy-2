@@ -14,7 +14,7 @@ const TOKEN_KEY = 'voy_jwt_session';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly apiUrl = '/api/auth'; // O configurado vía environment
+  private readonly apiUrl = '/api/auth';
 
 
   private readonly _currentUser = signal<UserSession | null>(this.loadSessionFromStorage());
