@@ -335,7 +335,7 @@ class UsersServiceTest {
 
     @Test
     @DisplayName("userToPublic: Debe promover al usuario a organizador cambiando ROLE_USER por ROLE_ORGANIZATOR")
-    void userToPublic_successful_shouldPromoteToOrganizer() {
+    void promoteToPublic_successful_shouldPromoteToOrganizer() {
         // Given
         UUID userId = UUID.randomUUID();
 
@@ -351,7 +351,7 @@ class UsersServiceTest {
 
         UserEntity user = UserEntity.builder()
                 .externalId(userId)
-                .accesibilityUser(false)
+                .isOrganizer(false)
                 .credentials(credentials)
                 .build();
 
@@ -363,11 +363,11 @@ class UsersServiceTest {
         given(userMapper.userToDto(user)).willReturn(expectedDto);
 
         // When
-        UserDto result = usersService.userToPublic(userId);
+        UserDto result = usersService.promoteToOrganizer(userId);
 
         // Then
         assertThat(result).isEqualTo(expectedDto);
-        assertThat(user.getAccesibilityUser()).isTrue();
+        assertThat(user.getIsOrganizer()).isTrue();
         assertThat(credentials.getRoles()).doesNotContain(userRole);
         assertThat(credentials.getRoles()).contains(organizerRole);
 
@@ -378,7 +378,7 @@ class UsersServiceTest {
 
     @Test
     @DisplayName("userToPublic: Debe lanzar EntityNotFoundException si el rol organizador no existe en el sistema")
-    void userToPublic_whenOrganizerRoleNotFound_shouldThrowEntityNotFoundException() {
+    void promoteToOrganizer_whenOrganizerRoleNotFound_shouldThrowEntityNotFoundException() {
         // Given
         UUID userId = UUID.randomUUID();
         UserEntity user = UserEntity.builder()
@@ -390,7 +390,7 @@ class UsersServiceTest {
 
         // When / Then
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> usersService.userToPublic(userId));
+                () -> usersService.promoteToOrganizer(userId));
 
         assertThat(exception.getMessage()).isEqualTo("El rol de organizador no existe en el sistema");
         then(userRepository).should(never()).save(any());

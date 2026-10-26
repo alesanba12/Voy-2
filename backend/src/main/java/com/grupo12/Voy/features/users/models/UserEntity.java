@@ -36,7 +36,7 @@ public class UserEntity {
     private String email;
 
     @Column(name = "accesibilidad",nullable = false)
-    private Boolean accesibilityUser;
+    private Boolean isOrganizer;
 
     @Column(name = "fecha_nacimiento",nullable = false)
     private LocalDate birthdate;
@@ -81,7 +81,7 @@ public class UserEntity {
     @PrePersist
     public void onSave(){
         if(externalId==null) externalId = UUID.randomUUID();
-        if(accesibilityUser==null) accesibilityUser = false;
+        if(isOrganizer ==null) isOrganizer = false;
     }
 
     @Override

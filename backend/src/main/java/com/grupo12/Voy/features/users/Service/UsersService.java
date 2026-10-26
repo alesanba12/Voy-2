@@ -226,11 +226,11 @@ public class UsersService implements IUsersService{
 
     @Override
     @Transactional
-    public UserDto userToPublic(UUID userId){
+    public UserDto promoteToOrganizer(UUID userId){
         UserEntity user = userRepository
                 .findByExternalId(userId)
                 .orElseThrow(()->new EntityNotFoundException("Usuario no encontrado"));
-        user.setAccesibilityUser(true);
+        user.setIsOrganizer(true);
 
         RoleEntity organizerRole = roleRepository.findByRole(Roles.ROLE_ORGANIZATOR);
         if (organizerRole == null) {
