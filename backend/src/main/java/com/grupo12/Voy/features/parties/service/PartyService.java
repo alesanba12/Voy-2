@@ -116,7 +116,7 @@ public class PartyService implements IPartyService {
         TagEntity tag = tagsRepository.findByName(nameTag.name())
                 .orElseThrow(() -> new EntityNotFoundException("No se encuentra la etiqueta " + nameTag.name()));
 
-        Boolean repetido = party.getTagsList().stream()
+        boolean repetido = party.getTagsList().stream()
                 .anyMatch(t -> t.getTagsId().equals(tag.getTagsId()));
         if (repetido)
             throw new AlreadyExistsException("La etiqueta ya está asignada al evento");
@@ -181,9 +181,7 @@ public class PartyService implements IPartyService {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         if (isAdmin) return true;
 
-        if (party.getOrganizer().getExternalId().equals(currentUserId)) return true;
-
-        return false;
+        return party.getOrganizer().getExternalId().equals(currentUserId);
     }
 
     @Transactional
@@ -227,6 +225,15 @@ public class PartyService implements IPartyService {
             throw new AlreadyExistsException("El organizador no está en esta lista");
         }
         party.getCoOrganizer().remove(coOrganizer);
+        return partyMapper.toResDTO(party);
+    }
+
+    @Transactional
+    @Override
+    public PartyResDTO changePartyStatus(UUID partyId){
+        PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(partyId)
+                .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
+        party.setState(!party.getState());
         return partyMapper.toResDTO(party);
     }
 }

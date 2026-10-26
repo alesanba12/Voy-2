@@ -253,4 +253,10 @@ public class PartiesController {
                                                          @PathVariable UUID id, @RequestParam UUID otherUserExtId) {
         return ResponseEntity.ok(partyService.removeCoOrganizrer(userExtId, id, otherUserExtId));
     }
+
+    @PatchMapping("/{id}/state")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PartyResDTO> changePartyStatus(@PathVariable UUID id){
+        return ResponseEntity.ok(partyService.changePartyStatus(id));
+    }
 }

@@ -30,4 +30,6 @@ public interface IPartyService {
     PartyResDTO addCoOrganizrer(UUID user, UUID idExternal, UUID coOrg);
 
     PartyResDTO removeCoOrganizrer(UUID user, UUID idExternal, UUID coOrg);
+
+    PartyResDTO changePartyStatus(UUID id);
 }
