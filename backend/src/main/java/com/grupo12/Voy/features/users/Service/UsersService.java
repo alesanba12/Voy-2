@@ -23,13 +23,15 @@ import com.grupo12.Voy.features.users.Dto.UserUpdateDto;
 import com.grupo12.Voy.features.users.Mapper.NewUserDtoMapper;
 import com.grupo12.Voy.features.users.Mapper.UserFollowMapper;
 import com.grupo12.Voy.features.users.Mapper.UserMapper;
-import com.grupo12.Voy.features.users.Mapper.UserUpdateMapper;
 import com.grupo12.Voy.features.users.UserRepository;
 import com.grupo12.Voy.features.users.models.UserEntity;
 import com.grupo12.Voy.features.users.Dto.UserDto;
 import com.grupo12.Voy.features.users.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.PredicateSpecification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +49,6 @@ public class UsersService implements IUsersService{
     private final UserMapper userMapper;
     private final NewUserDtoMapper newUserDtoMapper;
     private final UserFollowMapper userFollowMapper;
-    private final UserUpdateMapper userUpdateMapper;
     private final TicketMapper ticketMapper;
     private final ReceiptMapper receiptMapper;
     private final PartyMapper partyMapper;
@@ -67,8 +68,11 @@ public class UsersService implements IUsersService{
     public List<UserDto> getAll(String username, String email){
         PredicateSpecification<UserEntity> spec = PredicateSpecification.allOf(
                 UserSpecification.usernameContains(username),
-                UserSpecification.emailContains(email)
-        );
+                UserSpecification.emailContains(email));
+
+        if (!isAdmin()) {
+            spec = spec.and(UserSpecification.isOrganizer());
+        }
 
         return userRepository.findAll(spec).stream().map(userMapper::userToDto).toList();
     }
@@ -251,5 +255,10 @@ public class UsersService implements IUsersService{
                 .orElseThrow(()-> new EntityNotFoundException("Usuario no encontrado"));
     }
 
-
+    private boolean isAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.isAuthenticated() 
+        && auth.getAuthorities().stream()
+               .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
 }
