@@ -1,12 +1,12 @@
 package com.grupo12.Voy.features.parties.Dto;
 
-import com.grupo12.Voy.features.tags.dto.TagsDTO;
+
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+
 
 public record PartyReqDTO(
         @NotBlank(message = "El titulo es obligatorio")
@@ -26,5 +26,9 @@ public record PartyReqDTO(
         @PositiveOrZero(message = "El limite de invitados tiene que ser mayor a 0")
         Integer guestLimit,
         @NotNull(message = "La visibilidad del evento no puede ser nulo")
-        Boolean partyAccesibility) {
+        Boolean partyAccesibility,
+        @NotEmpty(message = "Por lo menos debe haber una etiqueta")
+        @Size(max = 5, message = "Como máximo puede haber 5 etiquetas")
+        List<@NotBlank String> tagsList
+) {
 }
