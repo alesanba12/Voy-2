@@ -6,7 +6,6 @@ import com.grupo12.Voy.features.parties.Dto.PartyResDTO;
 import com.grupo12.Voy.features.parties.Dto.PartyUsersDto;
 import com.grupo12.Voy.features.parties.models.PartyEntity;
 import com.grupo12.Voy.features.tags.models.TagEntity;
-import com.grupo12.Voy.features.users.Dto.UserDto;
 import com.grupo12.Voy.features.users.Mapper.UserMapper;
 import com.grupo12.Voy.features.users.models.UserEntity;
 import org.mapstruct.Mapper;
@@ -16,7 +15,6 @@ import org.mapstruct.Named;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = UserMapper.class)
@@ -48,4 +46,10 @@ public interface PartyMapper {
                 .collect(Collectors.toSet());
     }
 
+    default TagEntity stringToTag(String name) {
+        if (name == null) return null;
+        TagEntity tag = new TagEntity();
+        tag.setName(name);
+        return tag;
+    }
 }

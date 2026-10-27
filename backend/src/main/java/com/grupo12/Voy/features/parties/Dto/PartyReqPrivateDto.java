@@ -1,10 +1,11 @@
 package com.grupo12.Voy.features.parties.Dto;
 
+
 import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 public record PartyReqPrivateDto(
         @NotBlank(message = "El titulo es obligatorio")

@@ -100,10 +100,17 @@ public class PartyService implements IPartyService {
             throw new AlreadyExistsException("Ya existe un evento con ese titulo");
         }
 
+        List<TagEntity> tags = tagsRepository.findByNameIn(dto.tagsList());
+
+        if (tags.size() != dto.tagsList().size()) {
+            throw new IllegalArgumentException("Alguna etiqueta no existe");
+        }
+
         PartyEntity party = partyMapper.toEntity(dto);
         party.setPrice(dto.price());
         party.setOrganizer(organizer);
         party.setExternalId(UUID.randomUUID());
+        party.setTagsList(tags);
 
         return partyMapper.toResDTO(partyRepository.save(party));
     }
@@ -120,6 +127,9 @@ public class PartyService implements IPartyService {
                 .anyMatch(t -> t.getTagsId().equals(tag.getTagsId()));
         if (repetido)
             throw new AlreadyExistsException("La etiqueta ya está asignada al evento");
+        if(party.getTagsList().size() >= 5){
+            throw new NotAllowedException("El maximo de 5 etiquetas fue alcanzado");
+        }
 
         party.getTagsList().add(tag);
         return partyMapper.toResDTO(partyRepository.save(party));
@@ -133,8 +143,11 @@ public class PartyService implements IPartyService {
 
         TagEntity tag = tagsRepository.findByName(nameTag.name())
                 .orElseThrow(() -> new EntityNotFoundException("La etiqueta no existe"));
-
+        if(party.getTagsList().size() <= 1){
+            throw new NotAllowedException("El evento debe tener por lo menos una etiqueta");
+        }
         boolean removed = party.getTagsList().removeIf(t -> t.getTagsId().equals(tag.getTagsId()));
+
         if (!removed)
             throw new EntityNotFoundException("No se encuentra esa etiqueta en el evento");
 
@@ -199,7 +212,7 @@ public class PartyService implements IPartyService {
         if(user.equals(coOrg)){
             throw new NotAllowedException("El organizador no puede incluirse en la lista de coorganizadores");
         }
-        if(!coOrganizer.getAccesibilityUser()){
+        if(!coOrganizer.getIsOrganizer()){
             throw new NotAllowedException("El usuario debe estar registrado como creador de eventos");
         }
         if(party.getCoOrganizer().contains(coOrganizer)){
