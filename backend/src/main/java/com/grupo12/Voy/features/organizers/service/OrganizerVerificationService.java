@@ -7,6 +7,7 @@ import com.grupo12.Voy.features.organizers.dto.OrganizerRejectReqDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerificationResDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerifyReqDTO;
 import com.grupo12.Voy.features.organizers.enums.VerificationStatus;
+import com.grupo12.Voy.features.organizers.mapper.OrganizerVerificationMapper;
 import com.grupo12.Voy.features.organizers.models.OrganizerVerificationEntity;
 import com.grupo12.Voy.features.organizers.repository.OrganizerVerificationRepository;
 import com.grupo12.Voy.features.users.UserRepository;
@@ -28,6 +29,7 @@ public class OrganizerVerificationService implements IOrganizerVerificationServi
     private final UserRepository userRepository;
     private final CloudinaryService cloudinaryService;
     private final IUsersService usersService;
+    private final OrganizerVerificationMapper verificationMapper;
 
     @Override
     @Transactional
@@ -71,7 +73,7 @@ public class OrganizerVerificationService implements IOrganizerVerificationServi
     public List<OrganizerVerificationResDTO> getPendingVerifications() {
         return verificationRepository.findByStatus(VerificationStatus.PENDING)
                 .stream()
-                .map(this::mapToResponseDTO)
+                .map(verificationMapper::toDto)
                 .toList();
     }
 
@@ -91,7 +93,7 @@ public class OrganizerVerificationService implements IOrganizerVerificationServi
 
         usersService.promoteToOrganizer(idExternal);
 
-        return mapToResponseDTO(verificationRepository.save(verification));
+        return verificationMapper.toDto(verificationRepository.save(verification));
     }
 
     @Override
@@ -107,20 +109,7 @@ public class OrganizerVerificationService implements IOrganizerVerificationServi
         verification.setStatus(VerificationStatus.REJECTED);
         verification.setRejectionReason(rejectDTO.reason());
 
-        return mapToResponseDTO(verificationRepository.save(verification));
+        return verificationMapper.toDto(verificationRepository.save(verification));
     }
 
-    private OrganizerVerificationResDTO mapToResponseDTO(OrganizerVerificationEntity entity) {
-        return new OrganizerVerificationResDTO(
-                entity.getId(),
-                entity.getUser().getExternalId(),
-                entity.getUser().getEmail(),
-                entity.getStatus(),
-                entity.getDniFrontUrl(),
-                entity.getDniBackUrl(),
-                entity.getAdditionalInfo(),
-                entity.getRejectionReason(),
-                entity.getCreatedAt()
-        );
-    }
 }
