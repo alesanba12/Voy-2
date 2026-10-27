@@ -212,7 +212,7 @@ public class PartyService implements IPartyService {
         if(user.equals(coOrg)){
             throw new NotAllowedException("El organizador no puede incluirse en la lista de coorganizadores");
         }
-        if(!coOrganizer.getAccesibilityUser()){
+        if(!coOrganizer.getIsOrganizer()){
             throw new NotAllowedException("El usuario debe estar registrado como creador de eventos");
         }
         if(party.getCoOrganizer().contains(coOrganizer)){

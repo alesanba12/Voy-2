@@ -4,12 +4,10 @@ package com.grupo12.Voy.features.users.Controller;
 import com.grupo12.Voy.features.parties.Dto.PartyUsersDto;
 import com.grupo12.Voy.features.receipts.DTO.ReceiptResponseDTO;
 import com.grupo12.Voy.features.tickets.models.DTO.TicketUsersDto;
-import com.grupo12.Voy.features.users.Dto.NewUserDto;
 import com.grupo12.Voy.features.users.Dto.UserDto;
 import com.grupo12.Voy.features.users.Dto.UserFollowDto;
 import com.grupo12.Voy.features.users.Dto.UserUpdateDto;
 import com.grupo12.Voy.features.users.Service.IUsersService;
-import com.grupo12.Voy.features.users.models.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -196,17 +193,17 @@ public class UserController {
         return ResponseEntity.ok((userService.listReceipt(idExternal)));
     }
 
-    @Operation(summary = "Verificar usuario (Admin)", description = "Promueve un usuario al rol ORGANIZATOR y lo marca como público. Requiere rol ADMIN.")
+    @Operation(summary = "Promover usuario a organizador (Admin)", description = "Habilita la accesibilidad de organizador para publicar eventos. Requiere rol ADMIN.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Usuario verificado exitosamente",
+            @ApiResponse(responseCode = "200", description = "Usuario promovido exitosamente",
                     content = @Content(schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "403", description = "Acceso denegado. Se requiere rol ADMIN", content = @Content),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
     })
-    @PatchMapping("/verify/{idExternal}")
+    @PatchMapping("/promote/{idExternal}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDto> verifyUser(@PathVariable UUID idExternal){
-        return ResponseEntity.ok(userService.userToPublic(idExternal));
+    public ResponseEntity<UserDto> promoteToOrganizer(@PathVariable UUID idExternal){
+        return ResponseEntity.ok(userService.promoteToOrganizer(idExternal));
     }
 }
