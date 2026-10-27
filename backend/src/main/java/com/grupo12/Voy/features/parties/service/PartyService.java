@@ -240,4 +240,13 @@ public class PartyService implements IPartyService {
         party.getCoOrganizer().remove(coOrganizer);
         return partyMapper.toResDTO(party);
     }
+
+    @Transactional
+    @Override
+    public PartyResDTO changePartyStatus(UUID partyId){
+        PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(partyId)
+                .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
+        party.setState(!party.getState());
+        return partyMapper.toResDTO(party);
+    }
 }
