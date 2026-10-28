@@ -16,6 +16,6 @@ public class UserSpecification {
                 cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() +"%"));
     }
     public static PredicateSpecification<UserEntity> isOrganizer() {
-        return (root, cb) -> cb.isTrue(root.get("accesibilityUser"));
+        return (root, cb) -> cb.isTrue(root.get("isOrganizer"));
     }
 }
