@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -35,14 +36,18 @@ public class PartyService implements IPartyService {
 
 
     @Override
-    public List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city) {
+    public List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city, LocalDate from, LocalDate to) {
+        if(from != null && to != null && to.isBefore(from)){
+            throw new NotAllowedException("La fecha límite no puede ser anterior a la fecha de inicio");
+        }
         PredicateSpecification<PartyEntity> spec = PredicateSpecification.allOf(
                 PartySpecification.externalIdEqual(partyId),
                 PartySpecification.externalIdOrganizerEqual(organizerId),
                 PartySpecification.titleContains(title),
                 PartySpecification.isPublic(true),
                 PartySpecification.cityContains(city),
-                PartySpecification.stateTrue()
+                PartySpecification.betweenDates(from, to),
+                PartySpecification.LogicStateTrue()
         );
 
         return partyRepository
@@ -246,7 +251,7 @@ public class PartyService implements IPartyService {
     public PartyResDTO changePartyStatus(UUID partyId){
         PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(partyId)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
-        party.setState(!party.getState());
+        party.setLogicState(!party.getLogicState());
         return partyMapper.toResDTO(party);
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 @Tag(name = "Parties", description = "Gestión de eventos")
@@ -45,9 +46,11 @@ public class PartiesController {
             @RequestParam(required = false) UUID partyId,
             @RequestParam(required = false) UUID organizerId,
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String city
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to
     ) {
-        return ResponseEntity.ok(partyService.getAll(partyId, organizerId, title, city));
+        return ResponseEntity.ok(partyService.getAll(partyId, organizerId, title, city, from, to));
     }
 
     @Operation(summary = "Obtener evento por ID", description = """
@@ -257,7 +260,7 @@ public class PartiesController {
 
     @PatchMapping("/{id}/state")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PartyResDTO> changePartyStatus(@PathVariable UUID id){
+    public ResponseEntity<PartyResDTO> changePartyLogicStatus(@PathVariable UUID id){
         return ResponseEntity.ok(partyService.changePartyStatus(id));
     }
 }
