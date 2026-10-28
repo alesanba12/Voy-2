@@ -24,7 +24,7 @@ public class PartyScheduler {
         List<PartyEntity> expired = partyRepository
                 .findByDateTimeBeforeAndLogicStateTrue(LocalDateTime.now());
 
-        expired.forEach(party -> party.setLogicState(false));
+        expired.forEach(party -> party.setHasPassed(true));
 
         if (expired.isEmpty()) {
             log.info("[PartyScheduler] No hay eventos vencidos para cerrar.");

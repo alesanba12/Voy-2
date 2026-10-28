@@ -260,7 +260,7 @@ public class PartiesController {
 
     @PatchMapping("/{id}/state")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PartyResDTO> changePartyStatus(@PathVariable UUID id){
+    public ResponseEntity<PartyResDTO> changePartyLogicStatus(@PathVariable UUID id){
         return ResponseEntity.ok(partyService.changePartyStatus(id));
     }
 }

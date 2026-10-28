@@ -53,7 +53,7 @@ public class PartySpecification {
         };
     }
 
-    public static PredicateSpecification<PartyEntity> stateTrue(){
+    public static PredicateSpecification<PartyEntity> LogicStateTrue(){
         return ((root,cb) -> cb.isTrue(root.get("logicState")));
     }
 }

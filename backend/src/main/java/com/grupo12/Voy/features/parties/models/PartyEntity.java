@@ -61,7 +61,7 @@ public class PartyEntity {
 
     @Column(name = "estado")
     @ColumnDefault("true")
-    private Boolean logicState;
+    private Boolean logicState; //Si esta cancelado o no el evento por el administrador u organizador
 
     private Integer guestLimit;
 
@@ -76,12 +76,12 @@ public class PartyEntity {
 
     private LocalDateTime dateTime;
 
-    private Boolean state;
+    private Boolean hasPassed; //Si el evento ya paso
 
     @PrePersist
     public void onSave() {
         if (externalId == null) externalId = UUID.randomUUID();
-        if (state == null) state = true;
+        if (hasPassed == null) hasPassed = false;
         if (logicState == null) logicState = true;
     }
 

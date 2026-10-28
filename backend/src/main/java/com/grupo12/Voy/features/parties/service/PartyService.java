@@ -37,9 +37,6 @@ public class PartyService implements IPartyService {
 
     @Override
     public List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city, LocalDate from, LocalDate to) {
-        if(from != null && from.isBefore(LocalDate.now()) || to != null && to.isBefore(LocalDate.now())){
-            throw new NotAllowedException("La fecha no puede ser anterior al día de hoy");
-        }
         if(from != null && to != null && to.isBefore(from)){
             throw new NotAllowedException("La fecha límite no puede ser anterior a la fecha de inicio");
         }
@@ -50,7 +47,7 @@ public class PartyService implements IPartyService {
                 PartySpecification.isPublic(true),
                 PartySpecification.cityContains(city),
                 PartySpecification.betweenDates(from, to),
-                PartySpecification.stateTrue()
+                PartySpecification.LogicStateTrue()
         );
 
         return partyRepository
@@ -254,7 +251,7 @@ public class PartyService implements IPartyService {
     public PartyResDTO changePartyStatus(UUID partyId){
         PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(partyId)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
-        party.setState(!party.getState());
+        party.setLogicState(!party.getLogicState());
         return partyMapper.toResDTO(party);
     }
 }
