@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -35,13 +36,20 @@ public class PartyService implements IPartyService {
 
 
     @Override
-    public List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city) {
+    public List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city, LocalDate from, LocalDate to) {
+        if(from != null && from.isBefore(LocalDate.now()) || to != null && to.isBefore(LocalDate.now())){
+            throw new NotAllowedException("La fecha no puede ser anterior al día de hoy");
+        }
+        if(from != null && to != null && to.isBefore(from)){
+            throw new NotAllowedException("La fecha límite no puede ser anterior a la fecha de inicio");
+        }
         PredicateSpecification<PartyEntity> spec = PredicateSpecification.allOf(
                 PartySpecification.externalIdEqual(partyId),
                 PartySpecification.externalIdOrganizerEqual(organizerId),
                 PartySpecification.titleContains(title),
                 PartySpecification.isPublic(true),
                 PartySpecification.cityContains(city),
+                PartySpecification.betweenDates(from, to),
                 PartySpecification.stateTrue()
         );
 

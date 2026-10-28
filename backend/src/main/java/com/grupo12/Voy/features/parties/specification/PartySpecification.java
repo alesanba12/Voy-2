@@ -1,8 +1,10 @@
 package com.grupo12.Voy.features.parties.specification;
 
 import com.grupo12.Voy.features.parties.models.PartyEntity;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.PredicateSpecification;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class PartySpecification {
@@ -34,6 +36,21 @@ public class PartySpecification {
         return (root, cb) -> city == null || city.isBlank() ?
                 cb.conjunction() :
                 cb.like(cb.lower(root.get("city")), "%" + city.toLowerCase() + "%");
+    }
+
+    public static PredicateSpecification<PartyEntity> betweenDates(LocalDate from, LocalDate to){
+        return (root, cb) -> {
+            Predicate result = cb.conjunction();
+            if (from != null) {
+                result = cb.and(result,
+                        cb.greaterThanOrEqualTo(root.get("dateTime"), from.atStartOfDay()));
+            }
+            if (to != null) {
+                result = cb.and(result,
+                        cb.lessThan(root.get("dateTime"), to.plusDays(1).atStartOfDay()));
+            }
+            return result;
+        };
     }
 
     public static PredicateSpecification<PartyEntity> stateTrue(){
