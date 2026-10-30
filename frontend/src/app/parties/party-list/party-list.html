@@ -1,1 +1,28 @@
-<p>party-list works!</p>
+@let parties = this.parties();
+
+<h1>Eventos cerca tuyo</h1>
+
+<div class="filters">
+    <div class="filter">
+        <label for="title">Buscar por Nombre</label>
+        <input type="text" id="title" #titleSelect [value]="filterByPartyTitle()" (input)="filterByPartyTitle.set(titleSelect.value)">
+    </div>
+    <div class="filter">
+        <label for="city">Buscar por Ciudad</label>
+        <input type="text" id="city" #citySelect [value]="filterByCity()" (input)="filterByCity.set(citySelect.value)">
+    </div>
+    <div class="filter">
+        <h4>Buscar por Fechas</h4>
+        <label for="dateFrom">Desde</label>
+        <input type="date" id="dateFrom" #dateSelectFrom [value]="filterFrom()" (change)="filterFrom.set(dateSelectFrom.value)">
+        <label for="dateTo">Hasta</label>
+        <input type="date" id="dateTo" #dateSelectTo [value]="filterTo() ?? ''" (change)="filterTo.set(dateSelectTo.value)">
+        
+    </div>
+</div>
+
+<ul>
+@for (party of parties; track $index) {
+    <li>{{party.title}} | {{party.organizerName}} | {{party.city}} | {{party.dateTime}}</li>
+}
+</ul>
