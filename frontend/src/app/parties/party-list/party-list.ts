@@ -19,6 +19,7 @@ export class PartyList {
   protected readonly filterByCity = signal<string | null>(null);
   protected readonly filterFrom = signal<string>(this.addDays(0));
   protected readonly filterTo = signal<string | null>(this.addDays(7));
+  protected readonly filterByTags = signal<string>('');
   protected readonly orderBy = signal<string>('Fecha');
 
   private readonly filters = computed(() => ({
@@ -65,6 +66,11 @@ export class PartyList {
       parties = parties.filter((p) => this.dayOf(p.dateTime) <= to);
     }
 
+    const tag = this.filterByTags();
+    if (tag) {
+      parties = parties.filter((p) => p.tags.includes(tag));
+    }
+
     switch (this.orderBy()) {
       case 'Fecha':
         parties = [...parties].sort((p1, p2) => p1.dateTime.localeCompare(p2.dateTime));
@@ -95,6 +101,9 @@ export class PartyList {
     d.setDate(d.getDate() + days);
     return d.toLocaleDateString('en-CA');
   }
+
+
+  protected readonly tags = ['Gastronómico', 'Fiesta', 'Música', 'Teatro', 'Arte y cultura', 'Deporte'];
 
   protected readonly ordenamiento = [
     'Fecha',

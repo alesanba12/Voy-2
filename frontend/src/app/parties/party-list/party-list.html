@@ -12,11 +12,20 @@
         <input type="text" id="city" #citySelect [value]="filterByCity()" (input)="filterByCity.set(citySelect.value)">
     </div>
     <div class="filter">
-        <h4>Buscar por Fechas</h4>
+        <h5>Buscar por Fechas</h5>
         <label for="dateFrom">Desde</label>
         <input type="date" id="dateFrom" #dateSelectFrom [value]="filterFrom()" (change)="filterFrom.set(dateSelectFrom.value)">
         <label for="dateTo">Hasta</label>
         <input type="date" id="dateTo" #dateSelectTo [value]="filterTo() ?? ''" (change)="filterTo.set(dateSelectTo.value)">
+    </div>
+    <div class="filter">
+        <label for="tag">Buscar por etiqueta</label>
+        <select id="tag" #tagSelect [value]="filterByTags()" (change)="filterByTags.set(tagSelect.value)">
+            <option value="">Seleccione una categoria</option>
+            @for (tag of tags; track tag) {
+                <option [value]="tag">{{ tag }}</option>
+            }
+        </select>
     </div>
     <div class="order">
         <label for="orderBy">Ordenar por</label>
