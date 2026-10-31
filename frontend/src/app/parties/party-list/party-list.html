@@ -1,7 +1,7 @@
 @let parties = this.parties();
 
-<h1>Eventos cerca tuyo</h1>
 
+<h3>Filtra tu búsqueda</h3>
 <div class="filters">
     <div class="filter">
         <label for="title">Buscar por Nombre</label>
@@ -17,12 +17,19 @@
         <input type="date" id="dateFrom" #dateSelectFrom [value]="filterFrom()" (change)="filterFrom.set(dateSelectFrom.value)">
         <label for="dateTo">Hasta</label>
         <input type="date" id="dateTo" #dateSelectTo [value]="filterTo() ?? ''" (change)="filterTo.set(dateSelectTo.value)">
-        
+    </div>
+    <div class="order">
+        <label for="orderBy">Ordenar por</label>
+        <select id="orderBy" #ordSelect [value]="orderBy()" (change)="orderBy.set(ordSelect.value)">
+            @for (ord of ordenamiento; track ord) {
+                <option [value]="ord">{{ ord }}</option>
+            }
+        </select>
     </div>
 </div>
-
+<h1>Eventos cerca tuyo</h1>
 <ul>
 @for (party of parties; track $index) {
-    <li>{{party.title}} | {{party.organizerName}} | {{party.city}} | {{party.dateTime}}</li>
+    <li>{{party.title}} | {{party.organizerName}} | {{party.city}} | {{party.dateTime}} | {{ party.price }} </li>
 }
 </ul>
