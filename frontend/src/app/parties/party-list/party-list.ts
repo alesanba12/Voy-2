@@ -1,7 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { PartyClient } from '../party-service';
 import { Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { httpResource } from '@angular/common/http';
+import { Party } from '../party';
+import { debounceTime } from 'rxjs';
 
 @Component({
   imports: [],
@@ -22,49 +25,20 @@ export class PartyList {
   protected readonly filterByTags = signal<string>('');
   protected readonly orderBy = signal<string>('Fecha');
 
-  private readonly filters = computed(() => ({
-    id: this.filterById(),
-    organizerId: this.filterByOrganizerId(),
-    title: this.filterByPartyTitle(),
-    city: this.filterByCity(),
-    from: this.filterFrom(),
-    to: this.filterTo(),
+  protected readonly partiesResource = httpResource<Party[]>(() => ({
+    url: '/api/parties',
+    params: this.buildParams({
+      partyId: this.filterById(),
+      organizerId: this.filterByOrganizerId(),
+      title: this.debouncedTitle(),
+      city: this.debouncedCity(),
+      from: this.filterFrom(),
+      to: this.filterTo(),
+    }),
   }));
 
-  private readonly partySource = toSignal(
-    this.client.getAll(
-      this.toNull(this.filterById()),
-      this.toNull(this.filterByOrganizerId()),
-      this.toNull(this.filterByPartyTitle()),
-      this.toNull(this.filterByCity()),
-      this.toNull(this.filterFrom()),
-      this.toNull(this.filterTo()),
-    ),
-  );
-
   protected readonly parties = computed(() => {
-    let parties = this.partySource();
-
-    if (!parties) return [];
-
-    const title = this.filterByPartyTitle()?.toLowerCase();
-    if (title) {
-      parties = parties.filter((p) => p.title.toLowerCase().includes(title));
-    }
-
-    const city = this.filterByCity()?.toLowerCase();
-    if (city) {
-      parties = parties.filter((p) => p.city.toLowerCase().includes(city));
-    }
-    const from = this.filterFrom();
-    if (from) {
-      parties = parties.filter((p) => this.dayOf(p.dateTime) >= from);
-    }
-
-    const to = this.filterTo();
-    if (to) {
-      parties = parties.filter((p) => this.dayOf(p.dateTime) <= to);
-    }
+    let parties = [...(this.partiesResource.value() ?? [])];
 
     const tag = this.filterByTags();
     if (tag) {
@@ -72,28 +46,24 @@ export class PartyList {
     }
 
     switch (this.orderBy()) {
-      case 'Fecha':
-        parties = [...parties].sort((p1, p2) => p1.dateTime.localeCompare(p2.dateTime));
-        break;
       case 'Precio: mayor a menor':
-        parties = [...parties].sort((p1, p2) => p2.price - p1.price);
+        parties.sort((a, b) => b.price - a.price);
         break;
       case 'Precio: menor a mayor':
-        parties = [...parties].sort((p1, p2) => p1.price - p2.price);
+        parties.sort((a, b) => a.price - b.price);
+        break;
+      case 'Fecha':
+        parties.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
         break;
     }
-
     return parties;
   });
 
-  protected toNull(s: string | null) {
-    return s === '' ? null : s;
-  }
-
-  private dayOf(value: Date | string): string {
-    return typeof value === 'string'
-      ? value.substring(0, 10) // Con esto tomo solo las primeras 10 posiciones del string: "2026-12-31"
-      : value.toLocaleDateString('en-CA'); // por si el cliente lo convierte a Date
+  // Saca los filtros vacíos para que no viajen como "title=" en la URL
+  private buildParams(filters: Record<string, string | null>) {
+    return Object.fromEntries(
+      Object.entries(filters).filter(([, v]) => v !== null && v !== ''),
+    ) as Record<string, string>;
   }
 
   private addDays(days: number): string {
@@ -102,29 +72,30 @@ export class PartyList {
     return d.toLocaleDateString('en-CA');
   }
 
-
-  protected readonly tags = ['Gastronómico', 'Fiesta', 'Música', 'Teatro', 'Arte y cultura', 'Deporte'];
+  protected readonly tags = [
+    'Gastronómico',
+    'Fiesta',
+    'Música',
+    'Teatro',
+    'Arte y cultura',
+    'Deporte',
+  ];
 
   protected readonly ordenamiento = [
     'Fecha',
     'Precio: mayor a menor',
     'Precio: menor a mayor',
   ] as const;
+
+  private readonly debouncedTitle = toSignal(
+    toObservable(this.filterByPartyTitle).pipe(debounceTime(300)),
+    { initialValue: null },
+  );
+
+  private readonly debouncedCity = toSignal(
+    toObservable(this.filterByCity).pipe(debounceTime(300)),
+    { initialValue: null },
+  );
+
+  
 }
-// private readonly partySource = toSignal(
-//   toObservable(this.filters).pipe(
-//     switchMap((f) =>
-//       this.client
-//         .getAll(
-//           this.toNull(f.id),
-//           this.toNull(f.organizerId),
-//           this.toNull(f.title),
-//           this.toNull(f.city),
-//           this.toNull(f.from),
-//           this.toNull(f.to),
-//         )
-//         .pipe(catchError(() => of([]))),
-//     ),
-//   ),
-//   { initialValue: [] },
-// );}
