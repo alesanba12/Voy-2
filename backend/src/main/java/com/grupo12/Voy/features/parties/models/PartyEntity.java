@@ -71,6 +71,9 @@ public class PartyEntity {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<TicketEntity> usersList;
 
