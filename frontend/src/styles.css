@@ -9,34 +9,36 @@
   color-scheme: dark;
 
   /* ---------- Backgrounds ---------- */
-  --background-principal:  #0f0f12; /* fondo de la página, navbar, footer */
+  --background-principal: #0f0f12; /* fondo de la página, navbar, footer */
   --background-secundario: #1b1b1f; /* cards y paneles */
-  --background-terciario:  #26262b; /* elementos dentro de una card (filas, inputs, stats) */
+  --background-terciario: #26262b; /* elementos dentro de una card (filas, inputs, stats) */
 
   /* ---------- Bordes ---------- */
   --borde: #2e2e33;
+  --border: #2b2638;
 
   /* ---------- Textos ---------- */
-  --texto-principal:  #f2f0f6;
+  --texto-principal: #f2f0f6;
   --texto-secundario: #a9a8af;
   --texto-sobre-primario: #1b0050; /* texto encima de botones/badges violeta claro */
+  --texto-muteado: #8d86a3;
 
   /* ---------- Colores de marca ---------- */
-  --color-primario:       #8b5cf6; /* violeta base: links, acentos, barras */
+  --color-primario: #8b5cf6; /* violeta base: links, acentos, barras */
   --color-primario-claro: #d4c4ff; /* botón principal, badges, avatar */
-  --color-terciario:      #ffb562; /* ámbar: "Alta demanda", "Últimas entradas", espera */
+  --color-terciario: #ffb562; /* ámbar: "Alta demanda", "Últimas entradas", espera */
 
   /* ---------- Estados ---------- */
-  --color-exito:   #34d399; /* Publicado, +14%, Activo */
+  --color-exito: #34d399; /* Publicado, +14%, Activo */
   --color-peligro: #ffb4ab; /* Cancelar evento, eliminar */
 
   /* ---------- Tipografía ---------- */
   --fuente-principal: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   /* ---------- Radios ---------- */
-  --radio-sm:   6px;
-  --radio-md:   12px;
-  --radio-lg:   20px;
+  --radio-sm: 6px;
+  --radio-md: 12px;
+  --radio-lg: 20px;
   --radio-pill: 999px;
 }
 
@@ -69,4 +71,18 @@ body {
 a {
   color: var(--color-primario-claro);
   text-decoration: none;
+}
+
+input,
+select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--background-terciario);
+  color: var(--texto-principal);
+  border: 1px solid var(--border);
+  font-size: 14px;
 }

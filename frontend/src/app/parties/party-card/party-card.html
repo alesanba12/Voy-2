@@ -1,1 +1,15 @@
-<p>party-card works!</p>
+@let party = this.party();
+
+<article class="card">
+  <div class="card-image">
+    <img src="Show.webp" [alt]="party.title" />
+
+    @if (party.tags.length) {
+      <span class="tag">{{ party.tags[0] }}</span>
+    }
+    <div class="card-body">
+      <h3>{{ party.title }}</h3>
+      <p>{{ party.dateTime | eventDate }}</p>
+    </div>
+  </div>
+</article>

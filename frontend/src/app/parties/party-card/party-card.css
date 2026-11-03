@@ -1,0 +1,52 @@
+article {
+  background-color: var(--background-secundario);
+  display: flex;
+  flex-direction: column;
+  border-color: var(--background-terciario);
+  margin: 1rem;
+  border-radius: 1rem;
+  .card-image {
+    position: relative;
+  }
+
+  .card-image img {
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .card-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      /* leve oscurecido arriba, ayuda a leer la etiqueta */ rgba(0, 0, 0, 0) 35%,
+      rgba(18, 18, 18, 0.95) 100% /* poné acá el color de fondo de tu tarjeta */
+    );
+    pointer-events: none; /* no bloquea los clicks */
+  }
+  .tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 1;
+  }
+  .card-body {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 1;
+  }
+}

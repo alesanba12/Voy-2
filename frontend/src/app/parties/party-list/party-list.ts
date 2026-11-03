@@ -5,9 +5,11 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
 import { Party } from '../party';
 import { debounceTime } from 'rxjs';
+import { PartyCard } from '../party-card/party-card';
+import { DateFilterComponent, DateRange } from '../../shared/components/date-filter/date-filter';
 
 @Component({
-  imports: [],
+  imports: [PartyCard, DateFilterComponent],
   selector: 'app-party-list',
   styleUrl: './party-list.css',
   templateUrl: './party-list.html',
@@ -21,7 +23,7 @@ export class PartyList {
   protected readonly filterByPartyTitle = signal<string | null>(null);
   protected readonly filterByCity = signal<string | null>(null);
   protected readonly filterFrom = signal<string>(this.addDays(0));
-  protected readonly filterTo = signal<string | null>(this.addDays(7));
+  protected readonly filterTo = signal<string | null>(this.addDays(6));
   protected readonly filterByTags = signal<string>('');
   protected readonly orderBy = signal<string>('Fecha');
 
@@ -58,6 +60,13 @@ export class PartyList {
     }
     return parties;
   });
+
+  protected onDateChange(range: DateRange) {
+    this.filterFrom.set(range.from);
+    this.filterTo.set(range.to);
+    // No hace falta llamar a la API: httpResource lee estos signals
+    // y se vuelve a ejecutar solo cuando cambian.
+  }
 
   // Saca los filtros vacíos para que no viajen como "title=" en la URL
   private buildParams(filters: Record<string, string | null>) {
