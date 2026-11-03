@@ -2,6 +2,8 @@ package com.grupo12.Voy.features.parties.Dto;
 
 
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ public record PartyReqDTO(
         @PositiveOrZero(message = "El precio debe ser positivo")
         BigDecimal price,
         @Future(message = "La fecha es obligatoria")
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime dateTime,
         @NotNull(message = "El limite de invitados no puede ser nulo")
         @PositiveOrZero(message = "El limite de invitados tiene que ser mayor a 0")
@@ -29,6 +32,8 @@ public record PartyReqDTO(
         Boolean partyAccesibility,
         @NotEmpty(message = "Por lo menos debe haber una etiqueta")
         @Size(max = 5, message = "Como máximo puede haber 5 etiquetas")
-        List<@NotBlank String> tagsList
+        List<@NotBlank String> tagsList,
+        @NotEmpty(message = "La imagen del evento es necesaria")
+        MultipartFile image
 ) {
 }

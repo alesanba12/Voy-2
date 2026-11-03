@@ -3,6 +3,7 @@ package com.grupo12.Voy.features.organizers.service;
 import com.grupo12.Voy.common.exceptions.AlreadyExistsException;
 import com.grupo12.Voy.common.exceptions.EntityNotFoundException;
 import com.grupo12.Voy.common.exceptions.InvalidFieldException;
+import com.grupo12.Voy.common.service.CloudinaryService;
 import com.grupo12.Voy.features.organizers.dto.OrganizerRejectReqDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerificationResDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerifyReqDTO;

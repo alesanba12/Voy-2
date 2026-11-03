@@ -1,4 +1,4 @@
-package com.grupo12.Voy.features.organizers.service;
+package com.grupo12.Voy.common.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
