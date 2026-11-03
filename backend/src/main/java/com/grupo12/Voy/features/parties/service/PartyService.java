@@ -3,6 +3,7 @@ package com.grupo12.Voy.features.parties.service;
 import com.grupo12.Voy.common.exceptions.AlreadyExistsException;
 import com.grupo12.Voy.common.exceptions.EntityNotFoundException;
 import com.grupo12.Voy.common.exceptions.NotAllowedException;
+import com.grupo12.Voy.common.service.CloudinaryService;
 import com.grupo12.Voy.features.parties.Dto.PartyReqDTO;
 import com.grupo12.Voy.features.parties.Dto.PartyReqPrivateDto;
 import com.grupo12.Voy.features.parties.Dto.PartyResDTO;
@@ -33,6 +34,7 @@ public class PartyService implements IPartyService {
     private final UserRepository userRepository;
     private final PartyMapper partyMapper;
     private final TagsRepository tagsRepository;
+    private final CloudinaryService cloudinaryService;
 
 
     @Override
@@ -116,6 +118,10 @@ public class PartyService implements IPartyService {
         party.setOrganizer(organizer);
         party.setExternalId(UUID.randomUUID());
         party.setTagsList(tags);
+        if (dto.image() != null && !dto.image().isEmpty()) {
+        String imageUrl = cloudinaryService.uploadFile(dto.image(), "parties");
+        party.setImageUrl(imageUrl);
+        }
 
         return partyMapper.toResDTO(partyRepository.save(party));
     }
@@ -176,6 +182,12 @@ public class PartyService implements IPartyService {
         party.setDescription(dto.description());
         party.setDateTime(dto.dateTime());
         party.setGuestLimit(dto.guestLimit());
+
+        if (dto.image() != null && !dto.image().isEmpty()) {
+            String imageUrl = cloudinaryService.uploadFile(dto.image(), "parties");
+            party.setImageUrl(imageUrl);
+        }
+
         return partyMapper.toResDTO(partyRepository.save(party));
     }
 

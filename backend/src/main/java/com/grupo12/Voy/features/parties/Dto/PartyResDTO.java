@@ -18,6 +18,7 @@ public record PartyResDTO (
         Boolean partyAccesibility,
         Boolean state,
         String organizerName,///deberia mostrar username no el email, pero por ahora dejo el email como identificador
+        String imageUrl,
         Set<String> coOrganizerName,
         Set<String> tags)
     {}

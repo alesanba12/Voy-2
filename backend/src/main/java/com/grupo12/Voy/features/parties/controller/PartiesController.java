@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -74,7 +75,7 @@ public class PartiesController {
 
     @Operation(summary = "Crear evento público (Organizador)", description = """
             Crea un nuevo evento público con precio. El organizador se obtiene del token JWT.
-            Lanza error si ya existe un evento con el mismo título. Requiere rol ORGANIZATOR.
+            Soporta subida de imagen adjunta. Lanza error si ya existe un evento con el mismo título.
             """)
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Evento público creado exitosamente",
@@ -102,9 +103,9 @@ public class PartiesController {
                             }
                             """))
     )
-    @PostMapping("/public")
+    @PostMapping(value = "/public", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ORGANIZATOR')")
-    public ResponseEntity<PartyResDTO> createPublic(@RequestBody @Valid PartyReqDTO party,
+    public ResponseEntity<PartyResDTO> createPublic(@ModelAttribute @Valid PartyReqDTO party, // Cambiado @RequestBody por @ModelAttribute para reconocer el multi part file
                                                     @AuthenticationPrincipal(expression = "usuario.externalId") UUID currentUserId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(partyService.createPublic(party,currentUserId));
     }
@@ -146,7 +147,7 @@ public class PartiesController {
     }
 
     @Operation(summary = "Actualizar evento", description = """
-            Actualiza los datos de un evento existente.
+            Actualiza los datos y opcionalmente la imagen de un evento existente.
             Si el evento es privado, el precio se mantiene en 0 independientemente del valor enviado.
             Requiere rol ORGANIZATOR o USER.
             """)
@@ -174,9 +175,9 @@ public class PartiesController {
                             }
                             """))
     )
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ORGANIZATOR') or hasRole('USER')")
-    public ResponseEntity<PartyResDTO> update(@PathVariable UUID id, @RequestBody @Valid PartyReqDTO party) {
+    public ResponseEntity<PartyResDTO> update(@PathVariable UUID id, @ModelAttribute @Valid PartyReqDTO party) {  // Cambiado @RequestBody por @ModelAttribute para reconocer el multi part file
         return ResponseEntity.ok(partyService.update(id, party));
     }
 
