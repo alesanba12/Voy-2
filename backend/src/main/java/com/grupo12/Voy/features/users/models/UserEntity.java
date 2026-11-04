@@ -85,7 +85,6 @@ public class UserEntity {
     public void onSave(){
         if(externalId==null) externalId = UUID.randomUUID();
         if(isOrganizer ==null) isOrganizer = false;
-        if (imageUrl==null) imageUrl = "https://res.cloudinary.com/dmqsnjyfq/image/upload/v1793632574/voy/perfil/pngegg_xpixlj.png";
     }
 
     @Override

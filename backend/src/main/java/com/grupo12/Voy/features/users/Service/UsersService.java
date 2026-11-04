@@ -31,7 +31,6 @@ import com.grupo12.Voy.features.users.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -96,11 +95,6 @@ public class UsersService implements IUsersService{
         }
 
         UserEntity user = newUserDtoMapper.newUserToEntity(newUserDto);
-
-        if (newUserDto.image() != null && !newUserDto.image().isEmpty()) {
-            String imageUrl = cloudinaryService.uploadFile(newUserDto.image(), "users");
-            user.setImageUrl(imageUrl);
-        }
 
         UserEntity userEntity = userRepository.save(user);
 
