@@ -22,7 +22,7 @@ public interface PartyMapper {
     @Mapping(source = "organizer.email", target = "organizerName")
     @Mapping(source = "coOrganizer", target = "coOrganizerName", qualifiedByName = "usersToEmails")
     @Mapping(source = "tagsList", target = "tags")
-    @Mapping(target = "imageUrl", ignore = true)
+
     PartyResDTO toResDTO (PartyEntity party);
 
     List<PartyResDTO> toResDTOList (List<PartyEntity> parties);

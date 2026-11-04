@@ -41,6 +41,9 @@ public class UserEntity {
     @Column(name = "fecha_nacimiento",nullable = false)
     private LocalDate birthdate;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Builder.Default
     @ManyToMany
     @JoinTable(

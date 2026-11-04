@@ -9,6 +9,7 @@ import com.grupo12.Voy.common.security.models.CredentialsEntity;
 import com.grupo12.Voy.common.security.models.RoleEntity;
 import com.grupo12.Voy.common.security.repository.CredentialsRepository;
 import com.grupo12.Voy.common.security.repository.RoleRepository;
+import com.grupo12.Voy.common.service.CloudinaryService;
 import com.grupo12.Voy.features.parties.Dto.PartyUsersDto;
 import com.grupo12.Voy.features.parties.mapper.PartyMapper;
 import com.grupo12.Voy.features.parties.models.PartyEntity;
@@ -30,7 +31,6 @@ import com.grupo12.Voy.features.users.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,6 +56,8 @@ public class UsersService implements IUsersService{
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final CredentialsRepository credentialsRepository;
+    private final CloudinaryService  cloudinaryService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -121,6 +123,10 @@ public class UsersService implements IUsersService{
            }
            user.setUsername(userUpdateDto.username());
        }
+        if (userUpdateDto.image() != null && !userUpdateDto.image().isEmpty()) {
+            String imageUrl = cloudinaryService.uploadFile(userUpdateDto.image(), "users");
+            user.setImageUrl(imageUrl);
+        }
 
        CredentialsEntity credentials = user.getCredentials();
        if (credentials != null) {
