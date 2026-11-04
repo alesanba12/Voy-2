@@ -11,7 +11,8 @@ export interface Party {
         "state": boolean,
         "organizerName": string,///deberia mostrar username no el email, pero por ahora dejo el email como identificador
         "coOrganizerName": string[],
-        "tags": string[]
+        "tags": string[],
+        "imageUrl": string
 }
 
 export type PartyFormModel = Omit<Party,'id'>;

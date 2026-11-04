@@ -1,19 +1,25 @@
 article {
   background-color: var(--background-secundario);
-  display: flex;
-  flex-direction: column;
-  border-color: var(--background-terciario);
+  border: 1px solid var(--background-terciario);
   margin: 1rem;
   border-radius: 1rem;
+  overflow: hidden; 
+
   .card-image {
     position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; 
+    background: var(--background-terciario);
   }
 
   .card-image img {
-    display: block;
+    position: absolute;
+    inset: 0;
     width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    color: transparent;
   }
 
   .card-image::after {
@@ -23,11 +29,12 @@ article {
     background: linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0) 0%,
-      /* leve oscurecido arriba, ayuda a leer la etiqueta */ rgba(0, 0, 0, 0) 35%,
-      rgba(18, 18, 18, 0.95) 100% /* poné acá el color de fondo de tu tarjeta */
+      rgba(0, 0, 0, 0) 35%,
+      rgba(18, 18, 18, 0.95) 100%
     );
-    pointer-events: none; /* no bloquea los clicks */
+    pointer-events: none;
   }
+
   .tag {
     position: absolute;
     top: 12px;

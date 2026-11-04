@@ -80,9 +80,11 @@ select {
   gap: 8px;
   padding: 9px 14px;
   border-radius: 999px;
-  cursor: pointer;
   background: var(--background-terciario);
   color: var(--texto-principal);
   border: 1px solid var(--border);
   font-size: 14px;
+}
+select{
+  cursor: pointer;
 }

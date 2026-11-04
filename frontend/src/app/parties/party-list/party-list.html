@@ -68,7 +68,7 @@
   </div>
 
   <div class="order">
-    <label for="orderBy">Ordenar por </label>
+    <label for="orderBy">Ordenar por:</label>
     <select id="orderBy" #ordSelect [value]="orderBy()" (change)="orderBy.set(ordSelect.value)">
       @for (ord of ordenamiento; track ord) {
         <option [value]="ord">{{ ord }}</option>

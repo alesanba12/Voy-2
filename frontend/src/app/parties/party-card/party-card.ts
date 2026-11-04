@@ -12,7 +12,9 @@ export class PartyCard {
   public readonly party = input.required<Party>();
   private readonly router = inject(Router);
 
-  
+   onImgError(event: Event) {
+    (event.target as HTMLImageElement).src = 'Show.webp';
+  }
 }
 
 @Pipe({ name: 'eventDate' })

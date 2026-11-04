@@ -2,7 +2,11 @@
 
 <article class="card">
   <div class="card-image">
-    <img src="Show.webp" [alt]="party.title" />
+    <img
+      [src]="party.imageUrl || 'Show.webp'"
+      [alt]="party.title"
+      (error)="onImgError($event)"
+    />
 
     @if (party.tags.length) {
       <span class="tag">{{ party.tags[0] }}</span>
