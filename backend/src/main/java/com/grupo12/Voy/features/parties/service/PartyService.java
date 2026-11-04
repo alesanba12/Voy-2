@@ -118,10 +118,11 @@ public class PartyService implements IPartyService {
         party.setOrganizer(organizer);
         party.setExternalId(UUID.randomUUID());
         party.setTagsList(tags);
-        if (dto.image() != null && !dto.image().isEmpty()) {
+        if (dto.image() != null) {
         String imageUrl = cloudinaryService.uploadFile(dto.image(), "parties");
         party.setImageUrl(imageUrl);
         }
+
 
         return partyMapper.toResDTO(partyRepository.save(party));
     }
