@@ -10,12 +10,10 @@ import com.grupo12.Voy.features.users.Service.IUsersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,8 +23,8 @@ public class AuthController {
     private final JwtService jwtService;
     private final IUsersService userService;
 
-    @PostMapping("/register")
-    ResponseEntity<UserDto> register(@RequestBody @Valid NewUserDto newUserDto) {
+    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<UserDto> register(@ModelAttribute @Valid NewUserDto newUserDto) {
         return new ResponseEntity<>(userService.newUser(newUserDto), HttpStatus.CREATED);
     }
 

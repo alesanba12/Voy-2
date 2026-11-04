@@ -1,6 +1,8 @@
 package com.grupo12.Voy.features.users.Dto;
 
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -20,5 +22,7 @@ public record NewUserDto (
         String password,
         @NotNull(message = "La fecha no puede ser nula")
         @Past(message = "La fecha debe ser anterior a la de hoy")
-        LocalDate birthdate) {
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        LocalDate birthdate,
+        MultipartFile image) {
 }

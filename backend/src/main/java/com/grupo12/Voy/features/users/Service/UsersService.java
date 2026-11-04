@@ -9,6 +9,7 @@ import com.grupo12.Voy.common.security.models.CredentialsEntity;
 import com.grupo12.Voy.common.security.models.RoleEntity;
 import com.grupo12.Voy.common.security.repository.CredentialsRepository;
 import com.grupo12.Voy.common.security.repository.RoleRepository;
+import com.grupo12.Voy.common.service.CloudinaryService;
 import com.grupo12.Voy.features.parties.Dto.PartyUsersDto;
 import com.grupo12.Voy.features.parties.mapper.PartyMapper;
 import com.grupo12.Voy.features.parties.models.PartyEntity;
@@ -56,6 +57,8 @@ public class UsersService implements IUsersService{
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final CredentialsRepository credentialsRepository;
+    private final CloudinaryService  cloudinaryService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -94,6 +97,11 @@ public class UsersService implements IUsersService{
 
         UserEntity user = newUserDtoMapper.newUserToEntity(newUserDto);
 
+        if (newUserDto.image() != null && !newUserDto.image().isEmpty()) {
+            String imageUrl = cloudinaryService.uploadFile(newUserDto.image(), "users");
+            user.setImageUrl(imageUrl);
+        }
+
         UserEntity userEntity = userRepository.save(user);
 
         RoleEntity defaultRole = roleRepository.findByRole(Roles.ROLE_USER);
@@ -121,6 +129,10 @@ public class UsersService implements IUsersService{
            }
            user.setUsername(userUpdateDto.username());
        }
+        if (userUpdateDto.image() != null && !userUpdateDto.image().isEmpty()) {
+            String imageUrl = cloudinaryService.uploadFile(userUpdateDto.image(), "users");
+            user.setImageUrl(imageUrl);
+        }
 
        CredentialsEntity credentials = user.getCredentials();
        if (credentials != null) {
