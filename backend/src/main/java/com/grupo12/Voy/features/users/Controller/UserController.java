@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -75,10 +76,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/update")
+    @Operation(summary = "Actualizar usuario", description = "Actualiza los datos del usuario, incluyendo foto de perfil. Requiere rol USER.")
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('USER')")
     ResponseEntity<UserDto> updateUser(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal,
-                                             @RequestBody @Valid UserUpdateDto userUpdateDto){
+                                             @ModelAttribute @Valid UserUpdateDto userUpdateDto){
         return ResponseEntity.ok(userService.updateUser(idExternal, userUpdateDto));
     }
 
