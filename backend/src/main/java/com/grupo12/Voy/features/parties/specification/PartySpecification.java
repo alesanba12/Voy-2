@@ -23,7 +23,7 @@ public class PartySpecification {
     public static PredicateSpecification<PartyEntity> titleContains(String title){
         return ((root,cb) -> title == null || title.isBlank() ?
                 cb.conjunction() :
-                cb.like(cb.lower(root.get("title")),title.toLowerCase()));
+                cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
     }
 
     public static PredicateSpecification<PartyEntity> isPublic(Boolean isPublic){

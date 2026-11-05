@@ -1,0 +1,51 @@
+<div class="filter">
+  <!-- Botón que abre/cierra el menú -->
+  <button
+    class="trigger"
+    [class.is-open]="open()"
+    [attr.aria-expanded]="open()"
+    (click)="toggle()">
+    <span>📅</span>
+    <span>{{ label() }}</span>
+    <span class="chev">⌄</span>
+  </button>
+
+  <!-- Panel -->
+  @if (open()) {
+    <div class="menu">
+      <p class="section-title">Filtrar por fecha</p>
+
+      @for (p of presets; track p.id) {
+        <button
+          class="option"
+          [class.active]="draft().id === p.id"
+          (click)="selectPreset(p.id)">
+          <span>{{ p.icon }}</span>
+          <span>{{ p.label }}</span>
+          <span class="check">✓</span>
+        </button>
+      }
+
+      <hr />
+
+      <p class="section-title">Rango personalizado</p>
+      <div class="range">
+        <label>
+          Desde
+          <input type="date" #from [value]="draft().from"
+                 (change)="onManualChange(from.value, to.value)" />
+        </label>
+        <label>
+          Hasta
+          <input type="date" #to [value]="draft().to"
+                 (change)="onManualChange(from.value, to.value)" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn ghost" (click)="close()">Cancelar</button>
+        <button class="btn primary" (click)="apply()">Aplicar fecha</button>
+      </div>
+    </div>
+  }
+</div>
