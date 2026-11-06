@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 import { PartyList } from "./party-list/party-list";
 import { roleGuard } from "../core/auth/guards/role-guard";
+import { authGuard } from "../core/auth/guards/auth-guard";
 
 export const PARTIES_ROUTES : Routes = [
     {
@@ -10,6 +11,7 @@ export const PARTIES_ROUTES : Routes = [
     },
     {
         path: 'catalogo',
+        canActivate:[authGuard],
         loadComponent: () => import('./party-list/party-list').then(m => m.PartyList),
     },
     {

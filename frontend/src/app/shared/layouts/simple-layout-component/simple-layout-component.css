@@ -1,0 +1,14 @@
+:host{
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+    "header"
+    "main"
+}
+
+app-header{
+    grid-area: header;
+}
+main{
+    grid-area: main;
+}
