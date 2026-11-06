@@ -7,6 +7,6 @@ public class TagSpecification {
     public static PredicateSpecification<TagEntity> nameLike(String name){
         return ((root,cb) -> name == null || name.isBlank() ?
                 cb.conjunction() :
-                cb.like(cb.lower(root.get("name")),name.toLowerCase()));
+                cb.like(cb.lower(root.get("name")),name.toLowerCase()+"%"));
     }
 }
