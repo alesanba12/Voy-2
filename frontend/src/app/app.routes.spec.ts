@@ -32,11 +32,6 @@ describe('Application Routing', () => {
     router = TestBed.inject(Router);
   });
 
-  it('debe redirigir de "" a "/parties/catalogo"', async () => {
-    await router.navigateByUrl('');
-    expect(router.url).toBe('/parties/catalogo');
-  });
-
   it('debe navegar a "/auth/login"', async () => {
     await router.navigateByUrl('/auth/login');
     expect(router.url).toBe('/auth/login');
@@ -47,9 +42,28 @@ describe('Application Routing', () => {
     expect(router.url).toBe('/auth/login');
   });
 
-  it('debe navegar a "/parties/catalogo" de manera pública (sin sesión)', async () => {
+  it('debe bloquear "/parties/catalogo" si el usuario NO está registrado y redirigir a "/auth/login"', async () => {
+    mockIsAuthenticated.set(false);
+    await router.navigateByUrl('/parties/catalogo');
+    expect(router.url).toContain('/auth/login');
+  });
+
+  it('debe permitir acceder a un evento compartido "/parties/:id" de forma pública (sin estar registrado)', async () => {
+    mockIsAuthenticated.set(false);
+    await router.navigateByUrl('/parties/123e4567-e89b-12d3-a456-426614174000');
+    expect(router.url).toBe('/parties/123e4567-e89b-12d3-a456-426614174000');
+  });
+
+  it('debe permitir navegar a "/parties/catalogo" si el usuario ESTÁ registrado', async () => {
+    mockIsAuthenticated.set(true);
     await router.navigateByUrl('/parties/catalogo');
     expect(router.url).toBe('/parties/catalogo');
+  });
+
+  it('debe bloquear la raíz "" si no está autenticado y redirigir al login', async () => {
+    mockIsAuthenticated.set(false);
+    await router.navigateByUrl('');
+    expect(router.url).toContain('/auth/login');
   });
 
   it('debe bloquear "/tickets/my-tickets" si no está autenticado y redirigir a "/auth/login"', async () => {
@@ -80,8 +94,8 @@ describe('Application Routing', () => {
     expect(router.url).toBe('/parties/new');
   });
 
-  it('debe navegar a NotFound si la ruta no existe', async () => {
+  it('debe redirigir a "/auth" ante una ruta inexistente global', async () => {
     await router.navigateByUrl('/ruta-inexistente-xyz');
-    expect(router.url).toBe('/ruta-inexistente-xyz');
+    expect(router.url).toBe('/auth/login');
   });
 });
