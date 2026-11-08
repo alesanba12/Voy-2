@@ -2,7 +2,7 @@ package com.grupo12.Voy.features.tags.service;
 
 import com.grupo12.Voy.common.exceptions.EntityDuplicatedException;
 import com.grupo12.Voy.common.exceptions.EntityNotFoundException;
-import com.grupo12.Voy.common.exceptions.InvalidFieldException;
+import com.grupo12.Voy.common.exceptions.NotAllowedException;
 import com.grupo12.Voy.features.tags.ITagService;
 import com.grupo12.Voy.features.tags.TagsRepository;
 import com.grupo12.Voy.features.tags.dto.TagsDTO;
@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -62,9 +61,12 @@ public class TagService implements ITagService {
 
     @Override
     public void delete(TagsDTO tagsDTO){
+
         TagEntity tag = tagsRepository
                 .findByName(tagsDTO.name())
                 .orElseThrow(() -> new EntityNotFoundException("Etiqueta no encontrada"));
+        if (tagsRepository.isTagInUse(tag.getTagsId()))
+            throw new NotAllowedException("La etiqueta se encuentra en uso");
         tagsRepository.delete(tag);
     }
 }
