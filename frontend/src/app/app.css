@@ -1,3 +1,18 @@
 :host{
     min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: 
+    "header"
+    "main"
+    "footer";
+}
+main{
+    grid-area: main;
+}
+header{
+    grid-area: header;
+}
+footer{
+    grid-area: footer;
 }
