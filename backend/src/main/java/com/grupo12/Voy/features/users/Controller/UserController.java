@@ -48,6 +48,13 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll(username,email));
     }
 
+    @Operation(summary = "Obtener perfil propio", description = "Retorna los datos del usuario autenticado, incluida su foto de perfil.")
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')")
+    ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal){
+        return ResponseEntity.ok(userService.findByExternalId(idExternal));
+    }
+
     @Operation(summary = "Eliminar usuario (Admin)", description = "Elimina cualquier usuario por su ID externo. Requiere rol ADMIN.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente", content = @Content),

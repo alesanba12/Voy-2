@@ -22,6 +22,10 @@ export interface UserSession {
   expiresAt: number; // Timestamp en milisegundos
 }
 
+export interface UserProfile {
+  imageUrl: string | null;
+}
+
 // Payload decodificado del JWT generado por JwtService.java
 export interface JwtPayload {
   sub: string;

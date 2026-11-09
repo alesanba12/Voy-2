@@ -1,1 +1,41 @@
-<p>header works!</p>
+<header class="main-header">
+
+    <div class="header-left">
+        <a routerLink="/" class="logo">
+            Voy<span class="logo-dot"></span>
+        </a>
+        <nav class="main-nav">
+            <a routerLink="/parties/catalogo" routerLinkActive="active" class="nav-link">
+                Explorar
+            </a>
+            @if (isAuthenticated()) {
+            <a routerLink="/mis-eventos" routerLinkActive="active" class="nav-link">
+                Mis Eventos
+            </a>
+            }
+        </nav>
+    </div>
+
+    <div class="header-right">
+       
+
+        <div class="user-menu-container">
+            <button class="user-avatar-btn" (click)="toggleUserMenu()" aria-label="Abrir menú de usuario">
+                @if (userProfile()?.imageUrl; as imageUrl) {
+                <img [src]="imageUrl" alt="Foto de perfil">
+                }
+            </button>
+            @if (isMenuOpen()) {
+            <div class="dropdown-menu">
+                <a routerLink="/perfil" class="dropdown-item">Mi Perfil</a>
+                @if (isAdmin()) {
+                <a routerLink="/admin" class="dropdown-item admin-link">Panel Admin</a>
+                }
+                <hr class="dropdown-divider">
+                <button (click)="logout()" class="dropdown-item logout-btn">Cerrar Sesión</button>
+            </div>
+            }
+        </div>
+
+    </div>
+</header>
