@@ -15,6 +15,10 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
       {
+        path: '',
+        loadChildren: () => import('./legal/legal.routes').then(m => m.LEGAL_ROUTES)
+      },
+      {
         path: 'parties',
         loadChildren: () => import('./parties/parties.routes').then(m => m.PARTIES_ROUTES)
       },
