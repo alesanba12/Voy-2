@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { of, switchMap } from 'rxjs';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { UserProfile } from '../../../core/auth/models/auth.models';
 
 @Component({
-  imports: [],
+  imports: [RouterLink, RouterLinkActive],
   selector: 'app-header',
   styleUrl: './header.css',
   templateUrl: './header.html',
