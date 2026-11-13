@@ -1,1 +1,17 @@
-<p>footer works!</p>
+<div class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+      <a routerLink="/parties/catalogo" class="logo">
+            Voy<span class="logo-dot"></span>
+        </a>
+      <nav class="footer-links" aria-label="Enlaces legales">
+        <a routerLink="/privacidad" class="footer-link">Privacidad</a>
+        <a routerLink="/terminos" class="footer-link">Términos</a>
+      </nav>
+    </div>
+
+    <p class="copyright">
+      © {{ currentYear }} Voy. Todos los derechos reservados.
+    </p>
+  </div>
+</div>
