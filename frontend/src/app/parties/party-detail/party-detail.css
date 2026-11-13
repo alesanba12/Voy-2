@@ -1,0 +1,114 @@
+:host {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 'superior' 'details' 'recomendaciones';
+  gap: 1rem;
+  padding: 1rem;
+}
+.superior {
+  grid-area: superior;
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem;
+  .followshare {
+    display: flex;
+    gap: 1rem;
+  }
+}
+a {
+  text-decoration: none;
+  color: var(--texto-principal);
+}
+.details {
+  grid-area: details;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 'left right';
+  gap: 1rem;
+  margin: 1rem;
+  .left {
+    grid-area: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    .ubiYfecha {
+      display: flex;
+      gap: 1rem;
+      justify-content: space-evenly;
+      .ubi {
+        display: flex;
+        width: 100%;
+        gap: 0.5rem;
+        background-color: var(--background-terciario);
+        padding: 1rem;
+        border-radius: 1rem;
+        img {
+          width: 30px;
+          height: 30px;
+        }
+        .ubicacion {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+      .fech {
+        display: flex;
+        width: 100%;
+        gap: 0.5rem;
+        background-color: var(--background-terciario);
+        padding: 1rem;
+        border-radius: 1rem;
+        img {
+          width: 30px;
+          height: 30px;
+        }
+        .fecha {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+    .descripcion{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+        background-color: var(--background-terciario);
+        padding: 1rem;
+        border-radius: 1rem;
+        .tagggs{
+            color: var(--color-primario);
+        }
+    }
+  }
+  .right {
+    grid-area: right;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    .creator{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background-color: var(--background-terciario);
+        padding: 1rem;
+        border-radius: 1rem;
+        img{
+            height: 50px;
+            width: 50px;
+        }
+    }
+  }
+}
+.recomendaciones {
+  grid-area: recomendaciones;
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+  .eventos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 360px));
+    gap: .1rem;
+    list-style: none;
+  }
+}

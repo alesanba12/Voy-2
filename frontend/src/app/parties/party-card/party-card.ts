@@ -1,6 +1,7 @@
 import { Component, inject, input, Pipe, PipeTransform, forwardRef } from '@angular/core';
 import { Party } from '../party';
 import { Router } from '@angular/router';
+import { PARTIES_ROUTES } from '../parties.routes';
 
 @Component({
   imports: [forwardRef(() => EventDatePipe)],
@@ -15,7 +16,13 @@ export class PartyCard {
    onImgError(event: Event) {
     (event.target as HTMLImageElement).src = 'Show.webp';
   }
+
+  goToDetails() {
+  this.router.navigate(['/parties', this.party().externalId]);
+  }
 }
+
+
 
 @Pipe({ name: 'eventDate' })
 export class EventDatePipe implements PipeTransform {

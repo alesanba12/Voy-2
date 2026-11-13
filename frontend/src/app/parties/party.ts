@@ -1,5 +1,5 @@
 export interface Party {
-        "id": string,
+        "externalId": string,
         "title": string,
         "description": string,
         "city": string,
@@ -15,4 +15,4 @@ export interface Party {
         "imageUrl": string
 }
 
-export type PartyFormModel = Omit<Party,'id'>;
+export type PartyFormModel = Omit<Party,'externalId'>;
