@@ -135,6 +135,8 @@ public class UsersService implements IUsersService{
            credentialsRepository.save(credentials);
        }
 
+       user.setBio(userUpdateDto.bio());
+
        return userMapper.userToDto(userRepository.save(user));
     }
 
