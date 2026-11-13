@@ -2,6 +2,6 @@ package com.grupo12.Voy.features.users.Dto;
 
 import java.util.UUID;
 
-public record UserDto(UUID externalId, String username, String email,Boolean isOrganizer, String imageUrl){
+public record UserDto(UUID externalId, String username,String bio, String email,Boolean isOrganizer, String imageUrl){
 
 }
