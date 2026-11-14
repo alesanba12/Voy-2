@@ -85,9 +85,9 @@
       @if (partiesResource.isLoading()) {
         <p>Cargando...</p>
       }
-      @for (party of parties; track $index) {
+      @for (party of parties; track party.externalId) {
         <li>
-          <app-party-card [party]="party"> </app-party-card>
+          <app-party-card [party]="party" > </app-party-card>
         </li>
       }
       @if (!partiesResource.isLoading() && parties.length === 0) {

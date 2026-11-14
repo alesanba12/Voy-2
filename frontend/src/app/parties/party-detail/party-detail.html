@@ -1,1 +1,77 @@
-<p>party-detail works!</p>
+@let p = this.party();
+@let recomended = this.recomendedparties();
+
+@if (p) {
+  <div class="superior">
+    <div class="volver">
+      <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
+    </div>
+    <div class="followshare">
+      <button type="button" (click)="share()">
+  {{ copied() ? '¡Enlace copiado!' : 'Compartir' }}</button>
+      <button (click)="followParty.set(!followParty())">{{ followParty() ? '♥' : '♡' }}</button>
+    </div>
+  </div>
+  <div class="details">
+    <div class="left">
+      <img src="{{ p.imageUrl }}" alt="Imagen del evento" />
+      <div class="ubiYfecha">
+        <div class="ubi">
+          <img src="388528_geo_alt_fill_vbca85e28d1.png" />
+          <div class="ubicacion">
+            <h5>UBICACION</h5>
+            <p><strong>Direccion:</strong> {{ p.adress }}</p>
+            <p><strong>Localidad:</strong> {{ p.city }}</p>
+          </div>
+        </div>
+        <div class="fech">
+          <img src="175361_calendar_blank_v4a87a0b65e.png" />
+          <div class="fecha">
+            <h5>FECHA Y HORARIO</h5>
+            <p>
+              <strong>{{ p.dateTime | eventDate }}</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="descripcion">
+        <div class="tagggs">
+          <p>
+            @for (tag of p.tags; track $index) {
+              &dotsquare; {{ tag }}
+            }
+          </p>
+        </div>
+        <h3>Que esperar?</h3>
+        {{ p.description }}
+        @if (p.coOrganizerName) {
+          @for (coOrg of p.coOrganizerName; track $index) {
+            <p>coOrg</p>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="right">
+      <h1>{{ p.title }}</h1>
+      <div class="creator">
+        <img src="{{ p.imageUrl }}" />
+        <h3>{{ p.organizerName }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="recomendaciones">
+    @if (recomended) {
+      <h5>Recomendaciones</h5>
+      <h3>Eventos similares en la zona</h3>
+
+      <ul class="eventos">
+        @for (party of recomended; track $index) {
+          <li><app-party-card [party]="party"> </app-party-card></li>
+        }
+      </ul>
+    }@else {
+        <p>No hay eventos similares en la zona</p>
+    }
+  </div>
+}
