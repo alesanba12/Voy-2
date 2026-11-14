@@ -4,7 +4,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { AuthRequest, AuthResponse, JwtPayload, NewUserRequest, UserSession } from '../models/auth.models';
+import { AuthRequest, AuthResponse, JwtPayload, NewUserRequest, UserSession } from './auth.models';
 
 const TOKEN_KEY = 'voy_jwt_session';
 
