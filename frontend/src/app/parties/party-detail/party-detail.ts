@@ -4,7 +4,6 @@ import { PartyClient } from '../party-service';
 import { Party } from '../party';
 import { EventDatePipe, PartyCard } from '../party-card/party-card';
 import { httpResource } from '@angular/common/http';
-import { DateRange } from '../../shared/components/date-filter/date-filter';
 
 @Component({
   imports: [RouterLink, EventDatePipe, PartyCard],
@@ -21,7 +20,7 @@ export class PartyDetail implements OnInit {
 
   protected readonly party = signal<Party | undefined>(undefined);
   // protected readonly nombreOrganizador = computed(() => this.party()?.organizerName);
-  // protected readonly organizador = 
+  // protected readonly organizador =
 
   ngOnInit() {
     this.client.getById(this.partyId).subscribe({
@@ -35,13 +34,7 @@ export class PartyDetail implements OnInit {
     });
   }
 
-  shareParty() {
-    const party = this.route.snapshot;
-  }
-
   protected readonly followParty = signal<boolean>(false);
-
-  protected readonly filterByTags = signal<string>('');
 
   private readonly ciudad = computed(() => this.party()?.city);
   private readonly fecha = computed(() => this.party()?.dateTime);
@@ -59,14 +52,27 @@ export class PartyDetail implements OnInit {
   }));
 
   protected readonly recomendedparties = computed(() => {
-    let parties = [...(this.partiesResource.value() ?? [])];
+    const parties = this.partiesResource.value() ?? [];
     const party = this.party();
-    if (!party) return parties;
-    else {
-      parties = parties.filter((p) => p.tags.includes(party.tags[0]));
-    }
-    parties = parties.filter((p) => p.externalId !== this.partyId);
-    return parties.slice(0, 4);
+    const candidates = parties.filter((p) => p.externalId !== this.partyId);
+
+    if (!party) return candidates.slice(0, 4);
+
+    const currentTags = new Set(party.tags);
+
+    const similar = candidates
+      .map((p) => ({
+        party: p,
+        score: p.tags.filter((tag) => currentTags.has(tag)).length,
+      }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((item) => item.party);
+
+    // Si faltan para llegar a 4, se completa con las que no coinciden en tags
+    const rest = candidates.filter((p) => !similar.includes(p));
+
+    return [...similar, ...rest].slice(0, 4);
   });
 
   // Saca los filtros vacíos para que no viajen como "title=" en la URL
