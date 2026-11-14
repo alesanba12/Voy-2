@@ -1,0 +1,18 @@
+<input 
+    type="text" 
+    [value]="searchName()" 
+    (input)="searchName.set($any($event.target).value)" 
+    placeholder="Buscar etiqueta..." 
+/>
+
+@if (tagsResource.isLoading()) {
+    <p>Cargando etiquetas...</p>
+} @else if (tagsResource.error()) {
+    <p>Error al cargar las etiquetas.</p>
+} @else {
+    <ul>
+    @for (tag of tagsResource.value(); track tag.name) {
+        <li>{{ tag.name }}</li>
+    }
+    </ul>
+}
