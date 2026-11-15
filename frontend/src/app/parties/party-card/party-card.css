@@ -5,9 +5,16 @@ article {
   border-radius: 1rem;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease-in-out;
+  transition:
+    border-color 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+
   &:hover {
-    transform: scale(1.02);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  &:hover .card-image img {
+    transform: scale(1.08);
   }
 
   .card-image {
@@ -15,6 +22,7 @@ article {
     width: 100%;
     aspect-ratio: 16 / 9;
     background: var(--background-terciario);
+    overflow: hidden;
   }
 
   .card-image img {
@@ -25,6 +33,8 @@ article {
     object-fit: cover;
     display: block;
     color: transparent;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
   }
 
   .card-image::after {
