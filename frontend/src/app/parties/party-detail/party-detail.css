@@ -43,6 +43,7 @@ a {
         padding: 1rem;
         border-radius: 1rem;
         img {
+          margin-top: 1rem;
           width: 30px;
           height: 30px;
         }
@@ -59,6 +60,7 @@ a {
         padding: 1rem;
         border-radius: 1rem;
         img {
+          margin-top: 1rem;
           width: 30px;
           height: 30px;
         }

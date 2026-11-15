@@ -15,4 +15,4 @@ export interface Party {
         "imageUrl": string
 }
 
-export type PartyFormModel = Omit<Party,'externalId'>;
+export type PartyFormModel = Omit<Party,'externalId' | 'state' | 'organizerName' | 'coOrganizerName'>;
