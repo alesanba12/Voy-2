@@ -1,0 +1,91 @@
+.modal-container {
+  background-color: var(--background-secundario);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  padding: 28px;
+  width: 100%;
+  max-width: 440px;
+  color: var(--texto-principal);
+  font-family: var(--fuente-principal);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.modal-container h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin-bottom: 22px;
+  letter-spacing: -0.02em;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--texto-secundario);
+  margin-left: 4px;
+}
+
+/* Heredamos la base global de inputs (pill, background-terciario) y ajustamos ancho y foco */
+.form-group input {
+  width: 100%;
+  background: var(--background-terciario);
+  color: var(--texto-principal);
+  border: 1px solid var(--border);
+  border-radius: var(--radio-pill);
+  padding: 10px 16px;
+  font-family: var(--fuente-principal);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder {
+  color: var(--texto-muteado);
+}
+
+.form-group input:focus {
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-submit {
+  width: 100%;
+  justify-content: center;
+  background-color: var(--color-primario-claro);
+  color: var(--texto-sobre-primario);
+  font-family: var(--fuente-principal);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 11px 20px;
+  border-radius: var(--radio-pill);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease;
+}
+
+.btn-submit:hover {
+  opacity: 0.92;
+}
+
+.btn-submit:active {
+  transform: scale(0.98);
+}

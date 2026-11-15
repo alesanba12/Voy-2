@@ -1,7 +1,48 @@
 @let user = this.currentUser();
 
 @if(user){
-    <h2>{{user.username}}</h2>
+    <div class="data-user">
+        <div class="name-photo">
+            <img [src]="user.imageUrl || defaulImage" 
+            class="profile-image"
+            />
+            <div class="name">
+                <h2>{{user.username}}</h2>
+                <p>{{user.bio}}</p>
+            </div>
+        </div>
+
+        <div class="organize-form">
+            <div class="form-header">
+                <p class="nuevo">Nuevo</p>
+                <p>¿Generas tus propios eventos?</p>
+            </div>
+            <p>Publicá eventos, validá tickets QR y cobrá en 24 horas sin fricción.</p>
+
+            <div class="Organizer-form-page">
+                @if(!user.isOrganizer){
+                    <button >
+                        Convertirme en Organizador &rightarrow;
+                    </button>
+                }@else {
+                    <button (click)="goToOrganizerProfile()" >
+                        Ir a mi perfil de Organizador
+                    </button>
+                }
+            </div>
+
+            <button class="Update-profile" (click)="isEditModalOpen.update((v)=>!v)">Editar Perfil</button>
+
+            @if(isEditModalOpen()){
+                <div class="modal-backdrop" (click)="isEditModalOpen.update((v)=>!v)">
+                    <!-- Detenemos la propagación para que hacer clic dentro del modal no lo cierre -->
+                    <div class="modal-content-wrapper" (click)="$event.stopPropagation()">
+                        <app-edit-modal [currentUser]="user"></app-edit-modal>
+                        <button class="btn-close" (click)="isEditModalOpen.update((v)=>!v)">X</button>
+                    </div>
+                </div>
+            }            
+        </div>
+    </div>
 
 }
-

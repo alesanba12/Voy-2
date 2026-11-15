@@ -1,0 +1,41 @@
+
+
+
+
+
+/*Ventana Modal*/
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 15, 18, 0.8); /* Fondo semitransparente oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content-wrapper {
+  position: relative;
+  background: var(--background-secundario);
+  border-radius: var(--radio-lg);
+  border: 1px solid var(--borde);
+  padding: 10px;
+}
+
+.btn-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  color: var(--texto-secundario);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  color: var(--texto-principal);
+}
