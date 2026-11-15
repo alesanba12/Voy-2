@@ -1,1 +1,56 @@
-<p>party-form works!</p>
+<div class="volver">
+  <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
+</div>
+
+<h2>{{ isEditing() ? 'Editando tu evento' : 'Creando tu nuevo evento' }}</h2>
+<p>
+  Configura los detalles, tipos de entrada y line-up para que los usuarios de la red de Voy tengan
+  una prueba de la experiencia
+</p>
+
+<form [formRoot]="partyForm">
+  <div class="info1">
+    <h2>Informacion Principal</h2>
+    <div class="formControl">
+      <label for="title">Nombre del evento</label>
+      <input type="text" [formField]="partyForm.title" placeholder="Ingresa aquí el nombre" />
+    </div>
+    <div class="formControl">
+      <label for="description">Descripcion del evento</label>
+      <textarea id="description" rows="4" [formField]="partyForm.description"></textarea>
+    </div>
+    <div class="formControl">
+      <legend>Tags</legend>
+
+      <div class="chips">
+        @for (tag of tagsResource.value(); track tag.name) {
+          <button
+            type="button"
+            class="chip"
+            [class.selected]="isSelected(tag.name)"
+            [attr.aria-pressed]="isSelected(tag.name)"
+            (click)="toggleTag(tag.name)"
+          >
+            {{ tag.name }}
+          </button>
+        }
+      </div>
+
+      @if (partyForm.tags().touched() && partyForm.tags().invalid()) {
+        @for (error of partyForm.tags().errors(); track error.kind) {
+          <small class="error">{{ error.message }}</small>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="info2">
+    <h2>Fecha, Horario y Ubicacion</h2>
+    <div class="formControl">
+        <div class="dia">
+            <label for="date">Elegi el dia</label>
+            <input type="datetime-local">
+        </div>
+    </div>
+  </div>
+</form>
