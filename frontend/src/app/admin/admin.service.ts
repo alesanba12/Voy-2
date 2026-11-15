@@ -1,12 +1,17 @@
 import { httpResource } from '@angular/common/http';
-import { Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { metricsDTO } from './metrics';
+import { AuthService } from '../core/auth/auth.service';
 
 @Service()
 export class AdminService {
-    private readonly url = 'api/admin';
+    private readonly authService = inject(AuthService);
+    private readonly url = '/api/admin';
 
     getAllMetrics(){
-        return httpResource<metricsDTO>(() => `${this.url}/metrics/`);
+        return httpResource<metricsDTO>(() => {
+            const token = this.authService.getToken();
+            return token ? `${this.url}/metrics` : undefined;
+        });
     }
 }

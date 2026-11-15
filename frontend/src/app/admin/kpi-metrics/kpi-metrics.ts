@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { AdminService } from '../admin.service';
 
 @Component({
-  imports: [],
+  imports: [DecimalPipe],
   selector: 'app-kpi-metrics',
-  styleUrl: './kpi-metrics.css',
   templateUrl: './kpi-metrics.html',
+  styleUrl: './kpi-metrics.css'
 })
-export class KpiMetrics {}
+export class KpiMetrics {
+  private readonly adminService = inject(AdminService);
+  protected readonly metrics = this.adminService.getAllMetrics();
+}
