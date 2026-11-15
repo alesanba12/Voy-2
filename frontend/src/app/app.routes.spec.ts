@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { routes } from './app.routes';
-import { AuthService } from './core/auth/services/auth.service';
 import { signal } from '@angular/core';
+import { AuthService } from './core/auth/auth.service';
 
 describe('Application Routing', () => {
   let router: Router;
