@@ -3,12 +3,17 @@ article {
   border: 1px solid var(--background-terciario);
   margin: 1rem;
   border-radius: 1rem;
-  overflow: hidden; 
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  &:hover {
+    transform: scale(1.02);
+  }
 
   .card-image {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9; 
+    aspect-ratio: 16 / 9;
     background: var(--background-terciario);
   }
 

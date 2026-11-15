@@ -38,7 +38,7 @@
   display: flex;
   justify-content: space-between;
   margin: 0 1rem;
-  .order{
+  .order {
     display: flex;
     select {
       border: none;
