@@ -5,9 +5,16 @@ article {
   border-radius: 1rem;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease-in-out;
+  transition:
+    border-color 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+
   &:hover {
-    transform: scale(1.02);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  &:hover .card-image img {
+    transform: scale(1.08);
   }
 
   .card-image {
