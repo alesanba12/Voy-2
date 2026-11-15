@@ -1,17 +1,23 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../../core/auth/services/auth.service';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { UserDto, UserFollowDto } from '../user';
-import { Party } from '../../parties/party';
+import { Component, inject, OnInit } from '@angular/core';
+import { UserDto} from '../user';
+import { UserService } from '../user-service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-  imports: [],
+  imports: [UserProfile],
   selector: 'app-user-profile',
   styleUrl: './user-profile.css',
   templateUrl: './user-profile.html',
 })
 export class UserProfile {
+  private readonly userService = inject(UserService);
+
+  private readonly currentUser=toSignal<UserDto | undefined>(this.userService.getCurrentUser(),{
+    initialValue: undefined
+  })
   
+
+ 
+
 }
 
