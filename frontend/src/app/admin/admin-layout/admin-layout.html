@@ -1,0 +1,20 @@
+<aside>
+    <a routerLink="" routerLinkActive=""><span></span>Dashboard</a>
+    <a routerLink="" routerLinkActive=""><span></span>Solicitudes</a>
+    <a routerLink="" routerLinkActive=""><span></span>Usuarios</a>
+    <a routerLink="" routerLinkActive=""><span></span>Eventos</a>
+    <a routerLink="" routerLinkActive=""><span></span>Etiquetas</a>
+</aside>
+<div>
+    @if (metrics.isLoading()) {
+  <p>Cargando métricas...</p>
+} @else if (metrics.value(); as metrics) {
+
+  <p>Solicitudes pendientes: {{ metrics.approvedOrganizerRequests }}</p>
+  <p>Solicitudes aceptadas: {{ metrics.pendingOrganizerRequests }}</p>
+  <p>Usuarios totales: {{ metrics.totalUsers }}</p>
+  <p>Eventos activos: {{ metrics.activeParties}}</p>
+  <p>Eventos totales: {{ metrics.totalParties }}</p>
+}
+</div>
+<router-outlet></router-outlet>
