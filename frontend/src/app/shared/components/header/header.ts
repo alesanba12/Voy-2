@@ -3,8 +3,8 @@ import { Component, computed, ElementRef, HostListener, inject, signal } from '@
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { of, switchMap } from 'rxjs';
-import { AuthService } from '../../../core/auth/services/auth.service';
-import { UserProfile } from '../../../core/auth/models/auth.models';
+import { AuthService } from '../../../core/auth/auth.service';
+import { UserProfile } from '../../../core/auth/auth.models';
 
 @Component({
   imports: [RouterLink, RouterLinkActive],
