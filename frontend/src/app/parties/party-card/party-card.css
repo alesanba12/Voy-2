@@ -15,6 +15,7 @@ article {
     width: 100%;
     aspect-ratio: 16 / 9;
     background: var(--background-terciario);
+    overflow: hidden;
   }
 
   .card-image img {
@@ -25,6 +26,8 @@ article {
     object-fit: cover;
     display: block;
     color: transparent;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
   }
 
   .card-image::after {
