@@ -1,0 +1,18 @@
+<div class="upload-container" (click)="fileInput.click()">
+  @if (previewUrl()) {
+    <img [src]="previewUrl()" alt="Vista previa" class="preview-img" />
+    <span class="change-text">Cambiar imagen</span>
+  } @else {
+    <div class="placeholder">
+      <p>Subir {{ fieldName() }}</p>
+      <span class="hint">Hacé clic aquí</span>
+    </div>
+  }
+  
+  <input 
+    type="file" 
+    #fileInput 
+    hidden 
+    accept="image/*" 
+    (change)="onFileSelected($event)" />
+</div>
