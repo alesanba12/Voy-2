@@ -1,6 +1,6 @@
 @let party = this.party();
 
-<article class="card">
+<article class="card" (click)="goToDetails()">
   <div class="card-image">
     <img
       [src]="party.imageUrl || 'Show.webp'"

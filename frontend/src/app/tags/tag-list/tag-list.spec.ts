@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SimpleLayoutComponent } from './simple-layout-component';
+import { TagList } from './tag-list';
 
-describe('SimpleLayoutComponent', () => {
-  let component: SimpleLayoutComponent;
-  let fixture: ComponentFixture<SimpleLayoutComponent>;
+describe('TagList', () => {
+  let component: TagList;
+  let fixture: ComponentFixture<TagList>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SimpleLayoutComponent],
+      imports: [TagList],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SimpleLayoutComponent);
+    fixture = TestBed.createComponent(TagList);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

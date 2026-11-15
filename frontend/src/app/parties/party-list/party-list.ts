@@ -105,6 +105,4 @@ export class PartyList {
     toObservable(this.filterByCity).pipe(debounceTime(300)),
     { initialValue: null },
   );
-
-  
 }
