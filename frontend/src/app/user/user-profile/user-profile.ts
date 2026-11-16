@@ -35,6 +35,7 @@ export class UserProfile implements OnInit {
 
   onProfileUpdated(updatedUser: UserDto): void {
     this.currentUser.set(updatedUser);
+    this.userService.notifyProfileUpdated();
     this.isEditModalOpen.set(false);
   }
 }
