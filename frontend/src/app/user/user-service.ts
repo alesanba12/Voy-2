@@ -1,4 +1,4 @@
-import { inject, Service } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { UserDto, UserFollowDto, UserUpdateDto } from './user';
 import { Party } from '../parties/party';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -7,6 +7,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 export class UserService {
   private readonly client = inject(HttpClient)
   private readonly url = '/api/users';
+
+  readonly profileRefreshVersion = signal(0);
+
+  notifyProfileUpdated(): void {
+    this.profileRefreshVersion.update(version => version + 1);
+  }
 
   getAll(username?: string, email?: string) {
     let params = new HttpParams();
