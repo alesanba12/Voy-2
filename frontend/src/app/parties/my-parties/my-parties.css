@@ -1,0 +1,126 @@
+:host {
+  display: block;
+}
+
+.my-parties-page {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.back-link {
+  color: var(--texto-secundario);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--texto-principal);
+}
+
+.page-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  color: var(--color-primario-claro);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.page-heading h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.page-heading p:last-child,
+.party-content > p {
+  color: var(--texto-secundario);
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.65rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio-pill);
+  background: var(--color-primario-claro);
+  color: var(--texto-sobre-primario);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.primary-button:hover {
+  filter: brightness(1.06);
+}
+
+.party-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  list-style: none;
+}
+
+.party-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  align-self: flex-end;
+  min-height: 30px;
+  margin: -0.5rem 1rem 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio-pill);
+  background: transparent;
+  color: var(--texto-secundario);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.edit-link:hover {
+  border-color: var(--color-primario);
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--color-primario-claro);
+}
+
+.empty-state,
+.state-message {
+  padding: 1.5rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background: var(--background-secundario);
+}
+
+.empty-state p {
+  margin: 0.5rem 0 1.25rem;
+  color: var(--texto-secundario);
+}
+
+.error {
+  color: var(--color-peligro);
+}
+
+@media (max-width: 560px) {
+  .page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
