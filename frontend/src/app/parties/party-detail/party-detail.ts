@@ -58,12 +58,12 @@ export class PartyDetail implements OnInit {
 
     if (!party) return candidates.slice(0, 4);
 
-    const currentTags = new Set(party.tagsList);
+    const currentTags = new Set(party.tags);
 
     const similar = candidates
       .map((p) => ({
         party: p,
-        score: p.tagsList.filter((tag) => currentTags.has(tag)).length,
+        score: p.tags.filter((tag) => currentTags.has(tag)).length,
       }))
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score)

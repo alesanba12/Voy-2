@@ -44,7 +44,7 @@ export class PartyList {
 
     const tag = this.filterByTags();
     if (tag) {
-      parties = parties.filter((p) => p.tagsList.includes(tag));
+      parties = parties.filter((p) => p.tags.includes(tag));
     }
 
     switch (this.orderBy()) {

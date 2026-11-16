@@ -8,6 +8,7 @@ form {
   width: 60%;
 }
 .volver {
+  display: flex;
   justify-content: left;
 }
 .headline {
