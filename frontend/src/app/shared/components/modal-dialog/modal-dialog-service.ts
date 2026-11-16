@@ -4,13 +4,15 @@ export type ModalIntent =
   | 'unsaved-changes'     // Gris neutro: descartar edición o salir sin guardar
   | 'session-logout'      // Violeta: cerrar sesión o acciones de cuenta
   | 'cancel-attendance'   // Ámbar: cancelar asistencia o liberar lugar
-  | 'destructive-delete'; // Rojo: eliminar evento o acción irreversible
+  | 'destructive-delete'  // Rojo: eliminar evento o acción irreversible
+  | 'publish-event';
 
 export type ModalIcon =
   | 'unsaved-draft'
   | 'logout'
   | 'user-remove'
-  | 'delete-forever';
+  | 'delete-forever'
+  | 'publish-event';
 
 export interface ConfirmModalConfig {
   variant: ModalIntent;

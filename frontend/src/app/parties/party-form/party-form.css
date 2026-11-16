@@ -42,6 +42,10 @@ form {
   }
 }
 
+.form-success {
+  color: #15803d;
+}
+
 /* ---------- Bloques ---------- */
 .info {
   background-color: var(--background-secundario);

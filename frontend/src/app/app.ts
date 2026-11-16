@@ -3,9 +3,10 @@ import { RouterOutlet } from '@angular/router';
 import { AuthService } from './core/auth/auth.service';
 import { Header } from './shared/components/header/header';
 import { Footer } from './shared/components/footer/footer';
+import { ModalDialog } from './shared/components/modal-dialog/modal-dialog';
 
 @Component({
-  imports: [RouterOutlet, Header, Footer],
+  imports: [RouterOutlet, Header, Footer, ModalDialog],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

@@ -22,6 +22,9 @@
   @if (submitError()) {
     <div class="form-errors" role="alert">{{ submitError() }}</div>
   }
+  @if (submitSuccess()) {
+    <div class="form-success" role="status">{{ submitSuccess() }}</div>
+  }
 
   <!-- Información básica -->
   <section class="info">
@@ -234,8 +237,9 @@
   </section>
 
   <div class="action">
-    <button type="submit" class="publicar" [disabled]="partyForm().invalid()">
-      <img src="rocket-svgrepo-com.svg" class="spaceship" alt="" /> Publicar Evento
+    <button type="submit" class="publicar" [disabled]="partyForm().invalid() || isSubmitting()">
+      <img src="rocket-svgrepo-com.svg" class="spaceship" alt="" />
+      {{ isSubmitting() ? 'Guardando...' : isEditing() ? 'Guardar cambios' : 'Publicar Evento' }}
     </button>
   </div>
 </form>
