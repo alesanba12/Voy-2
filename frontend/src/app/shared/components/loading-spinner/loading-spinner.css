@@ -18,8 +18,8 @@
 
 .spotlight-wrapper {
   position: relative;
-  width: 340;
-  height: 340px;
+  width: 200;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -32,9 +32,10 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(139, 92, 246, 0.32) 0%,
-    rgba(139, 92, 246, 0.1) 42%,
-    rgba(17, 17, 20, 0) 72%
+    rgba(139, 92, 246, 0.16) 0%,   /* Antes: 0.35 — mucho más suave en el núcleo */
+    rgba(139, 92, 246, 0.11) 38%,  /* Mantiene el cuerpo de luz sin concentrarlo */
+    rgba(139, 92, 246, 0.04) 65%,
+    rgba(17, 17, 20, 0) 85%
   );
   animation: spotlightToggle 2s ease-in-out infinite;
   will-change: opacity, transform;
