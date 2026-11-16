@@ -30,6 +30,8 @@ export class PartyForm implements OnInit {
   public readonly editingParty = input<PartyRes>();
   protected readonly isEditing = computed(() => this.editingParty() !== undefined);
   public readonly edited = output<PartyRes>();
+  protected readonly submitAttempted = signal(false);
+  protected readonly submitError = signal<string | null>(null);
 
   ngOnInit(): void {
   const editingParty = this.editingParty();
@@ -103,22 +105,31 @@ private loadForEdit(party: PartyRes) {
     },
     {
       submission: {
+        onInvalid: () => this.submitAttempted.set(true),
         action: async (field) => {
           if (!confirm('Desea confirmar los datos?')) return;
 
+          this.submitAttempted.set(true);
+          this.submitError.set(null);
           await new Promise((resolve) => setTimeout(resolve, 500)); // simulamos latencia
           const party = field().value();
           const editingParty = this.editingParty();
           if (this.isEditing() && editingParty) {
             const { externalId } = editingParty;
-            this.partyClient.updateParty(externalId, party).subscribe((party) => {
-              alert('Producto modificado con éxito!');
-              this.edited.emit(party);
+            this.partyClient.updateParty(externalId, party).subscribe({
+              next: (party) => {
+                alert('Producto modificado con éxito!');
+                this.edited.emit(party);
+              },
+              error: () => this.submitError.set('No se pudo modificar el evento. Intenta nuevamente.'),
             });
           } else {
-            this.partyClient.addParty(party).subscribe(() => {
-              alert('Se Agrego el producto con éxito!');
-              this.resetForm();
+            this.partyClient.addParty(party).subscribe({
+              next: () => {
+                alert('Se Agrego el producto con éxito!');
+                this.resetForm();
+              },
+              error: () => this.submitError.set('No se pudo publicar el evento. Intenta nuevamente.'),
             });
           }
         },

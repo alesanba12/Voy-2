@@ -12,6 +12,18 @@
 </div>
 
 <form [formRoot]="partyForm">
+  @if (submitAttempted() && partyForm().invalid()) {
+    <div class="form-errors" role="alert">
+      <p>Revisa los siguientes errores antes de publicar:</p>
+      @for (error of partyForm().errorSummary(); track $index) {
+        <small>{{ error.message }}</small>
+      }
+    </div>
+  }
+  @if (submitError()) {
+    <div class="form-errors" role="alert">{{ submitError() }}</div>
+  }
+
   <div class="info">
     <div class="top">
       <h2>Informacion Básica</h2>
@@ -48,11 +60,6 @@
         }
       </div>
 
-      @if (partyForm.tagsList().touched() && partyForm.tagsList().invalid()) {
-        @for (error of partyForm.tagsList().errors(); track error.kind) {
-          <small class="error">{{ error.message }}</small>
-        }
-      }
     </div>
   </div>
 
@@ -147,7 +154,7 @@
   </div>
 
   <div class="action">
-    <button type="submit" class="publicar" [disabled]="partyForm().invalid()">
+    <button type="submit" class="publicar" >
       <img src="rocket-svgrepo-com.svg" class="spaceship" /> Publicar Evento
     </button>
   </div>
