@@ -83,7 +83,7 @@
       <p>Error al cargar los eventos</p>
     } @else {
       @if (partiesResource.isLoading()) {
-        <p>Cargando...</p>
+        <app-loading-spinner/>
       }
       @for (party of parties; track party.externalId) {
         <li>

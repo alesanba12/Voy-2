@@ -4,7 +4,7 @@ import { UserService } from '../user-service';
 import { Router } from '@angular/router';
 import { EditModal } from '../edit-modal/edit-modal';
 import { PartyCard } from '../../parties/party-card/party-card';
-import { Party } from '../../parties/party';
+import { PartyRes } from '../../parties/party';
 
 @Component({
   imports: [EditModal,PartyCard],
@@ -17,7 +17,7 @@ export class UserProfile implements OnInit {
   private readonly router = inject(Router);
 
   private readonly currentUser = signal<UserDto | undefined>(undefined);
-  private readonly myParties = signal<Party[]>([]);
+  private readonly myParties = signal<PartyRes[]>([]);
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe({

@@ -1,1 +1,235 @@
-<p>party-form works!</p>
+<div class="volver">
+  <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
+</div>
+
+<form [formRoot]="partyForm">
+  <div class="headline">
+    <h1>{{ isEditing() ? 'Editando tu evento' : 'Creando tu nuevo evento' }}</h1>
+    <p>
+      Configura los detalles, tipos de entrada y line-up para que los usuarios de la red de Voy
+      tengan una prueba de la experiencia
+    </p>
+  </div>
+
+  <!-- Información básica -->
+  <section class="info">
+    <div class="top">
+      <h2>Información Básica</h2>
+      <img src="filters-2-svgrepo-com.svg" width="30" alt="" />
+    </div>
+
+    <div class="formControl">
+      <div class="label-row">
+        <label for="title">NOMBRE DEL EVENTO</label>
+        @if (partyForm.title().touched() && partyForm.title().errors()[0]; as error) {
+          <small class="error">{{ error.message }}</small>
+        }
+      </div>
+      <input
+        type="text"
+        id="title"
+        [formField]="partyForm.title"
+        placeholder="Ingresa aquí el nombre"
+      />
+    </div>
+
+    <div class="formControl">
+      <div class="label-row">
+        <label for="description">DESCRIPCIÓN DE LA EXPERIENCIA</label>
+        @if (partyForm.description().touched() && partyForm.description().errors()[0]; as error) {
+          <small class="error">{{ error.message }}</small>
+        }
+      </div>
+      <textarea
+        id="description"
+        rows="4"
+        [formField]="partyForm.description"
+        placeholder="Cuéntale al mundo Voy todo lo que tiene tu evento"
+      ></textarea>
+    </div>
+
+    <div class="formControl">
+      <div class="label-row">
+        <h5>ETIQUETAS</h5>
+        @if (partyForm.tagsList().touched() && partyForm.tagsList().errors()[0]; as error) {
+          <small class="error">{{ error.message }}</small>
+        }
+      </div>
+      <p><small>Elige entre 1 y 5 etiquetas que se relacionen con tu evento</small></p>
+
+      <div class="chips">
+        @for (tag of tagsResource.value(); track tag.name) {
+          <button
+            type="button"
+            class="chip"
+            [class.selected]="isSelected(tag.name)"
+            [attr.aria-pressed]="isSelected(tag.name)"
+            (click)="toggleTag(tag.name)"
+          >
+            {{ tag.name }}
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Fecha, horario y ubicación -->
+  <section class="info">
+    <div class="top">
+      <h2>Fecha, Horario y Ubicación</h2>
+      <img src="calendar-alt-svgrepo-com.svg" width="30" alt="" />
+    </div>
+
+    <div class="formControl">
+      <div class="label-row">
+        <label for="date">ELEGÍ EL DÍA</label>
+        @if (partyForm.dateTime().touched() && partyForm.dateTime().errors()[0]; as error) {
+          <small class="error">{{ error.message }}</small>
+        }
+      </div>
+      <input type="datetime-local" id="date" [formField]="partyForm.dateTime" />
+    </div>
+
+    <div class="formControl">
+      <div class="label-row">
+        <label for="city">LOCALIDAD</label>
+        @if (partyForm.city().touched() && partyForm.city().errors()[0]; as error) {
+          <small class="error">{{ error.message }}</small>
+        }
+      </div>
+      <input type="text" id="city" [formField]="partyForm.city" placeholder="Mar del Plata" />
+    </div>
+
+    <div class="formControl">
+      <div class="label-row">
+        <label for="adress">DIRECCIÓN</label>
+        @if (partyForm.adress().touched() && partyForm.adress().errors()[0]; as error) {
+          <small class="error">{{ error.message }}</small>
+        }
+      </div>
+      <input
+        type="text"
+        id="adress"
+        [formField]="partyForm.adress"
+        placeholder="Diagonal Pueyrredón 3179"
+      />
+    </div>
+  </section>
+
+  <!-- Capacidad y entradas -->
+  <section class="info">
+    <div class="top">
+      <h2>Capacidad y Entradas</h2>
+      <img src="ticket-svgrepo-com.svg" width="30" alt="" />
+    </div>
+
+    <div class="ticketoption">
+      <button
+        type="button"
+        [class.selected]="tickets()"
+        [attr.aria-pressed]="tickets()"
+        (click)="tickets.set(true)"
+      >
+        Con entradas / Tickets pagos
+      </button>
+      <button
+        type="button"
+        [class.selected]="!tickets()"
+        [attr.aria-pressed]="!tickets()"
+        (click)="tickets.set(false)"
+      >
+        Sin entradas / Gratuito
+      </button>
+    </div>
+
+    <div class="ticketsFormControl">
+      @if (tickets()) {
+        <h4>ENTRADA GENERAL</h4>
+        <div class="cant">
+          <div class="cantidad">
+            <div class="label-row">
+              <label for="cupo">Cupo</label>
+              @if (
+                partyForm.guestLimit().touched() && partyForm.guestLimit().errors()[0];
+                as error
+              ) {
+                <small class="error">{{ error.message }}</small>
+              }
+            </div>
+            <div class="input-addon">
+              <input id="cupo" type="number" placeholder="0" [formField]="partyForm.guestLimit" />
+              <span class="addon">u.</span>
+            </div>
+          </div>
+
+          <div class="cantidad">
+            <div class="label-row">
+              <label for="price">Precio</label>
+              @if (partyForm.price().touched() && partyForm.price().errors()[0]; as error) {
+                <small class="error">{{ error.message }}</small>
+              }
+            </div>
+            <div class="input-addon">
+              <span class="addon">$</span>
+              <input id="price" type="number" placeholder="0" [formField]="partyForm.price" />
+              <span class="addon">ARS</span>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="cant">
+          <div class="cantidad">
+            <div class="label-row">
+              <label for="capacity">CAPACIDAD MÁXIMA</label>
+              @if (
+                partyForm.guestLimit().touched() && partyForm.guestLimit().errors()[0];
+                as error
+              ) {
+                <small class="error">{{ error.message }}</small>
+              }
+            </div>
+            <div class="input-addon">
+              <input
+                id="capacity"
+                type="number"
+                placeholder="0"
+                [formField]="partyForm.guestLimit"
+              />
+              <span class="addon">personas</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Portada -->
+  <section class="info">
+    <div class="top">
+      <h2>Portada y Material Visual</h2>
+      <img src="photo-svgrepo-com.svg" width="30" alt="" />
+    </div>
+
+    <div class="formControl">
+      <div class="label-row">
+        <span></span>
+        @if (partyForm.imageUrl().touched() && partyForm.imageUrl().errors()[0]; as error) {
+          <small class="error">{{ error.message }}</small>
+        }
+      </div>
+      <div class="photo">
+        <app-image-upload
+          fieldName="portada"
+          [currentUrl]="existingImageUrl()"
+          (fileChanged)="onImageChanged($event)"
+        />
+      </div>
+    </div>
+  </section>
+
+  <div class="action">
+    <button type="submit" class="publicar" [disabled]="partyForm().invalid()">
+      <img src="rocket-svgrepo-com.svg" class="spaceship" alt="" /> Publicar Evento
+    </button>
+  </div>
+</form>

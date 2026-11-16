@@ -1,0 +1,154 @@
+/* ---------- Tarjeta contenedor ---------- */
+.panel-card {
+  background: var(--background-secundario);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Cabecera del panel ---------- */
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.panel-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--texto-principal);
+  }
+}
+
+.panel-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radio-md);
+  background: var(--background-terciario);
+  border: 1px solid var(--border);
+  color: var(--color-primario-claro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.badge-neutral {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--radio-pill);
+  background: var(--background-terciario);
+  border: 1px solid var(--border);
+  color: var(--texto-secundario);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.panel-subtitle {
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin: 0;
+}
+
+/* ---------- Formulario agregar etiqueta ---------- */
+.add-tag-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border-radius: var(--radio-md);
+    background: var(--background-principal);
+  }
+}
+
+.btn-add {
+  border-radius: var(--radio-md);
+  background: var(--color-primario);
+  color: var(--texto-sobre-primario);
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 9px 16px;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+/* ---------- Nube de etiquetas ---------- */
+.tags-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tags-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--texto-muteado);
+}
+
+.tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--radio-md);
+  background: var(--background-terciario);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--texto-principal);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-primario);
+  }
+}
+
+.tag-remove {
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--texto-secundario);
+  font-size: 15px;
+  line-height: 1;
+  justify-content: center;
+
+  &:hover {
+    color: var(--color-peligro);
+    background: rgba(255, 180, 171, 0.15);
+  }
+}
