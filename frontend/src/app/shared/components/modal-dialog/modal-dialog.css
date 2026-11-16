@@ -83,33 +83,35 @@
 .icon-badge svg {
   width: 22px;
   height: 22px;
-}
-
-.close-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.65);
-  display: flex;
+}.close-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0; /* Anula el padding: 9px 14px global */
+  border-radius: var(--radio-pill);
+  border: 1px solid var(--borde);
+  background: var(--background-terciario);
+  color: var(--texto-secundario);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .close-btn:hover {
-  background-color: rgba(255, 255, 255, 0.14);
-  color: #fff;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-primario);
+  color: var(--texto-principal);
 }
 
 .close-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
-/* Badges y Eyebrow */
+
 .meta-row {
   display: flex;
   align-items: center;
