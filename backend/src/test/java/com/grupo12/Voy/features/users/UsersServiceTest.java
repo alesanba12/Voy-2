@@ -446,7 +446,7 @@ class UsersServiceTest {
         party.setExternalId(partyId);
         party.setOrganizer(organizer);
 
-        PartyUsersDto partyDto = new PartyUsersDto("Fiesta Epica", "Desc", "Rosario",
+        PartyUsersDto partyDto = new PartyUsersDto(partyId, "Fiesta Epica", "Desc", "Rosario",
                 BigDecimal.valueOf(1000), "Calle 123", LocalDateTime.now(), null);
 
         given(userRepository.findByExternalId(userId)).willReturn(Optional.of(user));

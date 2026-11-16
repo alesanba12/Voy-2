@@ -1,0 +1,38 @@
+<main class="activity-page">
+  <header class="page-heading">
+    <p class="eyebrow">TU ESPACIO</p>
+    <h1>Mi actividad</h1>
+    <p>Un lugar para encontrar lo que seguís y gestionar tus eventos.</p>
+  </header>
+
+  <nav class="activity-grid" aria-label="Secciones de mi actividad">
+    <a class="activity-card" routerLink="/actividad/seguidos">
+      <span class="card-icon" aria-hidden="true">♡</span>
+      <span class="card-content">
+        <strong>Siguiendo</strong>
+        <span>Organizadores y eventos que te interesan.</span>
+      </span>
+      <span class="card-arrow" aria-hidden="true">→</span>
+    </a>
+
+    @if (isOrganizer()) {
+      <a class="activity-card" routerLink="/parties/mis-eventos">
+        <span class="card-icon" aria-hidden="true">✦</span>
+        <span class="card-content">
+          <strong>Mis eventos</strong>
+          <span>Consultá y gestioná los eventos que organizás.</span>
+        </span>
+        <span class="card-arrow" aria-hidden="true">→</span>
+      </a>
+    }
+
+    <a class="activity-card" routerLink="/tickets/my-tickets">
+      <span class="card-icon" aria-hidden="true">▤</span>
+      <span class="card-content">
+        <strong>Mis entradas</strong>
+        <span>Revisá tus entradas y próximos eventos.</span>
+      </span>
+      <span class="card-arrow" aria-hidden="true">→</span>
+    </a>
+  </nav>
+</main>
