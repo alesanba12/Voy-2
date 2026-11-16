@@ -85,7 +85,7 @@ textarea {
   color: var(--texto-principal);
   border: 1px solid var(--border);
   font-size: 14px;
-  
+  font-family: var(--fuente-principal);
 }
 select{
   cursor: pointer;

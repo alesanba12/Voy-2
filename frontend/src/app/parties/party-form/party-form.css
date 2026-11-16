@@ -2,11 +2,30 @@
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  align-items: center;
 }
+
+/* ---------- Volver (a la izquierda de la pantalla) ---------- */
+.volver {
+  align-self: flex-start;
+
+  a {
+    text-decoration: none;
+  }
+}
+
+/* ---------- Form centrado ---------- */
 form {
-  width: 60%;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 60rem);
+  margin-inline: auto;
 }
+
+.headline {
+  margin-top: 2rem;
+}
+
+/* ---------- Resumen de errores ---------- */
 .form-errors {
   display: flex;
   flex-direction: column;
@@ -16,37 +35,62 @@ form {
   border: 1px solid #b42318;
   border-radius: 0.5rem;
   color: #b42318;
-}
-.form-errors p {
-  margin: 0;
-  font-weight: bold;
-}
-.volver {
-  display: flex;
-  justify-content: left;
-}
-.headline {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2rem;
-  .titulo {
-    display: flex;
-    flex-direction: column;
+
+  p {
+    margin: 0;
+    font-weight: bold;
   }
 }
+
+/* ---------- Bloques ---------- */
 .info {
   background-color: var(--background-secundario);
   margin: 2rem 0;
   padding: 2rem;
   border-radius: 1rem;
+
   .top {
     display: flex;
     justify-content: space-between;
   }
+
   .formControl {
     margin-top: 1rem;
+
+    /* Inputs de ancho completo (los de .cant quedan afuera de .formControl) */
+    input,
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
   }
 }
+
+/* ---------- Label + error a la derecha ---------- */
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 0.35rem;
+
+  h5 {
+    margin: 0;
+  }
+}
+
+.error {
+  color: #b42318;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ---------- Etiquetas ---------- */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -65,35 +109,28 @@ form {
     background 0.15s,
     color 0.15s,
     border-color 0.15s;
-}
 
-.chip:hover {
-  border-color: var(--color-primario);
-}
-
-.chip.selected {
-  background: var(--color-primario);
-  border-color: var(--color-primario);
-  color: var(--texto-principal);
-}
-.publicar {
-  img {
-    width: 40px;
-    height: 40px;
-    border: none;
+  &:hover {
+    border-color: var(--color-primario);
   }
-  background-color: var(--color-primario);
-  color: var(--texto-sobre-primario);
-  font-weight: bold;
-  border-radius: 0.5rem;
+
+  &.selected {
+    background: var(--color-primario);
+    border-color: var(--color-primario);
+    color: var(--texto-principal);
+  }
 }
+
+/* ---------- Entradas ---------- */
 .ticketoption {
   margin-top: 2rem;
   display: flex;
+
   button {
     border-radius: 0;
     flex: 1;
     justify-content: center;
+
     &.selected {
       background-color: var(--color-primario);
       color: var(--texto-sobre-primario);
@@ -104,12 +141,14 @@ form {
 .ticketsFormControl {
   display: flex;
   margin: 2rem 0;
+  padding: 1rem;
   border-radius: 1rem;
   background-color: var(--background-terciario);
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  .cant {
+}
+
+.cant {
     display: flex;
     gap: 1rem;
     .cantidad {
@@ -139,5 +178,40 @@ form {
       }
     }
   }
+
+
+/* ---------- Botón publicar ---------- */
+.action {
+  display: flex;
+  justify-content: flex-end;
 }
 
+.publicar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-primario);
+  color: var(--texto-sobre-primario);
+  font-weight: bold;
+  border-radius: 0.5rem;
+  transition:
+    opacity 0.15s,
+    filter 0.15s,
+    transform 0.15s;
+
+  img {
+    width: 40px;
+    height: 40px;
+    border: none;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    filter: grayscale(0.7);
+    cursor: not-allowed;
+  }
+}

@@ -72,12 +72,12 @@ private loadForEdit(party: PartyRes) {
       required(party.city, { message: 'Requerido' });
 
       required(party.adress, { message: 'Requerido' });
-      minLength(party.adress, 20, { message: 'Como mínimo 20 caracteres' });
-      maxLength(party.adress, 500, { message: 'Máximo 500 caracteres' });
+      minLength(party.adress, 5, { message: 'Como mínimo 20 caracteres' });
+      maxLength(party.adress, 50, { message: 'Máximo 500 caracteres' });
 
       required(party.price, { message: 'Requerido' });
       min(party.price, 0, { message: 'El valor no puede ser menor a 0' });
-      max(party.price, 500000, { message: 'El valor no puede superar los $ 500.000' });
+      max(party.price, 1000000, { message: 'El valor no puede superar los $ 500.000' });
 
       required(party.dateTime, { message: 'Requerido' });
       validate(party.dateTime, ({ value }) => {
