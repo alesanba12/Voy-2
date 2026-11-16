@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -132,5 +134,29 @@ public class ExceptionHandlerGlobal {
                 .endpoint(request.getDescription(false))
                 .dateTime(LocalDateTime.now())
                 .build();
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHandlerGlobal.class);
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorDetails> handlerIllegalArgument(IllegalArgumentException ex, WebRequest request) {
+        log.warn("Solicitud inválida", ex);
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .message(ex.getMessage())
+                .endpoint(request.getDescription(false))
+                .dateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDetails> handlerGeneric(Exception ex, WebRequest request) {
+        log.error("Error no controlado", ex);
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .message("Error interno del servidor")
+                .endpoint(request.getDescription(false))
+                .dateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
     }
 }
