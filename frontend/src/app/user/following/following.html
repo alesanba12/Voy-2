@@ -64,14 +64,10 @@
       @if (parties().length === 0) {
         <p class="empty-state">Todavía no seguís eventos.</p>
       } @else {
-        <ul class="party-list">
+        <ul class="party-grid">
           @for (party of parties(); track party.externalId) {
-            <li class="party-card">
-              <a class="party-info" [routerLink]="['/parties', party.externalId]">
-                <span class="party-city">{{ party.city }}</span>
-                <h3>{{ party.title }}</h3>
-                <p>{{ party.dateTime | eventDate }}</p>
-              </a>
+            <li class="followed-party">
+              <app-party-card [party]="party"></app-party-card>
               <button
                 type="button"
                 class="secondary-button"

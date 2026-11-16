@@ -1,12 +1,12 @@
 import { Component, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
-import { EventDatePipe } from '../../parties/party-card/party-card';
+import { PartyCard } from '../../parties/party-card/party-card';
 import { PartySummaryDto, UserFollowDto } from '../user';
 import { UserService } from '../user-service';
 
 @Component({
-  imports: [RouterLink, EventDatePipe],
+  imports: [RouterLink, PartyCard],
   selector: 'app-following',
   styleUrl: './following.css',
   templateUrl: './following.html',

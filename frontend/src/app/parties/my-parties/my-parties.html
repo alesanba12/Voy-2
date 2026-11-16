@@ -25,7 +25,7 @@
   } @else {
     <ul class="party-grid">
       @for (party of parties(); track party.externalId) {
-        <li class="party-card">
+        <li class="party-item">
           <app-party-card [party]="party"></app-party-card>
           <a class="edit-link" [routerLink]="['/parties', party.externalId, 'edit']">
             Editar evento

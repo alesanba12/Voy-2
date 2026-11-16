@@ -43,8 +43,7 @@
   color: var(--texto-secundario);
 }
 
-.primary-button,
-.edit-link {
+.primary-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -65,62 +64,41 @@
 
 .party-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
   list-style: none;
 }
 
-.party-card {
+.party-item {
   display: flex;
-  min-height: 230px;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.25rem;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-lg);
-  background:
-    radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.1), transparent 60%),
-    var(--background-secundario);
-}
-
-.party-content {
-  color: var(--texto-principal);
-  text-decoration: none;
-}
-
-.party-content:hover h2 {
-  color: var(--color-primario-claro);
-}
-
-.party-city {
-  color: var(--color-primario-claro);
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.party-content h2 {
-  margin: 0.5rem 0;
-  font-size: 1.25rem;
-}
-
-.party-price {
-  display: inline-block;
-  margin-top: 0.75rem;
-  font-weight: 600;
 }
 
 .edit-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: fit-content;
-  border-color: var(--borde);
+  align-self: flex-end;
+  min-height: 30px;
+  margin: -0.5rem 1rem 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio-pill);
   background: transparent;
-  color: var(--texto-principal);
+  color: var(--texto-secundario);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .edit-link:hover {
   border-color: var(--color-primario);
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--color-primario-claro);
 }
 
 .empty-state,

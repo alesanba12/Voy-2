@@ -55,15 +55,13 @@
   font-size: 1.35rem;
 }
 
-.organizer-list,
-.party-list {
+.organizer-list {
   display: grid;
   gap: 0.75rem;
   list-style: none;
 }
 
-.organizer-card,
-.party-card {
+.organizer-card {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -90,24 +88,20 @@
   font-weight: 600;
 }
 
-.party-info {
-  flex: 1;
-  color: var(--texto-principal);
-  text-decoration: none;
+.party-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  list-style: none;
 }
 
-.party-info h3 {
-  margin: 0.2rem 0;
+.followed-party {
+  display: flex;
+  flex-direction: column;
 }
 
-.party-info p,
-.party-city {
-  color: var(--texto-secundario);
-  font-size: 0.875rem;
-}
-
-.party-info:hover h3 {
-  color: var(--color-primario-claro);
+.followed-party .secondary-button {
+  align-self: flex-end;
+  margin: 0 1rem 1rem;
 }
 
 .secondary-button {
@@ -134,8 +128,7 @@
 }
 
 @media (max-width: 560px) {
-  .organizer-card,
-  .party-card {
+  .organizer-card {
     align-items: flex-start;
     flex-wrap: wrap;
   }
@@ -144,9 +137,14 @@
     align-self: center;
   }
 
-  .organizer-card .secondary-button,
-  .party-card .secondary-button {
+  .organizer-card .secondary-button {
     width: 100%;
+    justify-content: center;
+  }
+
+  .followed-party .secondary-button {
+    align-self: center;
+    width: calc(100% - 2rem);
     justify-content: center;
   }
 }
