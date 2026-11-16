@@ -1,0 +1,152 @@
+:host {
+  display: block;
+}
+
+.following-page {
+  width: min(100% - 2rem, 1000px);
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.back-link {
+  color: var(--texto-secundario);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--texto-principal);
+}
+
+.page-heading {
+  margin: 2rem 0;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  color: var(--color-primario-claro);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.page-heading h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.page-heading > p:last-child,
+.section-heading p {
+  color: var(--texto-secundario);
+}
+
+.follow-section {
+  margin-top: 2.5rem;
+}
+
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-heading h2 {
+  margin-bottom: 0.25rem;
+  font-size: 1.35rem;
+}
+
+.organizer-list,
+.party-list {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.organizer-card,
+.party-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background: var(--background-secundario);
+}
+
+.avatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.18);
+  color: var(--color-primario-claro);
+  font-weight: 700;
+}
+
+.organizer-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.party-info {
+  flex: 1;
+  color: var(--texto-principal);
+  text-decoration: none;
+}
+
+.party-info h3 {
+  margin: 0.2rem 0;
+}
+
+.party-info p,
+.party-city {
+  color: var(--texto-secundario);
+  font-size: 0.875rem;
+}
+
+.party-info:hover h3 {
+  color: var(--color-primario-claro);
+}
+
+.secondary-button {
+  flex: 0 0 auto;
+  border: 1px solid var(--borde);
+}
+
+.secondary-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.empty-state,
+.state-message {
+  padding: 1rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: var(--background-secundario);
+  color: var(--texto-secundario);
+}
+
+.error {
+  color: var(--color-peligro);
+}
+
+@media (max-width: 560px) {
+  .organizer-card,
+  .party-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .organizer-name {
+    align-self: center;
+  }
+
+  .organizer-card .secondary-button,
+  .party-card .secondary-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

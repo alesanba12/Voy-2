@@ -19,6 +19,17 @@ export interface UserFollowDto{
     username:string
 }
 
+export interface PartySummaryDto {
+    externalId: string;
+    title: string;
+    description: string;
+    city: string;
+    price: number;
+    adress: string;
+    dateTime: string;
+    organizer: UserDto;
+}
+
 export interface UserUpdateDto{
     email:string
     username:string

@@ -4,8 +4,10 @@ import com.grupo12.Voy.features.users.Dto.UserDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record PartyUsersDto(
+        UUID externalId,
         String title,
         String description,
         String city,

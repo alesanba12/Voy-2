@@ -3,6 +3,14 @@ import { Party } from '../party';
 import { Router } from '@angular/router';
 import { PARTIES_ROUTES } from '../parties.routes';
 
+export interface PartyCardData {
+  externalId: string;
+  title: string;
+  dateTime: string;
+  imageUrl?: string;
+  tags?: string[];
+}
+
 @Component({
   imports: [forwardRef(() => EventDatePipe)],
   selector: 'app-party-card',
@@ -10,7 +18,7 @@ import { PARTIES_ROUTES } from '../parties.routes';
   templateUrl: './party-card.html',
 })
 export class PartyCard {
-  public readonly party = input.required<Party>();
+  public readonly party = input.required<PartyCardData>();
   private readonly router = inject(Router);
 
    onImgError(event: Event) {

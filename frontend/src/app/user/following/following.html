@@ -1,0 +1,93 @@
+<main class="following-page">
+  <a class="back-link" routerLink="/actividad">← Mi actividad</a>
+  <header class="page-heading">
+    <p class="eyebrow">TU ACTIVIDAD</p>
+    <h1>Siguiendo</h1>
+    <p>Organizadores y eventos que elegiste seguir.</p>
+  </header>
+
+  @if (isLoading()) {
+    <p class="state-message" role="status">Cargando tus seguidos…</p>
+  } @else if (hasLoadError()) {
+    <p class="state-message error" role="alert">
+      No pudimos cargar tus seguidos. Intentá nuevamente más tarde.
+    </p>
+  } @else {
+    @if (actionError()) {
+      <p class="state-message error" role="alert">{{ actionError() }}</p>
+    }
+
+    <section class="follow-section" aria-labelledby="organizers-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="organizers-heading">Organizadores</h2>
+          <p>{{ organizers().length }} seguidos</p>
+        </div>
+      </div>
+
+      @if (organizers().length === 0) {
+        <p class="empty-state">Todavía no seguís organizadores.</p>
+      } @else {
+        <ul class="organizer-list">
+          @for (organizer of organizers(); track organizer.externalId) {
+            <li class="organizer-card">
+              <span class="avatar" aria-hidden="true">
+                {{ organizer.username.charAt(0).toUpperCase() }}
+              </span>
+              <span class="organizer-name">{{ organizer.username }}</span>
+              <button
+                type="button"
+                class="secondary-button"
+                [disabled]="pendingOrganizerIds().has(organizer.externalId)"
+                (click)="unfollowOrganizer(organizer.externalId)"
+              >
+                {{
+                  pendingOrganizerIds().has(organizer.externalId)
+                    ? 'Actualizando…'
+                    : 'Dejar de seguir'
+                }}
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="follow-section" aria-labelledby="parties-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="parties-heading">Eventos</h2>
+          <p>{{ parties().length }} seguidos</p>
+        </div>
+      </div>
+
+      @if (parties().length === 0) {
+        <p class="empty-state">Todavía no seguís eventos.</p>
+      } @else {
+        <ul class="party-list">
+          @for (party of parties(); track party.externalId) {
+            <li class="party-card">
+              <a class="party-info" [routerLink]="['/parties', party.externalId]">
+                <span class="party-city">{{ party.city }}</span>
+                <h3>{{ party.title }}</h3>
+                <p>{{ party.dateTime | eventDate }}</p>
+              </a>
+              <button
+                type="button"
+                class="secondary-button"
+                [disabled]="pendingPartyIds().has(party.externalId)"
+                (click)="unfollowParty(party.externalId)"
+              >
+                {{
+                  pendingPartyIds().has(party.externalId)
+                    ? 'Actualizando…'
+                    : 'Dejar de seguir'
+                }}
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</main>
