@@ -1,0 +1,64 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <nav class="sidebar-nav">
+      <a routerLink="dashboard" routerLinkActive="active">
+        <svg class="nav-icon"><use href="#icon-dashboard" /></svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="solicitudes" routerLinkActive="active">
+        <svg class="nav-icon"><use href="#icon-solicitudes" /></svg>
+        <span>Solicitudes</span>
+      </a>
+
+      <a routerLink="usuarios" routerLinkActive="active">
+        <svg class="nav-icon"><use href="#icon-usuarios" /></svg>
+        <span>Usuarios</span>
+      </a>
+
+      <a routerLink="eventos" routerLinkActive="active">
+        <svg class="nav-icon"><use href="#icon-eventos" /></svg>
+        <span>Eventos</span>
+      </a>
+
+      <a routerLink="etiquetas" routerLinkActive="active">
+        <svg class="nav-icon"><use href="#icon-etiquetas" /></svg>
+        <span>Etiquetas</span>
+      </a>
+    </nav>
+  </aside>
+
+  <section class="admin-content">
+    <router-outlet></router-outlet>
+  </section>
+</div>
+
+<svg style="display: none;">
+  <symbol id="icon-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+  </symbol>
+
+  <symbol id="icon-solicitudes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="4" y="3" width="16" height="18" rx="2" />
+    <path d="M9 7h6M9 11h6M9 15h4" />
+  </symbol>
+
+  <symbol id="icon-usuarios" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+  </symbol>
+
+  <symbol id="icon-eventos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+    <path d="M13 5v2M13 17v2M13 11v2" />
+  </symbol>
+
+  <symbol id="icon-etiquetas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
+    <circle cx="7" cy="7" r="1.5" fill="currentColor" />
+  </symbol>
+</svg>

@@ -39,16 +39,16 @@ export class PartyForm implements OnInit {
   protected readonly isSubmitting = signal(false);
 
   ngOnInit(): void {
-  const editingParty = this.editingParty();
-  if (editingParty) {
-    this.loadForEdit(editingParty);
+    const editingParty = this.editingParty();
+    if (editingParty) {
+      this.loadForEdit(editingParty);
+    }
   }
-}
 
-private loadForEdit(party: PartyRes) {
-  this.partyFormModel.set(toFormModel(party));
-  this.existingImageUrl.set(party.imageUrl);
-}
+  private loadForEdit(party: PartyRes) {
+    this.partyFormModel.set(toFormModel(party));
+    this.existingImageUrl.set(party.imageUrl);
+  }
 
   private readonly partyFormModel = signal<PartyFormModel>({
     title: '',
@@ -106,7 +106,7 @@ private loadForEdit(party: PartyRes) {
 
       required(party.tagsList, { message: 'Requerido' });
 
-      required(party.imageUrl, { message: 'Requerido', when: () => !this.isEditing(),});
+      required(party.imageUrl, { message: 'Requerido', when: () => !this.isEditing() });
     },
     {
       submission: {
@@ -194,6 +194,9 @@ private loadForEdit(party: PartyRes) {
 
   protected readonly existingImageUrl = signal<string | null>(null);
 
-  
-
+  protected onImageChanged(event: { fieldName: string; file: File | null }): void {
+    const field = this.partyForm.imageUrl();
+    field.value.set(event.file as any); // ajustá el tipo de imageUrl en PartyFormModel a `File | string | null`
+    field.markAsTouched();
+  }
 }
