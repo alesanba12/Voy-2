@@ -1,11 +1,11 @@
 import { inject, Service } from '@angular/core';
-import { UserDto, UserFollowDto } from './user';
+import { UserDto, UserFollowDto, UserUpdateDto } from './user';
 import { Party } from '../parties/party';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Service()
 export class UserService {
-    private readonly client = inject(HttpClient)
+  private readonly client = inject(HttpClient)
   private readonly url = '/api/users';
 
   getAll(username?: string, email?: string) {
@@ -31,10 +31,10 @@ export class UserService {
     return this.client.delete<void>(this.url);
   }
 
-  // // 5. Actualizar usuario (envía FormData por el multipart/form-data)
-  // updateUser(formData: FormData) {
-  //   return this.client.put<UserDto>(`${this.url}/update`, formData);
-  // }
+  // 5. Actualizar usuario (envía FormData por el multipart/form-data)
+  updateUser(formData: FormData) {
+    return this.client.put<UserDto>(`${this.url}/update`, formData);
+  }
 
   // 6. Listar usuarios seguidos
   listFollowList() {
@@ -80,4 +80,6 @@ export class UserService {
   promoteToOrganizer(idExternal: string | number) {
     return this.client.patch<UserDto>(`${this.url}/promote/${idExternal}`, {});
   }
+
+  
 }

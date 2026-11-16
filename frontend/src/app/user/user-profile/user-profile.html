@@ -37,7 +37,7 @@
                 <div class="modal-backdrop" (click)="isEditModalOpen.update((v)=>!v)">
                     <!-- Detenemos la propagación para que hacer clic dentro del modal no lo cierre -->
                     <div class="modal-content-wrapper" (click)="$event.stopPropagation()">
-                        <app-edit-modal [currentUser]="user"></app-edit-modal>
+                        <app-edit-modal [currentUser]="user" (userUpdated)="onProfileUpdated($event)"></app-edit-modal>
                         <button class="btn-close" (click)="isEditModalOpen.update((v)=>!v)">X</button>
                     </div>
                 </div>

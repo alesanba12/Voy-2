@@ -1,5 +1,11 @@
 
-
+.profile-image {
+  width: 80px;         /* Ajustá el tamaño según prefieras (ej. 70px, 90px) */
+  height: 80px;        /* Debe medir lo mismo que el width para que sea un círculo perfecto */
+  border-radius: 50%;  /* Vuelve la imagen completamente redonda */
+  object-fit: cover;   /* Evita que la foto se deforme si no es cuadrada */
+  border: 2px solid var(--color-primario); /* Opcional: un borde sutil con tu violeta de marca */
+}
 
 
 

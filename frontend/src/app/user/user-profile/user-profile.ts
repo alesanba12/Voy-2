@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { UserDto} from '../user';
+import { UserDto } from '../user';
 import { UserService } from '../user-service';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { EditModal } from '../edit-modal/edit-modal';
 
@@ -11,28 +10,31 @@ import { EditModal } from '../edit-modal/edit-modal';
   styleUrl: './user-profile.css',
   templateUrl: './user-profile.html',
 })
-export class UserProfile {
+export class UserProfile implements OnInit {
   private readonly userService = inject(UserService);
-  private readonly router = inject(Router)
+  private readonly router = inject(Router);
 
-  private readonly currentUser=toSignal<UserDto | undefined>(this.userService.getCurrentUser(),{
-    initialValue: undefined
-  })
-  
+  private readonly currentUser = signal<UserDto | undefined>(undefined);
+
+  ngOnInit(): void {
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => this.currentUser.set(user),
+      error: (err) => console.error('Error al cargar el usuario', err),
+    });
+  }
+
   readonly defaulImage = 'assets/default-avatar.png';
 
-  goToOrganizerProfile(){
-    this.router.navigateByUrl('/profile/organizerProfile')
+  goToOrganizerProfile() {
+    this.router.navigateByUrl('/profile/organizerProfile');
   }
 
   //Ventana modal de editar perfil
 
   readonly isEditModalOpen = signal(false);
-  
 
-
-
- 
-
+  onProfileUpdated(updatedUser: UserDto): void {
+    this.currentUser.set(updatedUser);
+    this.isEditModalOpen.set(false);
+  }
 }
-
