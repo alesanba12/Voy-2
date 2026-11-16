@@ -1,0 +1,273 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 10, 0.78);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 10000;
+  animation: fadeIn 0.18s ease-out;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 520px;
+  background-color: #161619;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+  animation: modalPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Variables por defecto (Neutral) */
+  --accent-bg: rgba(255, 255, 255, 0.08);
+  --accent-color: #d4d4d8;
+  --accent-glow: rgba(255, 255, 255, 0.05);
+  --btn-solid-bg: #27272a;
+  --btn-solid-text: #ffffff;
+}
+
+/* Variante 2: Violeta (Cerrar sesión) */
+.modal-card[data-variant='violet'] {
+  --accent-bg: rgba(139, 92, 246, 0.18);
+  --accent-color: #c4b5fd;
+  --accent-glow: rgba(139, 92, 246, 0.25);
+  --btn-solid-bg: #d8b4fe;
+  --btn-solid-text: #2e1065;
+}
+
+/* Variante 3: Ámbar (Cancelar asistencia) */
+.modal-card[data-variant='amber'] {
+  --accent-bg: rgba(217, 119, 6, 0.18);
+  --accent-color: #f59e0b;
+  --accent-glow: rgba(217, 119, 6, 0.22);
+  --pill-bg: #d97706;
+  --pill-text: #18181b;
+  --btn-solid-bg: #27272a;
+  --btn-solid-text: #fca5a5;
+}
+
+/* Variante 4: Danger / Rojo (Eliminar evento) */
+.modal-card[data-variant='danger'] {
+  --accent-bg: rgba(220, 38, 38, 0.18);
+  --accent-color: #fca5a5;
+  --accent-glow: rgba(220, 38, 38, 0.25);
+  --pill-bg: #991b1b;
+  --pill-text: #ffffff;
+  --btn-solid-bg: #fca5a5;
+  --btn-solid-text: #450a0a;
+}
+
+/* Top bar */
+.modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: var(--accent-bg);
+  color: var(--accent-color);
+  box-shadow: 0 0 24px var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-badge svg {
+  width: 22px;
+  height: 22px;
+}.close-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0; /* Anula el padding: 9px 14px global */
+  border-radius: var(--radio-pill);
+  border: 1px solid var(--borde);
+  background: var(--background-terciario);
+  color: var(--texto-secundario);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.close-btn:hover {
+  padding: 0;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-primario);
+  color: var(--texto-principal);
+}
+
+.close-btn svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.6rem;
+}
+
+.pill-badge {
+  background-color: var(--pill-bg);
+  color: var(--pill-text);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.eyebrow-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ref-code {
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Textos */
+.modal-title {
+  margin: 0 0 0.65rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.modal-desc {
+  margin: 0 0 1.4rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Tarjeta contextual interna */
+.context-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background-color: #1d1d21;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.85rem;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.context-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.context-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.context-icon.warn {
+  color: #f59e0b;
+}
+
+.context-icon.dev {
+  color: #c4b5fd;
+}
+
+.context-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.context-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.context-sub {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.context-right {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #c4b5fd;
+  white-space: nowrap;
+}
+
+/* Botones del footer */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.btn-secondary,
+.btn-confirm {
+  padding: 0.7rem 1.25rem;
+  border-radius: 0.65rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-secondary {
+  background-color: #26262a;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.btn-secondary:hover {
+  background-color: #303036;
+}
+
+.btn-confirm {
+  background-color: var(--btn-solid-bg);
+  color: var(--btn-solid-text);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-confirm:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

@@ -1,0 +1,95 @@
+:host {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.admin-shell {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+/* ---------- Sidebar ---------- */
+.admin-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--background-secundario);
+  border-right: 1px solid var(--borde);
+  padding: 24px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+
+/* ---------- Enlaces de navegación ---------- */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radio-md);
+    color: var(--texto-secundario);
+    font-size: 14px;
+    font-weight: 500;
+    transition:
+      background-color 0.18s ease,
+      color 0.18s ease;
+    
+      /* pildora violeta */
+    &.active {
+      background: var(--color-primario);
+      color: var(--texto-sobre-primario);
+      font-weight: 600;
+    }
+    
+    svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    
+    &:hover:not(.active) {
+      background: var(--background-terciario);
+      color: var(--texto-principal);
+    }
+  }
+}
+
+/* ---------- Área derecha de vistas hijas ---------- */
+.admin-content {
+  flex: 1;
+  min-width: 0;
+  padding: 28px 32px;
+  background: var(--background-principal);
+}
+
+/* ---------- Responsive móvil ---------- */
+@media (max-width: 768px) {
+  .admin-shell {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--borde);
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .sidebar-nav a {
+    white-space: nowrap;
+  }
+}

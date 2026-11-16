@@ -1,6 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { UserDto, UserFollowDto } from './user';
-import { Party } from '../parties/party';
+import { PartySummaryDto, UserDto, UserFollowDto } from './user';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Service()
@@ -53,17 +52,17 @@ export class UserService {
 
   // 9. Listar mis eventos creados
   listMyParties() {
-    return this.client.get<Party[]>(`${this.url}/myParties`);
+    return this.client.get<PartySummaryDto[]>(`${this.url}/myParties`);
   }
 
   // 10. Listar eventos seguidos
   listFollowedParties() {
-    return this.client.get<Party[]>(`${this.url}/followParties`);
+    return this.client.get<PartySummaryDto[]>(`${this.url}/followParties`);
   }
 
   // 11. Seguir / dejar de seguir evento
   alterFollowParty(idParty: string | number) {
-    return this.client.patch<Party[]>(`${this.url}/follow/party/${idParty}`, {});
+    return this.client.patch<PartySummaryDto[]>(`${this.url}/follow/party/${idParty}`, {});
   }
 
   // 12. Listar mis tickets

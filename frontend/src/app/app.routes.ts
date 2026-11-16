@@ -16,6 +16,11 @@ export const routes: Routes = [
     loadChildren: () => import('./parties/parties.routes').then((m) => m.PARTIES_ROUTES),
   },
   {
+    path: 'actividad',
+    canActivate: [authGuard],
+    loadChildren: () => import('./user/activity.routes').then((m) => m.ACTIVITY_ROUTES),
+  },
+  {
     path: 'tickets',
     canActivate: [authGuard],
     loadChildren: () => import('./tickets/tickets.routes').then((m) => m.TICKETS_ROUTES),
@@ -31,8 +36,18 @@ export const routes: Routes = [
     loadChildren: () => import('./user/user.routes').then((m) => m.PROFILE_ROUTES),
   },
   {
+    path: 'mis-eventos',
+    redirectTo: 'parties/mis-eventos',
+    pathMatch: 'full',
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./auth/auth.routes').then((m) => m.AUTH_ROUTES),
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES),
   },
   {
     path: '**',
