@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PartyClient } from '../party-service';
-import { Party } from '../party';
+import { PartyRes } from '../party';
 import { EventDatePipe, PartyCard } from '../party-card/party-card';
 import { httpResource } from '@angular/common/http';
 
@@ -18,7 +18,7 @@ export class PartyDetail implements OnInit {
 
   private readonly partyId = this.route.snapshot.paramMap.get('id')!;
 
-  protected readonly party = signal<Party | undefined>(undefined);
+  protected readonly party = signal<PartyRes | undefined>(undefined);
   // protected readonly nombreOrganizador = computed(() => this.party()?.organizerName);
   // protected readonly organizador =
 
@@ -39,7 +39,7 @@ export class PartyDetail implements OnInit {
   private readonly ciudad = computed(() => this.party()?.city);
   private readonly fecha = computed(() => this.party()?.dateTime);
 
-  protected readonly partiesResource = httpResource<Party[]>(() => ({
+  protected readonly partiesResource = httpResource<PartyRes[]>(() => ({
     url: '/api/parties',
     params: this.buildParams({
       partyId: null,
@@ -58,12 +58,12 @@ export class PartyDetail implements OnInit {
 
     if (!party) return candidates.slice(0, 4);
 
-    const currentTags = new Set(party.tags);
+    const currentTags = new Set(party.tagsList);
 
     const similar = candidates
       .map((p) => ({
         party: p,
-        score: p.tags.filter((tag) => currentTags.has(tag)).length,
+        score: p.tagsList.filter((tag) => currentTags.has(tag)).length,
       }))
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score)

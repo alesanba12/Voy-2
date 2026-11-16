@@ -1,5 +1,5 @@
 import { Component, inject, input, Pipe, PipeTransform, forwardRef } from '@angular/core';
-import { Party } from '../party';
+import { PartyRes } from '../party';
 import { Router } from '@angular/router';
 import { PARTIES_ROUTES } from '../parties.routes';
 
@@ -10,7 +10,7 @@ import { PARTIES_ROUTES } from '../parties.routes';
   templateUrl: './party-card.html',
 })
 export class PartyCard {
-  public readonly party = input.required<Party>();
+  public readonly party = input.required<PartyRes>();
   private readonly router = inject(Router);
 
    onImgError(event: Event) {

@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { PartyClient } from '../party-service';
-import { Party, PartyFormModel } from '../party';
+import { PartyFormModel, PartyRes, toFormModel } from '../party';
 import {
   form,
   max,
@@ -14,10 +14,11 @@ import {
 } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { TagsService } from '../../tags/tags.service';
-import { TagList } from '../../tags/tag-list/tag-list';
+import { FormsModule } from '@angular/forms';
+import { ImageUpload } from '../../shared/components/image-upload/image-upload';
 
 @Component({
-  imports: [FormRoot, RouterLink, FormField],
+  imports: [FormRoot, RouterLink, FormField, FormsModule, ImageUpload],
   selector: 'app-party-form',
   styleUrl: './party-form.css',
   templateUrl: './party-form.html',
@@ -26,17 +27,21 @@ export class PartyForm implements OnInit {
   private readonly partyClient = inject(PartyClient);
   private readonly tagService = inject(TagsService);
 
-  public readonly editingParty = input<Party>();
+  public readonly editingParty = input<PartyRes>();
   protected readonly isEditing = computed(() => this.editingParty() !== undefined);
-  public readonly edited = output<Party>();
+  public readonly edited = output<PartyRes>();
 
   ngOnInit(): void {
-    const editingParty = this.editingParty();
-
-    if (this.isEditing() && editingParty) {
-      this.partyFormModel.set(editingParty);
-    }
+  const editingParty = this.editingParty();
+  if (editingParty) {
+    this.loadForEdit(editingParty);
   }
+}
+
+private loadForEdit(party: PartyRes) {
+  this.partyFormModel.set(toFormModel(party));
+  this.existingImageUrl.set(party.imageUrl);
+}
 
   private readonly partyFormModel = signal<PartyFormModel>({
     title: '',
@@ -47,8 +52,8 @@ export class PartyForm implements OnInit {
     dateTime: '',
     guestLimit: 0,
     partyAccesibility: false,
-    tags: [],
-    imageUrl: '',
+    tagsList: [],
+    imageUrl: null,
   });
 
   protected readonly partyForm = form(
@@ -92,9 +97,9 @@ export class PartyForm implements OnInit {
       required(party.guestLimit, { message: 'Requerido' });
       min(party.guestLimit, 0, { message: 'El aforo no puede ser menor a 0' });
 
-      required(party.tags, { message: 'Requerido' });
+      required(party.tagsList, { message: 'Requerido' });
 
-      required(party.imageUrl, { message: 'Requerido' });
+      required(party.imageUrl, { message: 'Requerido', when: () => !this.isEditing(),});
     },
     {
       submission: {
@@ -131,22 +136,34 @@ export class PartyForm implements OnInit {
       dateTime: '',
       guestLimit: 0,
       partyAccesibility: false,
-      tags: [],
-      imageUrl: '',
+      tagsList: [],
+      imageUrl: null,
     });
   }
 
   protected readonly tagsResource = this.tagService.getTagsResource();
 
-protected isSelected(name: string): boolean {
-  return this.partyForm.tags().value().includes(name);
-}
+  protected isSelected(name: string): boolean {
+    return this.partyForm.tagsList().value().includes(name);
+  }
 
-protected toggleTag(name: string): void {
-  const field = this.partyForm.tags();
-  field.value.update((tags) =>
-    tags.includes(name) ? tags.filter((t) => t !== name) : [...tags, name],
-  );
-  field.markAsTouched();
-}
+  protected toggleTag(name: string): void {
+    const field = this.partyForm.tagsList();
+    field.value.update((tags) =>
+      tags.includes(name) ? tags.filter((t) => t !== name) : [...tags, name],
+    );
+    field.markAsTouched();
+  }
+
+  protected readonly tickets = signal<boolean>(true);
+
+  protected setTickets(paid: boolean) {
+    this.tickets.set(paid);
+    if (!paid) {
+      this.partyForm.price().value.set(0);
+    }
+  }
+
+  protected readonly existingImageUrl = signal<string | null>(null);
+
 }
