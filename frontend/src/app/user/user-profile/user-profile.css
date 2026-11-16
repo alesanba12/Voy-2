@@ -1,30 +1,143 @@
+/* ==========================================================================
+   Contenedor Principal / Bloque 1 (Perfil de Usuario)
+   ========================================================================== */
+.first-block {
+  background-color: var(--background-secundario);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  padding: 32px;
+  max-width: 900px;
+  width: 100%;
+  margin: 30px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Foto y datos a la izquierda */
+.name-photo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
 .profile-image {
-  width: 80px;         /* Ajustá el tamaño según prefieras (ej. 70px, 90px) */
-  height: 80px;        /* Debe medir lo mismo que el width para que sea un círculo perfecto */
-  border-radius: 50%;  /* Vuelve la imagen completamente redonda */
-  object-fit: cover;   /* Evita que la foto se deforme si no es cuadrada */
-  border: 2px solid var(--color-primario); /* Opcional: un borde sutil con tu violeta de marca */
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primario);
+  background-color: var(--background-terciario);
+  flex-shrink: 0;
+}
+
+.name h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
+.name p {
+  font-size: 0.95rem;
+  color: var(--texto-secundario);
+  max-width: 400px;
+}
+
+/* Botones laterales a la derecha */
+.side-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.Update-profile {
+  background-color: var(--color-primario-claro) !important;
+  color: var(--texto-sobre-primario) !important;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.Update-profile:hover {
+  opacity: 0.9;
+}
+
+.Update-profile:active {
+  transform: scale(0.98);
+}
+
+.organizer-profile {
+  background-color: var(--background-terciario) !important;
+  color: var(--texto-principal) !important;
+  border: 1px solid var(--borde);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.organizer-profile:hover {
+  background-color: var(--borde);
+  border-color: var(--color-primario);
 }
 
 
+/* ==========================================================================
+   Segundo Bloque (Próxima Salida Inminente)
+   ========================================================================== */
+.second-block {
+  max-width: 900px;
+  width: 100%;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-/*Ventana Modal*/
+.second-block h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--texto-principal);
+  letter-spacing: -0.01em;
+  margin-left: 4px;
+}
+
+.next-party {
+  width: 100%;
+  transition: transform 0.2s ease;
+}
+
+/* Opcional: un pequeño efecto si querés que destaque la card de la próxima salida */
+.next-party:hover {
+  transform: translateY(-2px);
+}
+
+
+/* ==========================================================================
+   Ventana Modal (Editar Perfil)
+   ========================================================================== */
 .modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(15, 15, 18, 0.8); /* Fondo semitransparente oscuro */
+  inset: 0;
+  background-color: rgba(15, 15, 18, 0.85);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 16px;
   z-index: 1000;
 }
 
 .modal-content-wrapper {
   position: relative;
+  width: 100%;
+  max-width: 440px;
   background: var(--background-secundario);
   border-radius: var(--radio-lg);
   border: 1px solid var(--borde);
@@ -33,15 +146,23 @@
 
 .btn-close {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: transparent;
-  color: var(--texto-secundario);
+  top: 18px;
+  right: 18px;
+  background: var(--background-terciario) !important;
+  color: var(--texto-secundario) !important;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radio-pill);
+  font-weight: 600;
   border: none;
-  font-size: 16px;
   cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .btn-close:hover {
-  color: var(--texto-principal);
+  color: var(--texto-principal) !important;
+  background: var(--borde) !important;
 }
