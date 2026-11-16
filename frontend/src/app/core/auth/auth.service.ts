@@ -24,7 +24,7 @@ export class AuthService {
   readonly userRoles = computed(() => this._currentUser()?.roles ?? []);
 
   //Autenticación contra /api/auth/login
-  login(credentials: AuthRequest): Observable<AuthResponse> {
+  login(credentials: AuthRequest) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap((res) => {
         this.saveTokenAndInitializeSession(res.token);
@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   //Registro de nuevo usuario contra /api/auth/register
-  register(userData: NewUserRequest): Observable<unknown> {
+  register(userData: NewUserRequest) {
     return this.http.post<unknown>(`${this.apiUrl}/register`, userData);
   }
 

@@ -1,42 +1,55 @@
-import { Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { form, FormField, required } from '@angular/forms/signals';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { form, FormField, FormRoot, required } from '@angular/forms/signals';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../core/auth/auth.service';
+import { AuthRequest } from '../../core/auth/auth.models';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [FormField, RouterLink],
+  imports: [FormField, FormRoot, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
-  readonly loginModel = signal({
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly showPassword = signal(false);
+
+  readonly loginModel = signal<AuthRequest>({
     username: '',
     password: '',
   });
 
-  readonly loginForm = form(this.loginModel, (schema) => {
-    required(schema.username, { message: 'El usuario es obligatorio.' });
-    required(schema.password, { message: 'La contraseña es obligatoria.' });
-  });
-
-  readonly showPassword = signal(false);
-  readonly isLoading = signal(false);
-  readonly errorMessage = signal<string | null>(null);
+  readonly loginForm = form(
+    this.loginModel,
+    (schemaPath) => {
+      required(schemaPath.username, { message: 'El usuario es obligatorio.' });
+      required(schemaPath.password, { message: 'La contraseña es obligatoria.' });
+    },
+    {
+      submission: {
+        action: async (field) => {
+          try {
+            await firstValueFrom(this.authService.login(field().value()));
+            await this.router.navigate(['/']);
+            return;
+          } catch (err: any) {
+            return {
+              kind: 'serverError',
+              message: err?.error?.message ?? err?.message ?? 'Usuario o contraseña incorrectos.',
+            };
+          }
+        },
+        onInvalid: (field) => {
+          field().errorSummary()[0]?.fieldTree().focusBoundControl();
+        },
+      },
+    }
+  );
 
   togglePassword(): void {
     this.showPassword.update((v) => !v);
-  }
-
-  onSubmit(event: Event): void {
-    event.preventDefault();
-
-    if (this.loginForm().invalid()) {
-      this.loginForm.username().markAsTouched();
-      this.loginForm.password().markAsTouched();
-      return;
-    }
-
-    const credentials = this.loginForm().value();
   }
 }

@@ -1,18 +1,4 @@
 <div class="auth-page">
-  <!-- Barra superior -->
-  <header class="top-nav">
-    <a routerLink="/" class="brand-logo">Voy<span class="dot">.</span></a>
-    <a routerLink="/auth/register" class="btn-register-nav" data-testid="register-link">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="8.5" cy="7" r="4" />
-        <line x1="20" y1="8" x2="20" y2="14" />
-        <line x1="23" y1="11" x2="17" y2="11" />
-      </svg>
-      Registrate
-    </a>
-  </header>
-
   <!-- Contenido principal -->
   <main class="auth-main">
     <!-- Columna izquierda: Hero + Tarjetas de valor -->
@@ -28,8 +14,8 @@
       </h1>
 
       <p class="hero-subtitle">
-        Descubrí los mejores eventos culturales, talleres, ferias y encuentros
-        en tu comunidad y reservá tu lugar en segundos.
+        Descubrí los mejores eventos culturales, talleres, ferias y encuentros en tu comunidad y
+        reservá tu lugar en segundos.
       </p>
 
       <div class="hero-divider"></div>
@@ -37,7 +23,14 @@
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -52,7 +45,14 @@
 
         <div class="feature-card">
           <div class="feature-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
@@ -65,7 +65,14 @@
 
         <div class="feature-card">
           <div class="feature-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <rect x="3" y="3" width="7" height="7" />
               <rect x="14" y="3" width="7" height="7" />
               <rect x="14" y="14" width="7" height="7" />
@@ -83,23 +90,27 @@
     <!-- Columna derecha: Tarjeta de Login -->
     <div class="auth-card" data-testid="login-container">
       <div class="auth-header">
-        <div class="access-tag">
-          <span class="access-line"></span>
-          ACCESO
-        </div>
         <h2>Bienvenido de nuevo</h2>
         <p>Iniciá sesión para ver y reservar eventos.</p>
       </div>
 
-      <form (ngSubmit)="onSubmit($event)" data-testid="login-form">
-        <!-- Usuario / Correo -->
+      <form [formRoot]="loginForm" data-testid="login-form">
+        <!-- Usuario -->
         <div class="form-group">
           <label for="username">USUARIO</label>
           <div
             class="input-wrapper"
             [class.is-invalid]="loginForm.username().touched() && loginForm.username().invalid()"
           >
-            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              class="input-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <rect x="2" y="4" width="20" height="16" rx="2" />
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
             </svg>
@@ -125,7 +136,15 @@
             class="input-wrapper"
             [class.is-invalid]="loginForm.password().touched() && loginForm.password().invalid()"
           >
-            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              class="input-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
@@ -133,7 +152,7 @@
               id="password"
               [type]="showPassword() ? 'text' : 'password'"
               [formField]="loginForm.password"
-              placeholder="••••••••"
+              placeholder="contraseña"
               data-testid="password-input"
             />
             <button
@@ -143,13 +162,31 @@
               aria-label="Mostrar u ocultar contraseña"
             >
               @if (showPassword()) {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
+                  />
+                  <path
+                    d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"
+                  />
                   <line x1="1" y1="1" x2="23" y2="23" />
                 </svg>
               } @else {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg>
@@ -163,23 +200,28 @@
           }
         </div>
 
-        <!-- Error de Servidor -->
-        @if (errorMessage()) {
+        @if (loginForm().errors().length > 0) {
           <div class="alert-box alert-error" data-testid="server-error" role="alert">
-            {{ errorMessage() }}
+            {{ loginForm().errors()[0]?.message }}
           </div>
         }
 
-        <!-- Botón Enviar -->
         <button
           type="submit"
           class="btn-submit"
-          [disabled]="isLoading()"
+          [disabled]="loginForm().submitting()"
           data-testid="submit-button"
         >
-          <span>{{ isLoading() ? 'Iniciando sesión...' : 'Iniciar sesión' }}</span>
-          @if (!isLoading()) {
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <span>{{ loginForm().submitting() ? 'Iniciando sesión...' : 'Iniciar sesión' }}</span>
+          @if (!loginForm().submitting()) {
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
@@ -192,14 +234,4 @@
       </form>
     </div>
   </main>
-
-  <!-- Pie de página -->
-  <footer class="auth-footer">
-    <div class="footer-left">
-      <span class="brand-logo small">Voy<span class="dot">.</span></span>
-      <a routerLink="/privacy">Privacidad</a>
-      <a routerLink="/terms">Términos</a>
-    </div>
-    <p class="copyright">© 2026 Voy. Todos los derechos reservados.</p>
-  </footer>
 </div>
