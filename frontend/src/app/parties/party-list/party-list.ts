@@ -7,9 +7,10 @@ import { Party } from '../party';
 import { debounceTime } from 'rxjs';
 import { PartyCard } from '../party-card/party-card';
 import { DateFilterComponent, DateRange } from '../../shared/components/date-filter/date-filter';
+import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
-  imports: [PartyCard, DateFilterComponent],
+  imports: [PartyCard, DateFilterComponent, LoadingSpinner],
   selector: 'app-party-list',
   styleUrl: './party-list.css',
   templateUrl: './party-list.html',

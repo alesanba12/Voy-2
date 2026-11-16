@@ -1,1 +1,35 @@
-<p>loading-spinner works!</p>
+<div class="loader-container" [class.full-screen]="fullScreen()" role="status" aria-live="polite">
+  <div class="spotlight-wrapper">
+   
+    <div class="spotlight-glow" aria-hidden="true"></div>
+
+    
+    <svg
+      class="voy-mark"
+      viewBox="0 0 110 90"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      
+      <polygon
+        points="16,16 32,16 48,60 64,16 80,16 55,76 41,76"
+        fill="#ffffff"
+      />
+
+    
+      <rect
+        class="voy-dot"
+        x="82"
+        y="61"
+        width="15"
+        height="15"
+        fill="#8b5cf6"
+      />
+    </svg>
+  </div>
+
+  @if (label()) {
+    <p class="loader-label">{{ label() }}</p>
+  }
+</div>
