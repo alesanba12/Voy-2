@@ -25,6 +25,27 @@ form {
   margin-top: 2rem;
 }
 
+/* ---------- Resumen de errores ---------- */
+.form-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #b42318;
+  border-radius: 0.5rem;
+  color: #b42318;
+
+  p {
+    margin: 0;
+    font-weight: bold;
+  }
+}
+
+.form-success {
+  color: #15803d;
+}
+
 /* ---------- Bloques ---------- */
 .info {
   background-color: var(--background-secundario);
