@@ -6,8 +6,8 @@ export interface PartyCardData {
   externalId: string;
   title: string;
   dateTime: string;
-  imageUrl?: string;
-  tags?: string[];
+  imageUrl?: string | null;
+  tags?: string[] | null;
 }
 
 @Component({
