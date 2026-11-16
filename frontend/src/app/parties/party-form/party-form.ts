@@ -12,7 +12,7 @@ import {
   FormRoot,
   FormField,
 } from '@angular/forms/signals';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TagsService } from '../../tags/tags.service';
 import { FormsModule } from '@angular/forms';
 import { ImageUpload } from '../../shared/components/image-upload/image-upload';
@@ -29,6 +29,7 @@ export class PartyForm implements OnInit {
   private readonly partyClient = inject(PartyClient);
   private readonly tagService = inject(TagsService);
   private readonly confirmModal = inject(ConfirmModalService);
+  private readonly router = inject(Router);
 
   public readonly editingParty = input<PartyRes>();
   protected readonly isEditing = computed(() => this.editingParty() !== undefined);
@@ -136,9 +137,10 @@ export class PartyForm implements OnInit {
               this.submitSuccess.set('Evento modificado con éxito.');
               this.edited.emit(updatedParty);
             } else {
-              await firstValueFrom(this.partyClient.addParty(party));
+              const createdParty = await firstValueFrom(this.partyClient.addParty(party));
               this.submitSuccess.set('Evento publicado con éxito.');
-              this.resetForm();
+              await new Promise<void>((resolve) => window.setTimeout(resolve, 2000));
+              await this.router.navigate(['/parties', createdParty.externalId]);
             }
           } catch {
             this.submitError.set(

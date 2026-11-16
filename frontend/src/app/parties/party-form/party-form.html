@@ -236,7 +236,7 @@
         <app-image-upload
           fieldName="portada"
           [currentUrl]="existingImageUrl()"
-          (fileChanged)="onImageChanged($event)"
+          (fileChanged)="onImageChanged($any($event))"
         />
       </div>
     </div>
