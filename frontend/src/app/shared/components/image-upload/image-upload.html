@@ -14,5 +14,7 @@
     #fileInput 
     hidden 
     accept="image/*" 
+    (click)="$event.stopPropagation()"
     (change)="onFileSelected($event)" />
 </div>
+

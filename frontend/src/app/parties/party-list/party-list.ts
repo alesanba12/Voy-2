@@ -3,7 +3,7 @@ import { PartyClient } from '../party-service';
 import { Router } from '@angular/router';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
-import { Party } from '../party';
+import { PartyRes } from '../party';
 import { debounceTime } from 'rxjs';
 import { PartyCard } from '../party-card/party-card';
 import { DateFilterComponent, DateRange } from '../../shared/components/date-filter/date-filter';
@@ -27,7 +27,7 @@ export class PartyList {
   protected readonly filterByTags = signal<string>('');
   protected readonly orderBy = signal<string>('Fecha');
 
-  protected readonly partiesResource = httpResource<Party[]>(() => ({
+  protected readonly partiesResource = httpResource<PartyRes[]>(() => ({
     url: '/api/parties',
     params: this.buildParams({
       partyId: this.filterById(),
