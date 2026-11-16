@@ -3,6 +3,8 @@ package com.grupo12.Voy.features.parties.repository;
 import com.grupo12.Voy.features.parties.models.PartyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -16,4 +18,7 @@ public interface PartyRepository extends JpaRepository<PartyEntity,Long>, JpaSpe
     Boolean existsByTitle(String title);
     // PartyRepository
     List<PartyEntity> findByDateTimeBeforeAndLogicStateTrue(LocalDateTime dateTime);
+
+    @Query("SELECT COUNT(p) FROM PartyEntity p WHERE p.logicState = true AND p.hasPassed = false")
+    long countActiveParties();
 }

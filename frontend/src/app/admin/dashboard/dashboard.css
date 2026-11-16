@@ -1,0 +1,20 @@
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.dashboard-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch; /* Iguala la altura de ambas columnas */
+}
+
+/* En pantallas medianas o chicas se apilan en una sola columna */
+@media (max-width: 1200px) {
+  .dashboard-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}

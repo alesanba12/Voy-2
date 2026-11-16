@@ -74,30 +74,36 @@ a {
 }
 
 input,
-select {
+select,
+textarea {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 9px 14px;
-  border-radius: 999px;
+  border-radius: 1rem;
   background: var(--background-terciario);
   color: var(--texto-principal);
   border: 1px solid var(--border);
   font-size: 14px;
+  font-family: var(--fuente-principal);
 }
 select{
   cursor: pointer;
 }
-
+input:hover, select:hover, textarea:hover, button:hover{
+  border-color: var(--color-primario);
+}
 button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 9px 14px;
-  border-radius: 999px;
+  border-radius: var(--radio-pill);
   background: var(--background-terciario);
-  color: var(--texto-primario);
-  border: none;
+  color: var(--texto-principal); /* Antes decía --texto-primario */
+  border: 1px solid transparent;  /* Evita saltos al cambiar border-color en :hover */
   font-size: 14px;
+  font-family: var(--fuente-principal);
   cursor: pointer;
 }
