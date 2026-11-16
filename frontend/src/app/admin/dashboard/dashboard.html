@@ -1,5 +1,10 @@
-<div>
-    <app-kpi-metrics/>
-    <app-organizer-requests/>
-</div>
+<div class="dashboard-wrapper">
+  <!-- Fila 1: Las 5 tarjetas de métricas -->
+  <app-kpi-metrics />
 
+  <!-- Fila 2: Solicitudes (izquierda) + Etiquetas (derecha) -->
+  <div class="dashboard-bottom-grid">
+    <app-organizer-requests />
+    <app-tags-admin />
+  </div>
+</div>
