@@ -1,0 +1,111 @@
+<section class="panel-card">
+  <header class="panel-header">
+    <div class="panel-title-group">
+      <div class="panel-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M19 8v6M22 11h-6" />
+        </svg>  
+      </div>
+      <div>
+        <h2>Solicitudes de Rol Organizador</h2>
+        <p class="panel-subtitle">
+          Verifica la documentación (DNI) antes de habilitar la publicación de eventos.
+        </p>
+      </div>
+    </div>
+
+    <span class="badge-pill">{{ requests().length }} pendientes</span>
+  </header>
+
+  <div class="table-container">
+    <table class="requests-table">
+      <thead>
+        <tr>
+          <th>SOLICITANTE</th>
+          <th>DOCUMENTACIÓN</th>
+          <th>FECHA</th>
+          <th class="text-right">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (req of requests(); track req.id) {
+          <tr>
+            <td>
+              <div class="user-cell">
+                <span class="avatar-initials">{{ getInitials(req.userEmail) }}</span>
+                <div>
+                  <div class="user-name">{{ req.userEmail }}</div>
+                  @if (req.additionalInfo) {
+                    <div class="user-org">{{ req.additionalInfo }}</div>
+                  }
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="docs-links">
+                <a [href]="req.dniFrontUrl" target="_blank" rel="noopener" class="doc-link">
+                  DNI Frente ↗
+                </a>
+                <a [href]="req.dniBackUrl" target="_blank" rel="noopener" class="doc-link">
+                  DNI Dorso ↗
+                </a>
+              </div>
+            </td>
+
+            <td class="text-muted nowrap">{{ req.createdAt | date: 'dd MMM yyyy' }}</td>
+
+            <td>
+              @if (rejectingId() === req.userExternalId) {
+                <div class="reject-inline-form">
+                  <input
+                    type="text"
+                    placeholder="Motivo de rechazo..."
+                    [value]="rejectReason()"
+                    (input)="rejectReason.set($any($event.target).value)"
+                  />
+                  <button
+                    type="button"
+                    class="btn-reject"
+                    [disabled]="!rejectReason().trim() || processingId() === req.userExternalId"
+                    (click)="confirmReject(req.userExternalId)"
+                  >
+                    Confirmar
+                  </button>
+                  <button type="button" class="btn-cancel" (click)="cancelReject()">
+                    Cancelar
+                  </button>
+                </div>
+              } @else {
+                <div class="actions-cell">
+                  <button
+                    type="button"
+                    class="btn-reject"
+                    [disabled]="processingId() === req.userExternalId"
+                    (click)="startReject(req.userExternalId)"
+                  >
+                    ✕ Rechazar
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-approve"
+                    [disabled]="processingId() === req.userExternalId"
+                    (click)="onApprove(req.userExternalId)"
+                  >
+                    ✓ Aprobar
+                  </button>
+                </div>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="empty-state">No hay solicitudes pendientes de revisión.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

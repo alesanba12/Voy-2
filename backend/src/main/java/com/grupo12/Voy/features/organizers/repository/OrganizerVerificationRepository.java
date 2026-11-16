@@ -14,4 +14,6 @@ public interface OrganizerVerificationRepository extends JpaRepository<Organizer
     Optional<OrganizerVerificationEntity> findByUserExternalId(UUID externalId);
 
     List<OrganizerVerificationEntity> findByStatus(VerificationStatus status);
+
+    long countByStatus(VerificationStatus status);
 }

@@ -1,0 +1,55 @@
+<section class="panel-card">
+  <header class="panel-header">
+    <div class="panel-title-group">
+      <div class="panel-title-row">
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"
+            />
+            <circle cx="7" cy="7" r="1.5" fill="currentColor" />
+          </svg>
+        </div>
+        <h2>Gestión de Etiquetas</h2>
+      </div>
+
+      <p class="panel-subtitle">Categorías disponibles para filtrar eventos en Voy.</p>
+    </div>
+
+    @if (tags.value(); as list) {
+      <span class="badge-neutral">{{ list.length }} activas</span>
+    }
+  </header>
+
+  <!-- Formulario para crear nueva etiqueta -->
+  <form class="add-tag-form" (submit)="onAddTag($event)">
+    <input
+      type="text"
+      placeholder="Nueva etiqueta..."
+      [value]="newTagName()"
+      (input)="newTagName.set($any($event.target).value)"
+    />
+    <button type="submit" class="btn-add" [disabled]="!newTagName().trim()">+ Agregar</button>
+  </form>
+
+  <!-- Listado de etiquetas -->
+  <div class="tags-section">
+    <span class="tags-section-label">ETIQUETAS INDEXADAS</span>
+
+    <div class="tags-cloud">
+      @for (tag of tags.value(); track $index) {
+        <span class="tag-chip">
+          <span>{{ tag.name }}</span>
+          <button
+            type="button"
+            class="tag-remove"
+            [attr.aria-label]="'Eliminar ' + tag.name"
+            (click)="onDeleteTag(tag.name)"
+          >
+            ×
+          </button>
+        </span>
+      }
+    </div>
+  </div>
+</section>

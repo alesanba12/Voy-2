@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   imports: [],
@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   styleUrl: './loading-spinner.css',
   templateUrl: './loading-spinner.html',
 })
-export class LoadingSpinner {}
+export class LoadingSpinner {
+  readonly fullScreen = input<boolean>(false);
+  readonly label = input<string>('');
+}
