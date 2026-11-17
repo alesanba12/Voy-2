@@ -17,6 +17,7 @@ public record PartyResDTO (
         Integer guestLimit,
         Boolean partyAccesibility,
         Boolean state,
+        Boolean tickets,
         String organizerName,///deberia mostrar username no el email, pero por ahora dejo el email como identificador
         String imageUrl,
         Set<String> coOrganizerName,

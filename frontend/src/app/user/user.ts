@@ -7,6 +7,7 @@ export interface NewUserDto {
 }
 
 export interface UserDto {
+  externalId: string;
   username: string;
   email: string;
   bio: string;
