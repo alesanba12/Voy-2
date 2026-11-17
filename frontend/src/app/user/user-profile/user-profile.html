@@ -1,7 +1,72 @@
 @let user = this.currentUser();
+@let nextParty = this.nextParty();
 
-@if(user){
-    <h2>{{user.username}}</h2>
+@if (user) {
+  <div class="first-block">
+    <div class="name-photo">
+      <img [src]="user.imageUrl || defaulImage" class="profile-image" />
+      <div class="name">
+        <h2>{{ user.username }}</h2>
+        <p>{{ user.bio }}</p>
+      </div>
+    </div>
 
+    <div class="side-buttons">
+      <button class="Update-profile" (click)="isEditModalOpen.update((v) => !v)">
+        Editar Perfil
+      </button>
+
+      @if (isEditModalOpen()) {
+        <div class="modal-backdrop" (click)="isEditModalOpen.update((v) => !v)">
+          <!-- Detenemos la propagación para que hacer clic dentro del modal no lo cierre -->
+          <div class="modal-content-wrapper" (click)="$event.stopPropagation()">
+            <app-edit-modal
+              [currentUser]="user"
+              (userUpdated)="onProfileUpdated($event)"
+            ></app-edit-modal>
+            <button class="btn-close" (click)="isEditModalOpen.update((v) => !v)">X</button>
+          </div>
+        </div>
+      }
+
+      @if (user.isOrganizer) {
+        <button class="organizer-profile" (click)="goToOrganizerProfile()">
+          Ir a mi perfil de Organizador
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="second-block">
+    <h2>Proxima salida inminente</h2>
+    @if (nextParty) {
+      <div class="next-party">
+        <app-party-card [party]="nextParty"></app-party-card>
+      </div>
+    }
+  </div>
+
+  <div class="third-block">
+    @if(!user.isOrganizer){
+      <div class="text">
+        <p>Espacio para creadores</p>
+        <h3>¿Organizás fiestas, talleres o festivales independientes?</h3>
+        <p>Unite a la red de anfitriones de Voy. y empezá a vender tickets en minutos con comisiones bajas, pagos instantáneos y control de puerta ultra-rápido por código QR.</p>
+      </div>
+  
+      <div class="button-OrganizerForm">        
+        <button (click)="isOrganizerModalOpen.update(v=>!v)">Solicitar Rol de Anfitrión &rightarrow;</button>
+        @if(isOrganizerModalOpen()){
+  
+          <div class="modal-backdrop" (click)="isOrganizerModalOpen.update((v)=>!v)">
+            <div class="modal-content-wrapper" (click)="$event.stopPropagation()">
+                <app-organizer-modal (requestSent)="isOrganizerModalOpen.set(false)"></app-organizer-modal>
+                <button class="btn-close" (click)="isOrganizerModalOpen.update((v)=>!v)">X</button>
+            </div>
+          </div>
+        }
+           
+      </div>
+    }       
+  </div>
 }
-

@@ -1,11 +1,19 @@
-import { inject, Service } from '@angular/core';
-import { PartySummaryDto, UserDto, UserFollowDto } from './user';
+
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Service, signal } from '@angular/core';
+import { OrganizerVerifyReqDTO, PartySummaryDto, UserDto, UserFollowDto } from './user';
 
 @Service()
 export class UserService {
-    private readonly client = inject(HttpClient)
+  private readonly client = inject(HttpClient)
   private readonly url = '/api/users';
+  private readonly OrganizerUrl = '/api/organizers'
+
+  readonly profileRefreshVersion = signal(0);
+
+  notifyProfileUpdated(): void {
+    this.profileRefreshVersion.update(version => version + 1);
+  }
 
   getAll(username?: string, email?: string) {
     let params = new HttpParams();
@@ -30,10 +38,10 @@ export class UserService {
     return this.client.delete<void>(this.url);
   }
 
-  // // 5. Actualizar usuario (envía FormData por el multipart/form-data)
-  // updateUser(formData: FormData) {
-  //   return this.client.put<UserDto>(`${this.url}/update`, formData);
-  // }
+  // 5. Actualizar usuario (envía FormData por el multipart/form-data)
+  updateUser(formData: FormData) {
+    return this.client.put<UserDto>(`${this.url}/update`, formData);
+  }
 
   // 6. Listar usuarios seguidos
   listFollowList() {
@@ -79,4 +87,11 @@ export class UserService {
   promoteToOrganizer(idExternal: string | number) {
     return this.client.patch<UserDto>(`${this.url}/promote/${idExternal}`, {});
   }
+
+  // 15. Solicitar ser organizador
+  requestVerification(formData: FormData){
+    return this.client.post<void>(`${this.OrganizerUrl}/verify`, formData);
+  }
+
+  
 }

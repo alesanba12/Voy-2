@@ -1,9 +1,9 @@
-export interface NewUserDto {
-  email: string;
-  username: string;
-  bio: string;
-  password: string;
-  birthday: string;
+export interface NewUserDto{
+    email:string
+    username:string
+    bio:string
+    password:string
+    birthday:string
 }
 
 export interface UserDto {
@@ -15,9 +15,9 @@ export interface UserDto {
   imageUrl: string;
 }
 
-export interface UserFollowDto {
-  externalId: string;
-  username: string;
+export interface UserFollowDto{
+    externalId:string
+    username:string
 }
 
 export interface PartySummaryDto {
@@ -33,10 +33,18 @@ export interface PartySummaryDto {
   tags: string[] | null;
 }
 
-export interface UserUpdateDto {
-  email: string;
-  username: string;
-  bio: string;
-  password: string;
-  // image:blob?
+export interface OrganizerVerifyReqDTO{
+    dniFront:FormData 
+    dniBack:FormData
+    additionalInfo:string   
 }
+
+
+// export interface UserUpdateDto{
+//     email:string
+//     username:string
+//     bio:string
+//     password:string
+//    // image:blob?
+// }
+
