@@ -62,6 +62,7 @@ export class PartyForm implements OnInit {
     partyAccesibility: false,
     tagsList: [],
     imageUrl: null,
+    tickets: false,
   });
 
   protected readonly partyForm = form(
@@ -168,6 +169,7 @@ export class PartyForm implements OnInit {
       partyAccesibility: false,
       tagsList: [],
       imageUrl: null,
+      tickets: false,
     });
   }
 
@@ -185,14 +187,12 @@ export class PartyForm implements OnInit {
     field.markAsTouched();
   }
 
-  protected readonly tickets = signal<boolean>(true);
-
   protected setTickets(paid: boolean) {
-    this.tickets.set(paid);
-    if (!paid) {
-      this.partyForm.price().value.set(0);
-    }
+  this.partyForm.tickets().value.set(paid);
+  if (!paid) {
+    this.partyForm.price().value.set(0);
   }
+}
 
   protected readonly existingImageUrl = signal<string | null>(null);
 
