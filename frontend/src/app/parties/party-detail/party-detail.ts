@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
-import { httpResource } from '@angular/common/http';
+import { HttpErrorResponse, httpResource } from '@angular/common/http';
 import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, forkJoin, map, of, switchMap, timer } from 'rxjs';
@@ -9,6 +9,8 @@ import { EventDatePipe, PartyCard } from '../party-card/party-card';
 import { UserService } from '../../user/user-service';
 import { PartySummaryDto, UserDto, UserFollowDto } from '../../user/user';
 import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
+import { ConfirmModalService } from '../../shared/components/modal-dialog/modal-dialog-service';
+import { ToastService } from '../../shared/components/toast/toast-service';
 
 @Component({
   imports: [RouterLink, EventDatePipe, PartyCard, LoadingSpinner],
@@ -22,6 +24,8 @@ export class PartyDetail {
   private readonly router = inject(Router);
   private readonly partyClient = inject(PartyClient);
   private readonly userService = inject(UserService);
+  protected readonly modelService = inject(ConfirmModalService);
+  private readonly toastService = inject(ToastService);
 
   // ───────── Evento ─────────
   private readonly partyId = toSignal(this.route.paramMap.pipe(map((p) => p.get('id'))), {
@@ -49,7 +53,7 @@ export class PartyDetail {
 
     effect(() => {
       if (this.partyResource.error()) {
-        alert('Evento no encontrado, redirigiendo al listado de eventos');
+        this.toastService.show('Evento no encontrado. Redirigiendo al catálogo.', 'error');
         this.router.navigate(['/parties/catalogo']);
       }
     });
@@ -144,12 +148,12 @@ export class PartyDetail {
   }
 
   private handleFollowError(err: { status?: number }) {
-  if (err.status === 401) {
-    this.router.navigate(['/login']); // ajustá a tu ruta
-  } else {
-    alert('No se pudo actualizar el seguimiento. Intentá nuevamente.');
+    if (err.status === 401) {
+      this.router.navigate(['/login']);
+    } else {
+      this.toastService.show('No se pudo actualizar el seguimiento. Intentá nuevamente.', 'error');
+    }
   }
-}
 
   // ───────── Tickets ─────────
   protected readonly MIN_TICKETS = 1;
@@ -204,7 +208,11 @@ export class PartyDetail {
 
   private canBePartner(user: UserDto) {
     const party = this.party();
-    return user.email !== party?.organizerName && !party?.coOrganizerName.includes(user.email);
+    return (
+      user.isOrganizer &&
+      user.email !== party?.organizerName &&
+      !party?.coOrganizerName.includes(user.email)
+    );
   }
 
   protected initials(name: string) {
@@ -222,8 +230,20 @@ export class PartyDetail {
     );
   }
 
-  protected removePartner(user: UserDto) {
-    if (!confirm(`¿Quitar a ${user.username} como partner del evento?`)) return;
+  protected async removePartner(user: UserDto) {
+    if (
+      !(await this.modelService.open({
+        variant: 'destructive-delete',
+        icon: 'user-remove',
+        title: 'Quitar partner',
+        description: `¿Quitar a ${user.username} como partner del evento?`,
+        cancelLabel: 'Cancelar',
+        confirmLabel: 'Quitar',
+      }))
+    ) {
+      return;
+    }
+
     this.updatePartners(
       (id) => this.partyClient.removeCoOrganizer(id, user.externalId),
       'No se pudo quitar al partner. Intentá nuevamente.',
@@ -245,11 +265,28 @@ export class PartyDetail {
         this.partnerLoading.set(false);
         onSuccess?.();
       },
-      error: () => {
+      error: (error: unknown) => {
         this.partnerLoading.set(false);
-        alert(errorMessage);
+        this.toastService.show(this.partnerErrorMessage(error) ?? errorMessage, 'error');
       },
     });
+  }
+
+  private partnerErrorMessage(error: unknown): string | null {
+    if (!(error instanceof HttpErrorResponse)) return null;
+
+    const details: unknown = error.error;
+    if (
+      typeof details === 'object' &&
+      details !== null &&
+      'message' in details &&
+      typeof details.message === 'string' &&
+      details.message.trim()
+    ) {
+      return details.message;
+    }
+
+    return null;
   }
 
   // ───────── Recomendaciones ─────────

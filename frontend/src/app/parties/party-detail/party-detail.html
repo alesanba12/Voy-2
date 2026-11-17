@@ -166,14 +166,14 @@
             <div class="partner-search">
               <input
                 type="search"
-                placeholder="Buscar por nombre de usuario"
+                placeholder="Buscar organizador por nombre de usuario"
                 [value]="searchTerm()"
                 (input)="searchTerm.set($any($event.target).value)"
               />
               @if (searchResults.isLoading()) {
                 <small>Buscando...</small>
               } @else if (searchTerm().trim().length >= 2 && !searchResults.value()?.length) {
-                <small>Sin resultados</small>
+                <small>No se encontraron organizadores disponibles.</small>
               }
               <ul class="lista">
                 @for (u of searchResults.value(); track u.externalId) {

@@ -1,1 +1,16 @@
-<p>toast works!</p>
+@if (toastService.activeToast(); as toast) {
+  <div
+    class="toast"
+    [attr.data-variant]="toast.variant"
+    [attr.role]="toast.variant === 'error' ? 'alert' : 'status'"
+    [attr.aria-live]="toast.variant === 'error' ? 'assertive' : 'polite'"
+    aria-atomic="true"
+  >
+    <span>{{ toast.message }}</span>
+    <button type="button" aria-label="Cerrar aviso" (click)="toastService.dismiss()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m18 6-12 12M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+}
