@@ -44,7 +44,12 @@
 
 <div class="infoAndOrder">
   <div class="info">
-    <p>{{ parties.length }} eventos encontrados en {{ filterByCity() }}</p>
+    <p>
+      {{ parties.length }} eventos encontrados
+      @if (filterByCity()?.trim(); as city) {
+        en {{ city }}
+      }
+    </p>
   </div>
 
   <div class="order">
@@ -57,22 +62,32 @@
   </div>
 </div>
 
-<section>
-  <ul>
-    @if (partiesResource.error()) {
-      <p>Error al cargar los eventos</p>
-    } @else {
-      @if (partiesResource.isLoading()) {
-        <app-loading-spinner/>
-      }
-      @for (party of parties; track party.externalId) {
-        <li>
-          <app-party-card [party]="party" > </app-party-card>
-        </li>
-      }
-      @if (!partiesResource.isLoading() && parties.length === 0) {
-        <p>No se encontraron eventos con esos parametros de busqueda</p>
-      }
+<section class="party-results" aria-live="polite">
+  @if (partiesResource.error()) {
+    <p class="results-error" role="alert">Error al cargar los eventos</p>
+  } @else {
+    @if (partiesResource.isLoading()) {
+      <app-loading-spinner />
     }
-  </ul>
+    @if (parties.length > 0) {
+      <ul class="party-grid">
+        @for (party of parties; track party.externalId) {
+          <li>
+            <app-party-card [party]="party"></app-party-card>
+          </li>
+        }
+      </ul>
+    } @else if (!partiesResource.isLoading()) {
+      <div class="empty-state" role="status">
+        <span class="empty-state-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3.5" y="5" width="17" height="16" rx="3"></rect>
+            <path d="M8 3v4M16 3v4M3.5 10h17M9 14l5 5m0-5-5 5"></path>
+          </svg>
+        </span>
+        <h2>{{ emptyState().title }}</h2>
+        <p>{{ emptyState().description }}</p>
+      </div>
+    }
+  }
 </section>
