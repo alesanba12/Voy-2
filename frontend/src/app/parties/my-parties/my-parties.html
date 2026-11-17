@@ -3,13 +3,13 @@
 
   <header class="page-heading">
     <div>
-      <p class="eyebrow">ESPACIO DE ORGANIZADOR</p>
+      <p class="eyebrow">PANEL DE CONTROL · ORGANIZADOR</p>
       <h1>Mis eventos</h1>
-      <p>Consultá tus eventos y accedé a sus detalles o edición.</p>
+      <p>Gestioná los eventos que publicaste y revisá los que se vienen.</p>
     </div>
     <a class="primary-button" routerLink="/parties/new">
       <span class="button-icon" aria-hidden="true">+</span>
-      <span>Crear Evento</span>
+      <span>Crear evento</span>
     </a>
   </header>
 
@@ -29,15 +29,101 @@
       </a>
     </section>
   } @else {
-    <ul class="party-grid">
-      @for (party of parties(); track party.externalId) {
-        <li class="party-item">
-          <app-party-card [party]="party"></app-party-card>
-          <a class="edit-link" [routerLink]="['/parties', party.externalId, 'edit']">
-            Editar evento
-          </a>
-        </li>
+    <section class="dashboard" aria-label="Resumen de eventos">
+      <div class="summary-cards">
+        <button
+          class="summary-card"
+          [class.selected]="activeFilter() === 'all'"
+          [attr.aria-pressed]="activeFilter() === 'all'"
+          (click)="setFilter('all')"
+        >
+          <span class="summary-label">Todos</span>
+          <span class="summary-value">{{ parties().length }}</span>
+        </button>
+        <button
+          class="summary-card upcoming"
+          [class.selected]="activeFilter() === 'upcoming'"
+          [attr.aria-pressed]="activeFilter() === 'upcoming'"
+          (click)="setFilter('upcoming')"
+        >
+          <span class="summary-label">Próximos</span>
+          <span class="summary-value">{{ upcomingParties().length }}</span>
+        </button>
+        <button
+          class="summary-card past"
+          [class.selected]="activeFilter() === 'past'"
+          [attr.aria-pressed]="activeFilter() === 'past'"
+          (click)="setFilter('past')"
+        >
+          <span class="summary-label">Anteriores</span>
+          <span class="summary-value">{{ pastParties().length }}</span>
+        </button>
+      </div>
+
+      <label class="search-field">
+        <span class="visually-hidden">Buscar entre mis eventos</span>
+        <input
+          type="search"
+          placeholder="Buscar entre mis eventos..."
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+        />
+      </label>
+
+      @if (visibleParties().length === 0) {
+        <p class="state-message no-results" role="status">
+          No encontramos eventos con esos criterios.
+        </p>
+      } @else {
+        <ul class="party-list">
+          @for (party of visibleParties(); track party.externalId) {
+            <li class="party-item">
+              <article class="party-row">
+                <a class="party-image" [routerLink]="['/parties', party.externalId]">
+                  <img
+                    [src]="party.imageUrl || 'Show.webp'"
+                    [alt]="party.title"
+                    (error)="onImageError($event)"
+                  />
+                </a>
+
+                <div class="party-details">
+                  <div class="party-meta">
+                    <span class="party-category">{{ party.tags?.[0] || 'Evento' }}</span>
+                    <span class="party-status" [class.past]="!isUpcoming(party)">
+                      {{ isUpcoming(party) ? 'Próximo' : 'Anterior' }}
+                    </span>
+                  </div>
+                  <h2>
+                    <a [routerLink]="['/parties', party.externalId]">{{ party.title }}</a>
+                  </h2>
+                  <p class="party-date">{{ formatDate(party.dateTime) }}</p>
+                  @if (party.adress || party.city) {
+                    <p class="party-location">
+                      @if (party.adress) {
+                        <span>{{ party.adress }}</span>
+                      }
+                      @if (party.adress && party.city) {
+                        <span aria-hidden="true"> · </span>
+                      }
+                      @if (party.city) {
+                        <span>{{ party.city }}</span>
+                      }
+                    </p>
+                  }
+                </div>
+
+                <div class="party-actions">
+                  <a [routerLink]="['/parties', party.externalId]">Ver evento</a>
+                  <a class="edit-link" [routerLink]="['/parties', party.externalId, 'edit']">
+                    Editar
+                  </a>
+                </div>
+              </article>
+            </li>
+          }
+        </ul>
       }
-    </ul>
+    </section>
   }
 </main>
