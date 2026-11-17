@@ -1,9 +1,9 @@
-export interface NewUserDto{
-    email:string
-    username:string
-    bio:string
-    password:string
-    birthday:string
+export interface NewUserDto {
+  email: string;
+  username: string;
+  bio?: string | null;
+  password: string;
+  birthdate: string;
 }
 
 export interface UserDto {

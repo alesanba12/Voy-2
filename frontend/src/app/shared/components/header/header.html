@@ -17,9 +17,8 @@
     </div>
 
     <div class="header-right">
-       
-
-        <div class="user-menu-container">
+        @if(this.isAuthenticated()){
+            <div class="user-menu-container">
             <button class="user-avatar-btn" (click)="toggleUserMenu()" aria-label="Abrir menú de usuario">
                 @if (userProfile()?.imageUrl; as imageUrl) {
                 <img [src]="imageUrl" alt="Foto de perfil">
@@ -38,6 +37,18 @@
             </div>
             }
         </div>
+        }@else{
+            @if (isLogin()) {
+                <button routerLink="/auth/register" class="auth-btn">
+                    Registrar
+                </button>
+            }@else {
+                <button routerLink="/auth/login" class="auth-btn">
+                    Iniciar Sesion
+                </button>
+            }
+        }
+        
 
     </div>
 </header>

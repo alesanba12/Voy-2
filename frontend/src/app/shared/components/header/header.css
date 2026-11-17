@@ -156,6 +156,41 @@
   background-color: var(--background-terciario);
 }
 
+/* Botones de Iniciar Sesión / Registrar en el header */
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.25rem;
+  background-color: var(--color-primario);
+  color: var(--texto-principal);
+  border: none;
+  border-radius: var(--radio-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+  
+  &:hover:not(:disabled) {
+    opacity: 0.95;
+    border-color: transparent;
+    box-shadow:
+      0 4px 12px -2px color-mix(in srgb, var(--color-primario) 55%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--texto-principal) 22%, transparent);
+  }
+}
+
+
+.auth-btn:active {
+  transform: scale(0.98);
+}
+
 .dropdown-divider {
   height: 1px;
   background-color: var(--borde);

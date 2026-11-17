@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { of, switchMap } from 'rxjs';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter, map, of, switchMap } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UserProfile } from '../../../core/auth/auth.models';
 import { UserService } from '../../../user/user-service';
@@ -14,16 +14,26 @@ import { UserService } from '../../../user/user-service';
   templateUrl: './header.html',
 })
 export class Header  {
-private readonly authService = inject(AuthService);
-private readonly http = inject(HttpClient);
-private readonly elementRef = inject(ElementRef<HTMLElement>);
-private readonly userService = inject(UserService);
+  private readonly authService = inject(AuthService);
+  private readonly http = inject(HttpClient);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
 
 
- protected readonly isMenuOpen = signal<boolean>(false);
- protected readonly  isAuthenticated = this.authService.isAuthenticated;
- protected readonly  isAdmin = computed(() => this.authService.hasRole('ROLE_ADMIN'));
+  protected readonly isMenuOpen = signal<boolean>(false);
+  protected readonly isAuthenticated = this.authService.isAuthenticated;
+  protected readonly isAdmin = computed(() => this.authService.hasRole('ROLE_ADMIN'));
 
+  readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects)
+    ),
+    { initialValue: '' }
+  );
+
+ readonly isLogin = computed(() => this.currentUrl().includes('/auth/login'));
  protected readonly user = this.authService.currentUser;
  protected readonly userProfile = toSignal(
    toObservable(computed(() => ({
@@ -54,7 +64,6 @@ private readonly userService = inject(UserService);
   }
 
   logout(): void {
- 
     this.authService.logout();
     this.closeUserMenu();
   }

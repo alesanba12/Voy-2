@@ -1,54 +1,55 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { form, FormField, FormRoot, required } from '@angular/forms/signals';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
+import { AuthRequest } from '../../core/auth/auth.models';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [FormField, FormRoot, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.css',
 })
 export class Login {
-  private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
 
-  readonly isLoading = signal<boolean>(false);
-  readonly errorMessage = signal<string | null>(null);
+  readonly showPassword = signal(false);
 
-  readonly loginForm = this.fb.nonNullable.group({
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required]]
+  readonly loginModel = signal<AuthRequest>({
+    username: '',
+    password: '',
   });
 
-  onSubmit(): void {
-    if (this.loginForm.invalid || this.isLoading()) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
-
-    this.authService.login(this.loginForm.getRawValue()).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/parties';
-        this.router.navigateByUrl(returnUrl);
+  readonly loginForm = form(
+    this.loginModel,
+    (schemaPath) => {
+      required(schemaPath.username, { message: 'El usuario es obligatorio.' });
+      required(schemaPath.password, { message: 'La contraseña es obligatoria.' });
+    },
+    {
+      submission: {
+        action: async (field) => {
+          try {
+            await firstValueFrom(this.authService.login(field().value()));
+            await this.router.navigate(['/']);
+            return;
+          } catch (err: any) {
+            return {
+              kind: 'serverError',
+              message: 'Usuario o contraseña incorrectos.',
+            };
+          }
+        },
+        onInvalid: (field) => {
+          field().errorSummary()[0]?.fieldTree().focusBoundControl();
+        },
       },
-      error: (err) => {
-        this.isLoading.set(false);
-        if (err.status === 401) {
-          this.errorMessage.set('Usuario o contraseña incorrectos.');
-        } else if (err.status === 0) {
-          this.errorMessage.set('No se pudo conectar con el servidor.');
-        } else {
-          this.errorMessage.set('Ocurrió un error al iniciar sesión. Inténtalo de nuevo.');
-        }
-      }
-    });
+    }
+  );
+
+  togglePassword(): void {
+    this.showPassword.update((v) => !v);
   }
 }
