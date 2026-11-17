@@ -38,7 +38,7 @@ export class Login {
           } catch (err: any) {
             return {
               kind: 'serverError',
-              message: err?.error?.message ?? err?.message ?? 'Usuario o contraseña incorrectos.',
+              message: 'Usuario o contraseña incorrectos.',
             };
           }
         },

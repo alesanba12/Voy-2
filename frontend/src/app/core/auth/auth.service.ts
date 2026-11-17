@@ -4,7 +4,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
-import { AuthRequest, AuthResponse, JwtPayload, NewUserRequest, UserSession } from './auth.models';
+import { AuthRequest, AuthResponse, JwtPayload, UserSession } from './auth.models';
+import { NewUserDto } from '../../user/user';
+
 
 const TOKEN_KEY = 'voy_jwt_session';
 
@@ -33,7 +35,7 @@ export class AuthService {
   }
 
   //Registro de nuevo usuario contra /api/auth/register
-  register(userData: NewUserRequest) {
+  register(userData: NewUserDto) {
     return this.http.post<unknown>(`${this.apiUrl}/register`, userData);
   }
 

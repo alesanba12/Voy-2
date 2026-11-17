@@ -7,13 +7,6 @@ export interface AuthResponse {
   token: string;
 }
 
-export interface NewUserRequest {
-  email: string;
-  username: string;
-  password: string;
-  birthdate: string; // Formato YYYY-MM-DD (LocalDate de Java)
-}
-
 export interface UserSession {
   userId: string;
   username: string;

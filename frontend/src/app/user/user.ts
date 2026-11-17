@@ -1,9 +1,9 @@
 export interface NewUserDto {
   email: string;
   username: string;
-  bio: string;
+  bio?: string | null;
   password: string;
-  birthday: string;
+  birthdate: string;
 }
 
 export interface UserDto {
