@@ -37,8 +37,8 @@
 
   /* ---------- Radios ---------- */
   --radio-sm: 6px;
-  --radio-md: 12px;
-  --radio-lg: 20px;
+  --radio-md: 0.4rem;
+  --radio-lg: 0.4rem;
   --radio-pill: 999px;
 }
 
