@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { EditModal } from '../edit-modal/edit-modal';
 import { PartyCard } from '../../parties/party-card/party-card';
 import { OrganizerModal } from '../organizer-modal/organizer-modal';
+import { ToastService } from '../../shared/components/toast/toast-service';
 
 @Component({
   imports: [EditModal, PartyCard, OrganizerModal],
@@ -15,6 +16,7 @@ import { OrganizerModal } from '../organizer-modal/organizer-modal';
 export class UserProfile implements OnInit {
   private readonly userService = inject(UserService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   private readonly currentUser = signal<UserDto | undefined>(undefined);
   private readonly myParties = signal<PartySummaryDto[]>([]);
@@ -27,7 +29,10 @@ export class UserProfile implements OnInit {
 
     this.userService.listFollowedParties().subscribe({
       next:(parties)=>this.myParties.set(parties),
-      error:()=> alert('No hay fiestas cargadas')
+      error: () => {
+        this.myParties.set([]);
+        this.toastService.show('No se pudieron cargar tus fiestas. Intentá nuevamente.', 'error');
+      },
     })
   }
 

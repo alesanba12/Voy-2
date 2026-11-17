@@ -9,6 +9,8 @@ import { EventDatePipe, PartyCard } from '../party-card/party-card';
 import { UserService } from '../../user/user-service';
 import { PartySummaryDto, UserDto, UserFollowDto } from '../../user/user';
 import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
+import { ConfirmModalService } from '../../shared/components/modal-dialog/modal-dialog-service';
+import { ToastService } from '../../shared/components/toast/toast-service';
 
 @Component({
   imports: [RouterLink, EventDatePipe, PartyCard, LoadingSpinner],
@@ -22,6 +24,8 @@ export class PartyDetail {
   private readonly router = inject(Router);
   private readonly partyClient = inject(PartyClient);
   private readonly userService = inject(UserService);
+  protected readonly modelService = inject(ConfirmModalService);
+  private readonly toastService = inject(ToastService);
 
   // ───────── Evento ─────────
   private readonly partyId = toSignal(this.route.paramMap.pipe(map((p) => p.get('id'))), {
@@ -49,7 +53,7 @@ export class PartyDetail {
 
     effect(() => {
       if (this.partyResource.error()) {
-        alert('Evento no encontrado, redirigiendo al listado de eventos');
+        this.toastService.show('Evento no encontrado. Redirigiendo al catálogo.', 'error');
         this.router.navigate(['/parties/catalogo']);
       }
     });
@@ -144,12 +148,12 @@ export class PartyDetail {
   }
 
   private handleFollowError(err: { status?: number }) {
-  if (err.status === 401) {
-    this.router.navigate(['/login']); // ajustá a tu ruta
-  } else {
-    alert('No se pudo actualizar el seguimiento. Intentá nuevamente.');
+    if (err.status === 401) {
+      this.router.navigate(['/login']);
+    } else {
+      this.toastService.show('No se pudo actualizar el seguimiento. Intentá nuevamente.', 'error');
+    }
   }
-}
 
   // ───────── Tickets ─────────
   protected readonly MIN_TICKETS = 1;
@@ -222,8 +226,20 @@ export class PartyDetail {
     );
   }
 
-  protected removePartner(user: UserDto) {
-    if (!confirm(`¿Quitar a ${user.username} como partner del evento?`)) return;
+  protected async removePartner(user: UserDto) {
+    if (
+      !(await this.modelService.open({
+        variant: 'destructive-delete',
+        icon: 'user-remove',
+        title: 'Quitar partner',
+        description: `¿Quitar a ${user.username} como partner del evento?`,
+        cancelLabel: 'Cancelar',
+        confirmLabel: 'Quitar',
+      }))
+    ) {
+      return;
+    }
+
     this.updatePartners(
       (id) => this.partyClient.removeCoOrganizer(id, user.externalId),
       'No se pudo quitar al partner. Intentá nuevamente.',
@@ -247,7 +263,7 @@ export class PartyDetail {
       },
       error: () => {
         this.partnerLoading.set(false);
-        alert(errorMessage);
+        this.toastService.show(errorMessage, 'error');
       },
     });
   }
