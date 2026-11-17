@@ -17,9 +17,10 @@ import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-int
 import { catchError, forkJoin, map, of, switchMap, timer } from 'rxjs';
 import { UserService } from '../../user/user-service';
 import { PartySummaryDto, UserDto, UserFollowDto } from '../../user/user';
+import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
-  imports: [RouterLink, EventDatePipe, PartyCard],
+  imports: [RouterLink, EventDatePipe, PartyCard, LoadingSpinner],
   selector: 'app-party-detail',
   styleUrl: './party-detail.css',
   templateUrl: './party-detail.html',
