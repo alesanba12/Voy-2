@@ -42,16 +42,20 @@ private readonly userService = inject(UserService);
   }
 
   @HostListener('document:click', ['$event'])
-  closeMenuOnOutsideClick(event: MouseEvent): void {
+  handleDocumentClick(event: MouseEvent): void {
     const userMenu = this.elementRef.nativeElement.querySelector('.user-menu-container');
-    if (!userMenu?.contains(event.target as Node)) {
-      this.isMenuOpen.set(false);
+    if (!(event.target instanceof Node) || !userMenu?.contains(event.target)) {
+      this.closeUserMenu();
     }
+  }
+
+  closeUserMenu(): void {
+    this.isMenuOpen.set(false);
   }
 
   logout(): void {
  
     this.authService.logout();
-    this.isMenuOpen.set(false); 
+    this.closeUserMenu();
   }
 }
