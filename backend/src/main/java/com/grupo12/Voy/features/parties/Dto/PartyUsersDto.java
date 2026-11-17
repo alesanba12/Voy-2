@@ -4,13 +4,18 @@ import com.grupo12.Voy.features.users.Dto.UserDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
 
 public record PartyUsersDto(
-        String title,
-        String description,
-        String city,
-        BigDecimal price,
-        String adress,
-        LocalDateTime dateTime,
-        UserDto organizer) {
+                UUID externalId,
+                String title,
+                String description,
+                String city,
+                BigDecimal price,
+                String adress,
+                LocalDateTime dateTime,
+                UserDto organizer,
+                String imageUrl,
+                Set<String> tags) {
 }
