@@ -35,6 +35,8 @@ private readonly userService = inject(UserService);
    { initialValue: null }
  );
 
+ readonly defaulImage = '/user-alt-1-svgrepo-com.svg';
+
   toggleUserMenu(): void {
     this.isMenuOpen.update(val => !val);
   }
