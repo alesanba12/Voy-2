@@ -1,13 +1,17 @@
 @let user = this.currentUser();
 @let nextParty = this.nextParty();
 
-@if (user) {
+<div class="volver">
+  <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
+</div>
+
+@if (user) {  
   <div class="first-block">
     <div class="name-photo">
       <img [src]="user.imageUrl || defaulImage" class="profile-image" />
       <div class="name">
-        <h2>{{ user.username }}</h2>
-        <p>{{ user.bio }}</p>
+        <h1>{{ user.username }}</h1>
+        <h3>{{ user.bio }}</h3>
       </div>
     </div>
 

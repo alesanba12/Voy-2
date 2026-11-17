@@ -1,6 +1,19 @@
 /* ==========================================================================
    Contenedor Principal / Bloque 1 (Perfil de Usuario)
    ========================================================================== */
+
+/* ---------- Volver (a la izquierda de la pantalla) ---------- */
+.volver {
+  padding: 2rem;
+  a {
+    color: var(--texto-secundario);
+    text-decoration: none;
+    &:hover{
+      color: var(--texto-principal);
+    }
+  }
+}
+
 .first-block {
   background-color: var(--background-secundario);
   border: 1px solid var(--borde);
@@ -34,7 +47,7 @@
   flex-shrink: 0;
 }
 
-.name h2 {
+.name h1 {
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--texto-principal);
@@ -43,7 +56,7 @@
   font-style:var(--fuente-principal) ;
 }
 
-.name p {
+.name h3 {
   font-size: 0.95rem;
   color: var(--texto-secundario);
   max-width: 400px;
