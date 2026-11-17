@@ -90,17 +90,17 @@ export class PartyForm implements OnInit {
 
       required(party.description, { message: 'Requerido' });
       minLength(party.description, 20, { message: 'Como mínimo 20 caracteres' });
-      maxLength(party.description, 500, { message: 'Máximo 500 caracteres' });
+      maxLength(party.description, 1000, { message: 'Máximo 1000 caracteres' });
 
       required(party.city, { message: 'Requerido' });
 
       required(party.adress, { message: 'Requerido' });
-      minLength(party.adress, 5, { message: 'Como mínimo 20 caracteres' });
-      maxLength(party.adress, 50, { message: 'Máximo 500 caracteres' });
+      minLength(party.adress, 5, { message: 'Como mínimo 5 caracteres' });
+      maxLength(party.adress, 50, { message: 'Máximo 50 caracteres' });
 
       required(party.price, { message: 'Requerido' });
       min(party.price, 0, { message: 'El valor no puede ser menor a 0' });
-      max(party.price, 1000000, { message: 'El valor no puede superar los $ 500.000' });
+      max(party.price, 1000000, { message: 'El valor no puede superar los $ 1.000.000' });
 
       required(party.dateTime, { message: 'Requerido' });
       validate(party.dateTime, ({ value }) => {
@@ -146,13 +146,15 @@ export class PartyForm implements OnInit {
           this.isSubmitting.set(true);
           const party = field().value();
           const editingParty = this.editingParty();
+          const partyId = editingParty?.externalId ?? this.editingPartyId;
           try {
-            if (this.isEditing() && editingParty) {
+            if (partyId) {
               const updatedParty = await firstValueFrom(
-                this.partyClient.updateParty(editingParty.externalId, party),
+                this.partyClient.updateParty(partyId, party),
               );
               this.submitSuccess.set('Evento modificado con éxito.');
               this.edited.emit(updatedParty);
+              await this.router.navigate(['/parties', partyId]);
             } else {
               const createdParty = await firstValueFrom(this.partyClient.addParty(party));
               this.submitSuccess.set('Evento publicado con éxito.');

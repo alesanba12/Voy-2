@@ -24,24 +24,28 @@ export class PartyClient {
     return this.http.get<PartyRes>(this.apiUrl + '/' + id);
   }
 
-  addParty(newParty: PartyFormModel) {
+  private toFormData(party: PartyFormModel): FormData {
     const data = new FormData();
-    data.append('title', newParty.title);
-    data.append('description', newParty.description);
-    data.append('city', newParty.city);
-    data.append('adress', newParty.adress);
-    data.append('price', String(newParty.price));
-    data.append('dateTime', newParty.dateTime);
-    data.append('guestLimit', String(newParty.guestLimit));
-    data.append('partyAccesibility', String(newParty.partyAccesibility));
-    data.append('tickets', String(newParty.tickets));
-    newParty.tagsList.forEach((tag) => data.append('tagsList', tag));
+    data.append('title', party.title);
+    data.append('description', party.description);
+    data.append('city', party.city);
+    data.append('adress', party.adress);
+    data.append('price', String(party.price));
+    data.append('dateTime', party.dateTime);
+    data.append('guestLimit', String(party.guestLimit));
+    data.append('partyAccesibility', String(party.partyAccesibility));
+    data.append('tickets', String(party.tickets));
+    party.tagsList.forEach((tag) => data.append('tagsList', tag));
 
-    if (newParty.imageUrl) {
-      data.append('image', newParty.imageUrl);
+    if (party.imageUrl) {
+      data.append('image', party.imageUrl);
     }
 
-    return this.http.post<PartyRes>(this.apiUrl + '/public', data);
+    return data;
+  }
+
+  addParty(newParty: PartyFormModel) {
+    return this.http.post<PartyRes>(this.apiUrl + '/public', this.toFormData(newParty));
   }
 
   deleteParty(id: string) {
@@ -49,7 +53,7 @@ export class PartyClient {
   }
 
   updateParty(id: string, editedParty: PartyFormModel) {
-    return this.http.put<PartyRes>(this.apiUrl + '/' + id, editedParty);
+    return this.http.put<PartyRes>(this.apiUrl + '/' + id, this.toFormData(editedParty));
   }
 
   addCoOrganizer(partyId: string, otherUserExtId: string) {
