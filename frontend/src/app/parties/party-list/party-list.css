@@ -49,6 +49,9 @@
   display: flex;
   justify-content: space-between;
   margin: 0 1rem;
+  .info{
+    margin-left: 0.6rem;
+  }
   .order {
     margin: 0 1.5rem;
     display: flex;
