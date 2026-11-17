@@ -2,6 +2,7 @@ package com.grupo12.Voy.features.parties.service;
 
 import com.grupo12.Voy.common.exceptions.AlreadyExistsException;
 import com.grupo12.Voy.common.exceptions.EntityNotFoundException;
+import com.grupo12.Voy.common.exceptions.InvalidFieldException;
 import com.grupo12.Voy.common.exceptions.NotAllowedException;
 import com.grupo12.Voy.common.service.CloudinaryService;
 import com.grupo12.Voy.features.parties.Dto.PartyReqDTO;
@@ -13,6 +14,7 @@ import com.grupo12.Voy.features.parties.models.PartyEntity;
 import com.grupo12.Voy.features.parties.specification.PartySpecification;
 import com.grupo12.Voy.features.tags.TagsRepository;
 import com.grupo12.Voy.features.tags.dto.TagsDTO;
+import com.grupo12.Voy.features.tags.mappers.TagMapper;
 import com.grupo12.Voy.features.tags.models.TagEntity;
 import com.grupo12.Voy.features.users.UserRepository;
 import com.grupo12.Voy.features.users.models.UserEntity;
@@ -35,11 +37,12 @@ public class PartyService implements IPartyService {
     private final PartyMapper partyMapper;
     private final TagsRepository tagsRepository;
     private final CloudinaryService cloudinaryService;
-
+    private final TagMapper tagMapper;
 
     @Override
-    public List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city, LocalDate from, LocalDate to) {
-        if(from != null && to != null && to.isBefore(from)){
+    public List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city, LocalDate from,
+            LocalDate to) {
+        if (from != null && to != null && to.isBefore(from)) {
             throw new NotAllowedException("La fecha límite no puede ser anterior a la fecha de inicio");
         }
         PredicateSpecification<PartyEntity> spec = PredicateSpecification.allOf(
@@ -49,8 +52,7 @@ public class PartyService implements IPartyService {
                 PartySpecification.isPublic(true),
                 PartySpecification.cityContains(city),
                 PartySpecification.betweenDates(from, to),
-                PartySpecification.LogicStateTrue()
-        );
+                PartySpecification.LogicStateTrue());
 
         return partyRepository
                 .findAll(spec)
@@ -103,6 +105,10 @@ public class PartyService implements IPartyService {
         UserEntity organizer = userRepository.findByExternalId(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Organizer no encontrado"));
 
+        if (dto.image() == null || dto.image().isEmpty()) {
+            throw new InvalidFieldException("La imagen del evento es necesaria");
+        }
+
         if (partyRepository.existsByTitle(dto.title())) {
             throw new AlreadyExistsException("Ya existe un evento con ese titulo");
         }
@@ -120,10 +126,9 @@ public class PartyService implements IPartyService {
         party.setTagsList(tags);
         party.setPartyAccesibility(true);
         if (dto.image() != null) {
-        String imageUrl = cloudinaryService.uploadFile(dto.image(), "parties");
-        party.setImageUrl(imageUrl);
+            String imageUrl = cloudinaryService.uploadFile(dto.image(), "parties");
+            party.setImageUrl(imageUrl);
         }
-
 
         return partyMapper.toResDTO(partyRepository.save(party));
     }
@@ -140,7 +145,7 @@ public class PartyService implements IPartyService {
                 .anyMatch(t -> t.getTagsId().equals(tag.getTagsId()));
         if (repetido)
             throw new AlreadyExistsException("La etiqueta ya está asignada al evento");
-        if(party.getTagsList().size() >= 5){
+        if (party.getTagsList().size() >= 5) {
             throw new NotAllowedException("El maximo de 5 etiquetas fue alcanzado");
         }
 
@@ -156,7 +161,7 @@ public class PartyService implements IPartyService {
 
         TagEntity tag = tagsRepository.findByName(nameTag.name())
                 .orElseThrow(() -> new EntityNotFoundException("La etiqueta no existe"));
-        if(party.getTagsList().size() <= 1){
+        if (party.getTagsList().size() <= 1) {
             throw new NotAllowedException("El evento debe tener por lo menos una etiqueta");
         }
         boolean removed = party.getTagsList().removeIf(t -> t.getTagsId().equals(tag.getTagsId()));
@@ -168,15 +173,17 @@ public class PartyService implements IPartyService {
     }
 
     @Override
+    @Transactional
     public PartyResDTO update(UUID idExternal, PartyReqDTO dto) {
         PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(idExternal)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
+        List<TagEntity> tags = tagsRepository.findByNameIn(dto.tagsList());
 
-        if (party.getPartyAccesibility()) {
-            party.setPrice(BigDecimal.ZERO);
-        } else {
-            party.setPrice(dto.price());
+        if (tags.size() != dto.tagsList().size()) {
+            throw new IllegalArgumentException("Alguna etiqueta no existe");
         }
+
+        party.setTagsList(tags);
         party.setTitle(dto.title());
         party.setCity(dto.city());
         party.setAdress(dto.adress());
@@ -184,6 +191,8 @@ public class PartyService implements IPartyService {
         party.setDescription(dto.description());
         party.setDateTime(dto.dateTime());
         party.setGuestLimit(dto.guestLimit());
+        party.setPrice(dto.price());
+        party.setTickets(dto.tickets());
 
         if (dto.image() != null && !dto.image().isEmpty()) {
             String imageUrl = cloudinaryService.uploadFile(dto.image(), "parties");
@@ -201,40 +210,44 @@ public class PartyService implements IPartyService {
         party.setLogicState(Boolean.FALSE);
         partyRepository.save(party);
     }
-    ///Funcion para saber si puede ver o no evento privado
+
+    /// Funcion para saber si puede ver o no evento privado
     private boolean canView(PartyEntity party, UUID currentUserId) {
-        if (party.getPartyAccesibility()) return true;
-        if (currentUserId == null) return false;
+        if (party.getPartyAccesibility())
+            return true;
+        if (currentUserId == null)
+            return false;
 
         boolean isAdmin = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getAuthorities()
                 .stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        if (isAdmin) return true;
+        if (isAdmin)
+            return true;
 
         return party.getOrganizer().getExternalId().equals(currentUserId);
     }
 
     @Transactional
     @Override
-    public PartyResDTO addCoOrganizrer(UUID user, UUID idExternal, UUID coOrg){
+    public PartyResDTO addCoOrganizrer(UUID user, UUID idExternal, UUID coOrg) {
         PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(idExternal)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
         UserEntity creator = userRepository.findByExternalId(user)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         UserEntity coOrganizer = userRepository.findByExternalId(coOrg)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-        if(!party.getOrganizer().equals(creator)){
+        if (!party.getOrganizer().equals(creator)) {
             throw new NotAllowedException("Solo el organizador principal puede modificar esta lista");
         }
-        if(user.equals(coOrg)){
+        if (user.equals(coOrg)) {
             throw new NotAllowedException("El organizador no puede incluirse en la lista de coorganizadores");
         }
-        if(!coOrganizer.getIsOrganizer()){
+        if (!coOrganizer.getIsOrganizer()) {
             throw new NotAllowedException("El usuario debe estar registrado como creador de eventos");
         }
-        if(party.getCoOrganizer().contains(coOrganizer)){
+        if (party.getCoOrganizer().contains(coOrganizer)) {
             throw new AlreadyExistsException("El organizador ya está en esta la lista");
         }
         party.getCoOrganizer().add(coOrganizer);
@@ -243,17 +256,17 @@ public class PartyService implements IPartyService {
 
     @Transactional
     @Override
-    public PartyResDTO removeCoOrganizrer(UUID user, UUID idExternal, UUID coOrg){
+    public PartyResDTO removeCoOrganizrer(UUID user, UUID idExternal, UUID coOrg) {
         PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(idExternal)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
         UserEntity creator = userRepository.findByExternalId(user)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         UserEntity coOrganizer = userRepository.findByExternalId(coOrg)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-        if(!party.getOrganizer().equals(creator)){
+        if (!party.getOrganizer().equals(creator)) {
             throw new NotAllowedException("Solo el organizador principal puede modificar esta lista");
         }
-        if(!party.getCoOrganizer().contains(coOrganizer)){
+        if (!party.getCoOrganizer().contains(coOrganizer)) {
             throw new AlreadyExistsException("El organizador no está en esta lista");
         }
         party.getCoOrganizer().remove(coOrganizer);
@@ -262,7 +275,7 @@ public class PartyService implements IPartyService {
 
     @Transactional
     @Override
-    public PartyResDTO changePartyStatus(UUID partyId){
+    public PartyResDTO changePartyStatus(UUID partyId) {
         PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(partyId)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
         party.setLogicState(!party.getLogicState());

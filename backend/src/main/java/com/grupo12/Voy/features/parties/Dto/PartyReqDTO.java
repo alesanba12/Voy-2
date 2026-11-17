@@ -35,7 +35,6 @@ public record PartyReqDTO(
         @NotEmpty(message = "Por lo menos debe haber una etiqueta")
         @Size(max = 5, message = "Como máximo puede haber 5 etiquetas")
         List<@NotBlank String> tagsList,
-        @NotNull(message = "La imagen del evento es necesaria")
         MultipartFile image
 ) {
 }

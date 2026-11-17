@@ -12,12 +12,12 @@ import {
   FormRoot,
   FormField,
 } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TagsService } from '../../tags/tags.service';
 import { FormsModule } from '@angular/forms';
 import { ImageUpload } from '../../shared/components/image-upload/image-upload';
 import { ConfirmModalService } from '../../shared/components/modal-dialog/modal-dialog-service';
-import { firstValueFrom } from 'rxjs';
+import { finalize, firstValueFrom } from 'rxjs';
 
 @Component({
   imports: [FormRoot, RouterLink, FormField, FormsModule, ImageUpload],
@@ -30,10 +30,16 @@ export class PartyForm implements OnInit {
   private readonly tagService = inject(TagsService);
   private readonly confirmModal = inject(ConfirmModalService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly editingPartyId = this.route.snapshot.paramMap.get('id');
 
   public readonly editingParty = input<PartyRes>();
-  protected readonly isEditing = computed(() => this.editingParty() !== undefined);
+  protected readonly isEditing = computed(
+    () => this.editingParty() !== undefined || this.editingPartyId !== null,
+  );
   public readonly edited = output<PartyRes>();
+  protected readonly isLoadingParty = signal(false);
+  protected readonly partyLoadError = signal<string | null>(null);
   protected readonly submitAttempted = signal(false);
   protected readonly submitError = signal<string | null>(null);
   protected readonly submitSuccess = signal<string | null>(null);
@@ -43,6 +49,16 @@ export class PartyForm implements OnInit {
     const editingParty = this.editingParty();
     if (editingParty) {
       this.loadForEdit(editingParty);
+    } else if (this.editingPartyId) {
+      this.isLoadingParty.set(true);
+      this.partyClient
+        .getById(this.editingPartyId)
+        .pipe(finalize(() => this.isLoadingParty.set(false)))
+        .subscribe({
+          next: (party) => this.loadForEdit(party),
+          error: () =>
+            this.partyLoadError.set('No se pudo cargar el evento para editar. Intentá nuevamente.'),
+        });
     }
   }
 
@@ -74,17 +90,17 @@ export class PartyForm implements OnInit {
 
       required(party.description, { message: 'Requerido' });
       minLength(party.description, 20, { message: 'Como mínimo 20 caracteres' });
-      maxLength(party.description, 500, { message: 'Máximo 500 caracteres' });
+      maxLength(party.description, 1000, { message: 'Máximo 1000 caracteres' });
 
       required(party.city, { message: 'Requerido' });
 
       required(party.adress, { message: 'Requerido' });
-      minLength(party.adress, 5, { message: 'Como mínimo 20 caracteres' });
-      maxLength(party.adress, 50, { message: 'Máximo 500 caracteres' });
+      minLength(party.adress, 5, { message: 'Como mínimo 5 caracteres' });
+      maxLength(party.adress, 50, { message: 'Máximo 50 caracteres' });
 
       required(party.price, { message: 'Requerido' });
       min(party.price, 0, { message: 'El valor no puede ser menor a 0' });
-      max(party.price, 1000000, { message: 'El valor no puede superar los $ 500.000' });
+      max(party.price, 1000000, { message: 'El valor no puede superar los $ 1.000.000' });
 
       required(party.dateTime, { message: 'Requerido' });
       validate(party.dateTime, ({ value }) => {
@@ -130,13 +146,15 @@ export class PartyForm implements OnInit {
           this.isSubmitting.set(true);
           const party = field().value();
           const editingParty = this.editingParty();
+          const partyId = editingParty?.externalId ?? this.editingPartyId;
           try {
-            if (this.isEditing() && editingParty) {
+            if (partyId) {
               const updatedParty = await firstValueFrom(
-                this.partyClient.updateParty(editingParty.externalId, party),
+                this.partyClient.updateParty(partyId, party),
               );
               this.submitSuccess.set('Evento modificado con éxito.');
               this.edited.emit(updatedParty);
+              await this.router.navigate(['/parties', partyId]);
             } else {
               const createdParty = await firstValueFrom(this.partyClient.addParty(party));
               this.submitSuccess.set('Evento publicado con éxito.');

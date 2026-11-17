@@ -47,6 +47,16 @@ form {
   color: #15803d;
 }
 
+.form-state {
+  width: min(100%, 60rem);
+  margin: 2rem auto;
+  color: var(--texto-secundario);
+}
+
+.form-state-error {
+  color: var(--color-peligro);
+}
+
 /* ---------- Bloques ---------- */
 .info {
   background-color: var(--background-secundario);
