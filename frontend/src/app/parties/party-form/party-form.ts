@@ -12,10 +12,12 @@ import {
   FormRoot,
   FormField,
 } from '@angular/forms/signals';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TagsService } from '../../tags/tags.service';
 import { FormsModule } from '@angular/forms';
 import { ImageUpload } from '../../shared/components/image-upload/image-upload';
+import { ConfirmModalService } from '../../shared/components/modal-dialog/modal-dialog-service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   imports: [FormRoot, RouterLink, FormField, FormsModule, ImageUpload],
@@ -26,12 +28,16 @@ import { ImageUpload } from '../../shared/components/image-upload/image-upload';
 export class PartyForm implements OnInit {
   private readonly partyClient = inject(PartyClient);
   private readonly tagService = inject(TagsService);
+  private readonly confirmModal = inject(ConfirmModalService);
+  private readonly router = inject(Router);
 
   public readonly editingParty = input<PartyRes>();
   protected readonly isEditing = computed(() => this.editingParty() !== undefined);
   public readonly edited = output<PartyRes>();
   protected readonly submitAttempted = signal(false);
   protected readonly submitError = signal<string | null>(null);
+  protected readonly submitSuccess = signal<string | null>(null);
+  protected readonly isSubmitting = signal(false);
 
   ngOnInit(): void {
     const editingParty = this.editingParty();
@@ -107,32 +113,43 @@ export class PartyForm implements OnInit {
       submission: {
         onInvalid: () => this.submitAttempted.set(true),
         action: async (field) => {
-          if (!confirm('Desea confirmar los datos?')) return;
+          const confirmed = await this.confirmModal.open({
+            variant: 'publish-event',
+            icon: 'publish-event',
+            title: this.isEditing() ? '¿Guardar los cambios?' : '¿Publicar el evento?',
+            description: 'Revisa que los datos del evento sean correctos antes de continuar.',
+            cancelLabel: 'Seguir editando',
+            confirmLabel: this.isEditing() ? 'Guardar cambios' : 'Publicar evento',
+          });
+          if (!confirmed) return;
 
           this.submitAttempted.set(true);
           this.submitError.set(null);
-          await new Promise((resolve) => setTimeout(resolve, 500)); // simulamos latencia
+          this.submitSuccess.set(null);
+          this.isSubmitting.set(true);
           const party = field().value();
           const editingParty = this.editingParty();
-          if (this.isEditing() && editingParty) {
-            const { externalId } = editingParty;
-            this.partyClient.updateParty(externalId, party).subscribe({
-              next: (party) => {
-                alert('Producto modificado con éxito!');
-                this.edited.emit(party);
-              },
-              error: () =>
-                this.submitError.set('No se pudo modificar el evento. Intenta nuevamente.'),
-            });
-          } else {
-            this.partyClient.addParty(party).subscribe({
-              next: () => {
-                alert('Se Agrego el producto con éxito!');
-                this.resetForm();
-              },
-              error: () =>
-                this.submitError.set('No se pudo publicar el evento. Intenta nuevamente.'),
-            });
+          try {
+            if (this.isEditing() && editingParty) {
+              const updatedParty = await firstValueFrom(
+                this.partyClient.updateParty(editingParty.externalId, party),
+              );
+              this.submitSuccess.set('Evento modificado con éxito.');
+              this.edited.emit(updatedParty);
+            } else {
+              const createdParty = await firstValueFrom(this.partyClient.addParty(party));
+              this.submitSuccess.set('Evento publicado con éxito.');
+              await new Promise<void>((resolve) => window.setTimeout(resolve, 2000));
+              await this.router.navigate(['/parties', createdParty.externalId]);
+            }
+          } catch {
+            this.submitError.set(
+              this.isEditing()
+                ? 'No se pudo modificar el evento. Intenta nuevamente.'
+                : 'No se pudo publicar el evento. Intenta nuevamente.',
+            );
+          } finally {
+            this.isSubmitting.set(false);
           }
         },
       },

@@ -11,6 +11,21 @@
     </p>
   </div>
 
+  @if (submitAttempted() && partyForm().invalid()) {
+    <div class="form-errors" role="alert">
+      <p>Revisa los siguientes errores antes de publicar:</p>
+      @for (error of partyForm().errorSummary(); track $index) {
+        <small>{{ error.message }}</small>
+      }
+    </div>
+  }
+  @if (submitError()) {
+    <div class="form-errors" role="alert">{{ submitError() }}</div>
+  }
+  @if (submitSuccess()) {
+    <div class="form-success" role="status">{{ submitSuccess() }}</div>
+  }
+
   <!-- Información básica -->
   <section class="info">
     <div class="top">
@@ -221,15 +236,16 @@
         <app-image-upload
           fieldName="portada"
           [currentUrl]="existingImageUrl()"
-          (fileChanged)="onImageChanged($event)"
+          (fileChanged)="onImageChanged($any($event))"
         />
       </div>
     </div>
   </section>
 
   <div class="action">
-    <button type="submit" class="publicar" [disabled]="partyForm().invalid()">
-      <img src="rocket-svgrepo-com.svg" class="spaceship" alt="" /> Publicar Evento
+    <button type="submit" class="publicar" [disabled]="partyForm().invalid() || isSubmitting()">
+      <img src="rocket-svgrepo-com.svg" class="spaceship" alt="" />
+      {{ isSubmitting() ? 'Guardando...' : isEditing() ? 'Guardar cambios' : 'Publicar Evento' }}
     </button>
   </div>
 </form>

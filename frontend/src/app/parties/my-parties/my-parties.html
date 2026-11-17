@@ -1,0 +1,37 @@
+<main class="my-parties-page">
+  <a class="back-link" routerLink="/actividad">← Mi actividad</a>
+
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">ESPACIO DE ORGANIZADOR</p>
+      <h1>Mis eventos</h1>
+      <p>Consultá tus eventos y accedé a sus detalles o edición.</p>
+    </div>
+    <a class="primary-button" routerLink="/parties/new">Crear evento</a>
+  </header>
+
+  @if (isLoading()) {
+    <p class="state-message" role="status">Cargando tus eventos…</p>
+  } @else if (hasError()) {
+    <p class="state-message error" role="alert">
+      No pudimos cargar tus eventos. Intentá nuevamente más tarde.
+    </p>
+  } @else if (parties().length === 0) {
+    <section class="empty-state">
+      <h2>Todavía no creaste eventos</h2>
+      <p>Cuando publiques uno, aparecerá acá.</p>
+      <a class="primary-button" routerLink="/parties/new">Crear mi primer evento</a>
+    </section>
+  } @else {
+    <ul class="party-grid">
+      @for (party of parties(); track party.externalId) {
+        <li class="party-item">
+          <app-party-card [party]="party"></app-party-card>
+          <a class="edit-link" [routerLink]="['/parties', party.externalId, 'edit']">
+            Editar evento
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</main>

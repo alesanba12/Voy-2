@@ -1,0 +1,108 @@
+:host {
+  display: block;
+}
+
+.activity-page {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 5rem) 0;
+}
+
+.page-heading {
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  color: var(--color-primario-claro);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.page-heading h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.page-heading > p:last-child {
+  color: var(--texto-secundario);
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 1rem;
+}
+
+.activity-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  min-height: 132px;
+  padding: 1.25rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background:
+    radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.12), transparent 60%),
+    var(--background-secundario);
+  color: var(--texto-principal);
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212, 196, 255, 0.45);
+}
+
+.activity-card:focus-visible {
+  outline: 2px solid var(--color-primario-claro);
+  outline-offset: 3px;
+}
+
+.card-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(212, 196, 255, 0.2);
+  border-radius: 14px;
+  background: rgba(139, 92, 246, 0.14);
+  color: var(--color-primario-claro);
+  font-size: 1.4rem;
+}
+
+.card-content {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.card-content strong {
+  font-size: 1.05rem;
+}
+
+.card-content span {
+  color: var(--texto-secundario);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.card-arrow {
+  color: var(--texto-muteado);
+  font-size: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-card {
+    transition: none;
+  }
+
+  .activity-card:hover {
+    transform: none;
+  }
+}

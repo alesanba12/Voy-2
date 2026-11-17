@@ -21,6 +21,12 @@ export const PARTIES_ROUTES : Routes = [
         loadComponent: () => import('./party-form/party-form').then(m => m.PartyForm),
     },
     {
+        path: 'mis-eventos',
+        canActivate: [roleGuard],
+        data: { roles: ['ROLE_ORGANIZATOR', 'ROLE_ADMIN'] },
+        loadComponent: () => import('./my-parties/my-parties').then(m => m.MyParties),
+    },
+    {
         path: ':id',
         loadComponent: () => import('./party-detail/party-detail').then(m => m.PartyDetail),
     },
