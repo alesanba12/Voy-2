@@ -19,11 +19,31 @@ export interface UserFollowDto{
     username:string
 }
 
-export interface UserUpdateDto{
-    email:string
-    username:string
-    bio:string
-    password:string
-   // image:blob?
+export interface PartySummaryDto {
+  externalId: string;
+  title: string;
+  description: string;
+  city: string;
+  price: number;
+  adress: string;
+  dateTime: string;
+  organizer: UserDto;
+  imageUrl: string | null;
+  tags: string[] | null;
 }
+
+export interface OrganizerVerifyReqDTO{
+    dniFront:FormData 
+    dniBack:FormData
+    additionalInfo:string   
+}
+
+
+// export interface UserUpdateDto{
+//     email:string
+//     username:string
+//     bio:string
+//     password:string
+//    // image:blob?
+// }
 

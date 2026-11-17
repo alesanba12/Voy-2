@@ -1,6 +1,6 @@
 import { Component, inject, input, output, signal } from '@angular/core';
 import { UserService } from '../user-service';
-import { UserDto, UserUpdateDto } from '../user';
+import { UserDto} from '../user';
 import { ImageUpload } from '../../shared/components/image-upload/image-upload';
 import { FormsModule } from '@angular/forms';
 

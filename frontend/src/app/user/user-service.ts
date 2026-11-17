@@ -1,12 +1,13 @@
 
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service, signal } from '@angular/core';
-import { PartySummaryDto, UserDto, UserFollowDto } from './user';
+import { OrganizerVerifyReqDTO, PartySummaryDto, UserDto, UserFollowDto } from './user';
 
 @Service()
 export class UserService {
   private readonly client = inject(HttpClient)
   private readonly url = '/api/users';
+  private readonly OrganizerUrl = '/api/organizers'
 
   readonly profileRefreshVersion = signal(0);
 
@@ -85,6 +86,11 @@ export class UserService {
   // 14. Promover usuario a organizador (Admin)
   promoteToOrganizer(idExternal: string | number) {
     return this.client.patch<UserDto>(`${this.url}/promote/${idExternal}`, {});
+  }
+
+  // 15. Solicitar ser organizador
+  requestVerification(formData: FormData){
+    return this.client.post<void>(`${this.OrganizerUrl}/verify`, formData);
   }
 
   

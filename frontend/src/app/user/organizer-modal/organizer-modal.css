@@ -1,0 +1,119 @@
+.modal-container {
+  background: var(--background-secundario);
+  color: var(--texto-principal);
+  padding: 28px;
+  width: 100%;
+  max-width: 480px;
+  font-family: var(--fuente-principal);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-container h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--texto-principal);
+  letter-spacing: -0.02em;
+}
+
+.modal-subtitle {
+  font-size: 0.9rem;
+  color: var(--texto-secundario);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.verify-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--texto-principal);
+}
+
+.required {
+  color: var(--color-peligro);
+}
+
+/* Inputs de archivos personalizados con variables de diseño */
+.form-group input[type="file"] {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--radio-md);
+  background: var(--background-terciario);
+  color: var(--texto-secundario);
+  border: 1px dashed var(--borde);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input[type="file"]:hover {
+  border-color: var(--color-primario);
+}
+
+/* Textarea personalizado acorde a inputs globales */
+.form-group textarea {
+  display: flex;
+  padding: 12px 14px;
+  border-radius: var(--radio-md);
+  background: var(--background-terciario);
+  color: var(--texto-principal);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-family: var(--fuente-principal);
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-primario);
+}
+
+.file-selected {
+  font-size: 0.8rem;
+  color: var(--color-exito);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* Botón de envío */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btn-submit {
+  background-color: var(--color-primario-claro) !important;
+  color: var(--texto-sobre-primario) !important;
+  font-weight: 600;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radio-pill);
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-submit:hover {
+  opacity: 0.9;
+}
+
+.btn-submit:active {
+  transform: scale(0.98);
+}

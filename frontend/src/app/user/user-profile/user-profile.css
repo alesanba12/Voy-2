@@ -6,8 +6,8 @@
   border: 1px solid var(--borde);
   border-radius: var(--radio-lg);
   padding: 32px;
-  max-width: 900px;
-  width: 100%;
+  width: calc(100% - 6rem);
+  max-width: 1300px;
   margin: 30px auto;
   display: flex;
   justify-content: space-between;
@@ -40,6 +40,7 @@
   color: var(--texto-principal);
   margin-bottom: 4px;
   letter-spacing: -0.02em;
+  font-style:var(--fuente-principal) ;
 }
 
 .name p {
@@ -48,7 +49,7 @@
   max-width: 400px;
 }
 
-/* Botones laterales a la derecha */
+/* Botones laterales a la derecha (respetando tus estilos originales) */
 .side-buttons {
   display: flex;
   align-items: center;
@@ -89,19 +90,24 @@
 
 
 /* ==========================================================================
-   Segundo Bloque (Próxima Salida Inminente)
+   Segundo Bloque (Próxima Salida Inminente) — Contenedor tipo card compacto
    ========================================================================== */
 .second-block {
-  max-width: 900px;
-  width: 100%;
+  background-color: var(--background-secundario);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  padding: 24px 32px; /* Padding vertical equilibrado para menor altura */
+  width: calc(100% - 6rem);
+  max-width: 1300px;
   margin: 30px auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .second-block h2 {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--texto-principal);
   letter-spacing: -0.01em;
@@ -113,9 +119,135 @@
   transition: transform 0.2s ease;
 }
 
-/* Opcional: un pequeño efecto si querés que destaque la card de la próxima salida */
 .next-party:hover {
   transform: translateY(-2px);
+}
+
+
+/* ==========================================================================
+   Tercer Bloque (Banner Espacio para Creadores)
+   ========================================================================== */
+.third-block {
+  width: calc(100% - 6rem);
+  max-width: 1300px;
+  margin: 30px auto;
+  padding: 32px 36px;
+  border-radius: var(--radio-lg);
+  border: 1px solid var(--border);
+  /* Fondo oscuro con el sutil resplandor violeta en la esquina superior derecha */
+  background: radial-gradient(
+      circle at 88% 30%,
+      rgba(139, 92, 246, 0.16) 0%,
+      rgba(27, 27, 31, 0.95) 55%,
+      var(--background-secundario) 100%
+    );
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Si el usuario ya es organizador y el bloque queda vacío, lo ocultamos */
+.third-block:empty {
+  display: none;
+}
+
+/* Columna izquierda con badge, título y descripción */
+.third-block .text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 560px;
+}
+
+/* Primer <p>: Pill "Espacio para creadores"*/
+.third-block .text p:first-of-type {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(139, 92, 246, 0.22);
+  color: var(--color-primario-claro);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radio-pill);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  position: relative;
+}
+
+.third-block .text p:first-of-type::after {
+  position: absolute;
+  left: calc(100% + 12px);
+  white-space: nowrap;
+  color: var(--texto-muteado);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+/* Título principal */
+.third-block .text h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--texto-principal);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-top: 2px;
+}
+
+/* Descripción inferior */
+.third-block .text p:last-of-type {
+  font-size: 0.9rem;
+  color: var(--texto-secundario);
+  line-height: 1.55;
+}
+
+/* Columna derecha con el botón */
+.button-OrganizerForm {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Botón lila con brillo suave */
+.button-OrganizerForm > button {
+  background-color: var(--color-primario-claro) !important;
+  color: var(--texto-sobre-primario) !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 13px 22px;
+  border-radius: var(--radio-md);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(212, 196, 255, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.button-OrganizerForm > button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(212, 196, 255, 0.55);
+  opacity: 0.95;
+}
+
+.button-OrganizerForm > button:active {
+  transform: scale(0.98);
+}
+
+/* Responsivo para pantallas chicas */
+@media (max-width: 720px) {
+  .third-block,
+  .first-block,
+  .second-block {
+    width: calc(100% - 2rem);
+    padding: 20px;
+  }
+
+  .button-OrganizerForm,
+  .button-OrganizerForm > button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 

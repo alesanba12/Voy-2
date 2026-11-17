@@ -1,13 +1,13 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { UserDto } from '../user';
+import { PartySummaryDto, UserDto } from '../user';
 import { UserService } from '../user-service';
 import { Router } from '@angular/router';
 import { EditModal } from '../edit-modal/edit-modal';
 import { PartyCard } from '../../parties/party-card/party-card';
-import { PartyRes } from '../../parties/party';
+import { OrganizerModal } from '../organizer-modal/organizer-modal';
 
 @Component({
-  imports: [EditModal,PartyCard],
+  imports: [EditModal, PartyCard, OrganizerModal],
   selector: 'app-user-profile',
   styleUrl: './user-profile.css',
   templateUrl: './user-profile.html',
@@ -17,7 +17,7 @@ export class UserProfile implements OnInit {
   private readonly router = inject(Router);
 
   private readonly currentUser = signal<UserDto | undefined>(undefined);
-  private readonly myParties = signal<PartyRes[]>([]);
+  private readonly myParties = signal<PartySummaryDto[]>([]);
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe({
@@ -31,8 +31,7 @@ export class UserProfile implements OnInit {
     })
   }
 
-  readonly defaulImage = 'https://res.cloudinary.com/dmqsnjyfq/image/upload/v1793632574/voy/perfil/pngegg_xpixlj.png';
-
+  readonly defaulImage = '/user-alt-1-svgrepo-com.svg';
   goToOrganizerProfile() {
     this.router.navigateByUrl('/profile/organizerProfile');
   }
@@ -40,6 +39,7 @@ export class UserProfile implements OnInit {
   //Ventana modal de editar perfil
 
   readonly isEditModalOpen = signal(false);
+  readonly isOrganizerModalOpen = signal(false);
 
   onProfileUpdated(updatedUser: UserDto): void {
     this.currentUser.set(updatedUser);

@@ -1,1 +1,54 @@
-<p>organizer-modal works!</p>
+<div class="modal-container">
+  <h2>Solicitud de Organizador</h2>
+  <p class="modal-subtitle">Para publicar eventos y cobrar sin fricción, necesitamos verificar tu identidad.</p>
+
+  <form (ngSubmit)="onSubmit()" class="verify-form">
+    
+        <!-- Frente del DNI -->
+        <div class="form-group">
+        <label for="dniFront">Foto del frente del DNI <span class="required">*</span></label>
+        <input 
+            type="file" 
+            id="dniFront" 
+            accept="image/*" 
+            (change)="onFrontFileSelected($event)" 
+            required />
+        @if (dniFrontFile()) {
+            <span class="file-selected">Archivo seleccionado: {{ dniFrontFile()?.name }}</span>
+        }
+        </div>
+
+        <!-- Dorso del DNI -->
+        <div class="form-group">
+        <label for="dniBack">Foto del dorso del DNI <span class="required">*</span></label>
+        <input 
+            type="file" 
+            id="dniBack" 
+            accept="image/*" 
+            (change)="onBackFileSelected($event)" 
+            required />
+        @if (dniBackFile()) {
+            <span class="file-selected">Archivo seleccionado: {{ dniBackFile()?.name }}</span>
+        }
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="form-group">
+        <label for="additionalInfo">Información adicional (Opcional)</label>
+        <textarea 
+            id="additionalInfo" 
+            [value]="additionalInfo()" 
+            (input)="additionalInfo.set($any($event.target).value)" 
+            rows="3" 
+            maxlength="250"
+            placeholder="Contanos brevemente sobre los eventos que pensás realizar..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+        <button type="submit" class="btn-submit">
+            Enviar Solicitud
+        </button>
+        </div>
+
+  </form>
+</div>
