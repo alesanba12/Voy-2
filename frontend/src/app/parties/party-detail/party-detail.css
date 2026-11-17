@@ -22,7 +22,7 @@ a {
 .details {
   grid-area: details;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   grid-template-areas: 'left right';
   gap: 1rem;
   margin: 1rem;
@@ -79,17 +79,17 @@ a {
         }
       }
     }
-    .descripcion{
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        gap: 0.5rem;
-        background-color: var(--background-terciario);
-        padding: 1rem;
-        border-radius: 1rem;
-        .tagggs{
-            color: var(--color-primario);
-        }
+    .descripcion {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 0.5rem;
+      background-color: var(--background-terciario);
+      padding: 1rem;
+      border-radius: 1rem;
+      .tagggs {
+        color: var(--color-primario);
+      }
     }
   }
   .right {
@@ -98,17 +98,23 @@ a {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    .creator{
+    .creator {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background-color: var(--background-terciario);
+      padding: 1rem;
+      border-radius: 1rem;
+      .name {
         display: flex;
         align-items: center;
         gap: 1rem;
-        background-color: var(--background-terciario);
-        padding: 1rem;
-        border-radius: 1rem;
-        img{
-            height: 50px;
-            width: 50px;
-        }
+      }
+      img {
+        height: 50px;
+        width: 50px;
+      }
+      justify-content: space-between;
     }
   }
 }
@@ -130,7 +136,94 @@ a {
   .eventos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 360px));
-    gap: .1rem;
+    gap: 0.1rem;
     list-style: none;
   }
 }
+
+.tickets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--background-terciario);
+  padding: 1rem;
+  border-radius: 1rem;
+  h5{
+    color: var(--texto-muteado);
+  }
+  .stock{
+    display: flex;
+    justify-content: right;
+    color: var(--color-primario-claro);
+  }
+  .entrada {
+    background-color: var(--background-secundario);
+    padding: 1rem;
+    border-radius: 1rem;
+    .precio{
+      color: var(--color-primario-claro);
+    }
+  }
+  .tipo {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0 2rem;
+  }
+  .cantidad {
+    display: flex;
+    justify-content: space-between;
+  }
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--background-principal);
+    border-radius: 12px;
+    padding: 0;
+  }
+  .stepper:hover {
+    border-color: var(--color-primario);
+  }
+  .stepper button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  .stepper button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .comprar {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--color-primario-claro);
+    color: var(--texto-sobre-primario);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .comprar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .total {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem;
+  }
+}
+.partners { background: #1e1e20; border-radius: 20px; padding: 1.5rem; margin-top: 1rem; }
+.partners-header { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.partners-header h3 { margin: 0; flex: 1; }
+.badge { background: #2b2840; color: #c9b8ff; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: 600; }
+.add { background: #2a2a2d; color: #c9b8ff; border: none; border-radius: 12px; padding: 0.5rem 1rem; cursor: pointer; }
+.partner-list, .partner-search ul { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.75rem; }
+.partner { display: flex; align-items: center; gap: 1rem; background: #2a2a2d; border-radius: 14px; padding: 0.9rem 1rem; }
+.partner .info { flex: 1; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; background: #3a3a3f; display: grid; place-items: center; font-weight: 700; }
+.estado { color: #5fd49a; background: #1b1b1d; padding: 0.25rem 0.6rem; border-radius: 8px; }
+.remove { background: none; border: none; color: #ff7b7b; cursor: pointer; }
+.remove:disabled { opacity: 0.4; cursor: not-allowed; }
