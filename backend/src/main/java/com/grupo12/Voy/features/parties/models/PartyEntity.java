@@ -79,6 +79,10 @@ public class PartyEntity {
 
     private LocalDateTime dateTime;
 
+    @Column(name = "entradas")
+    @ColumnDefault("false")
+    private Boolean tickets;
+
     private Boolean hasPassed; //Si el evento ya paso
 
     @PrePersist

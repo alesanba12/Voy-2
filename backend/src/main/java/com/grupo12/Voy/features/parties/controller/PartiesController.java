@@ -98,6 +98,7 @@ public class PartiesController {
                               "dateTime": "2025-12-31T22:00:00",
                               "guestLimit": 100,
                               "partyAccesibility": true,
+                              "tickets": false,
                               "price": 2000.00,
                               "tagsList": ["MUSIC"]
                             }

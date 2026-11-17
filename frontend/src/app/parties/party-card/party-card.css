@@ -2,7 +2,7 @@ article {
   background-color: var(--background-secundario);
   border: 1px solid var(--background-terciario);
   margin: 1rem;
-  border-radius: 1rem;
+  border-radius: 0.4rem;
   overflow: hidden;
   cursor: pointer;
   transition:
@@ -21,6 +21,7 @@ article {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
+    container-type: inline-size;
     background: var(--background-terciario);
     overflow: hidden;
   }
@@ -69,6 +70,16 @@ article {
     position: absolute;
     bottom: 12px;
     left: 12px;
+    right: 12px;
     z-index: 1;
+
+    h3 {
+      font-size: clamp(1rem, 5cqi, 1.5rem);
+      line-height: 1.15;
+    }
+
+    p {
+      font-size: clamp(0.75rem, 3.5cqi, 1rem);
+    }
   }
 }

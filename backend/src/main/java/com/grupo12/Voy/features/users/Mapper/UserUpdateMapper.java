@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface UserUpdateMapper {
     @Mapping(source = "password", target = "credentials.password")
+    @Mapping(target = "imageUrl", ignore = true)
     UserEntity toEntity (UserUpdateDto userUpdateDto);
 }
