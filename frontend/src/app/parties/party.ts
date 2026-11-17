@@ -8,6 +8,7 @@ export interface PartyRes {
         "dateTime": string,
         "guestLimit": number,
         "partyAccesibility": boolean,
+        "tickets": boolean,
         "state": boolean,
         "organizerName": string,///deberia mostrar username no el email, pero por ahora dejo el email como identificador
         "coOrganizerName": string[],
@@ -24,6 +25,7 @@ export interface PartyReq {
         "dateTime": string,
         "guestLimit": number,
         "partyAccesibility": boolean,
+        "tickets": boolean,
         "tagsList": string[],
         "imageUrl": File | null,
 }
@@ -39,6 +41,7 @@ export function toFormModel(party: PartyRes): PartyFormModel {
     dateTime: party.dateTime.slice(0, 16),
     guestLimit: party.guestLimit,
     partyAccesibility: party.partyAccesibility,
+    tickets: party.tickets,
     tagsList: [...party.tags],
     imageUrl: null,
   };

@@ -22,27 +22,7 @@
       placeholder="Ingresa la ciudad"
     />
   </div>
-  <!-- <div class="filter">
-    <label for="dateFrom">Desde</label>
-    <input
-      type="date"
-      id="dateFrom"
-      #dateSelectFrom
-      [value]="filterFrom()"
-      (change)="filterFrom.set(dateSelectFrom.value)"
-    />
-  </div>
-  <div class="filter">
-    <label for="dateTo">Hasta</label>
-    <input
-      type="date"
-      id="dateTo"
-      #dateSelectTo
-      [value]="filterTo() ?? ''"
-      (change)="filterTo.set(dateSelectTo.value)"
-    />
-  </div> -->
-
+ 
   <div class="filter">
     <app-date-filter initialPreset="7d" (applied)="onDateChange($event)" />
   </div>

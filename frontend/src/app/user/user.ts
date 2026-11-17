@@ -6,12 +6,13 @@ export interface NewUserDto{
     birthday:string
 }
 
-export interface UserDto{
-    username:string
-    email:string
-    bio:string
-    isOrganizer:boolean
-    imageUrl:string
+export interface UserDto {
+  externalId: string;
+  username: string;
+  email: string;
+  bio: string;
+  isOrganizer: boolean;
+  imageUrl: string;
 }
 
 export interface UserFollowDto{

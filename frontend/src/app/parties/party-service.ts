@@ -34,6 +34,7 @@ export class PartyClient {
     data.append('dateTime', newParty.dateTime);
     data.append('guestLimit', String(newParty.guestLimit));
     data.append('partyAccesibility', String(newParty.partyAccesibility));
+    data.append('tickets', String(newParty.tickets));
     newParty.tagsList.forEach((tag) => data.append('tagsList', tag));
 
     if (newParty.imageUrl) {
@@ -49,5 +50,17 @@ export class PartyClient {
 
   updateParty(id: string, editedParty: PartyFormModel) {
     return this.http.put<PartyRes>(this.apiUrl + '/' + id, editedParty);
+  }
+
+  addCoOrganizer(partyId: string, otherUserExtId: string) {
+    return this.http.patch<PartyRes>(`${this.apiUrl}/${partyId}/coOrganizers/add`, null, {
+      params: { otherUserExtId },
+    });
+  }
+
+  removeCoOrganizer(partyId: string, otherUserExtId: string) {
+    return this.http.patch<PartyRes>(`${this.apiUrl}/${partyId}/coOrganizers/remove`, null, {
+      params: { otherUserExtId },
+    });
   }
 }
