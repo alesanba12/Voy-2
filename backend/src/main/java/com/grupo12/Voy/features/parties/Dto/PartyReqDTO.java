@@ -30,6 +30,8 @@ public record PartyReqDTO(
         Integer guestLimit,
         @NotNull(message = "La visibilidad del evento no puede ser nulo")
         Boolean partyAccesibility,
+        @NotNull(message = "Se debe informar si es con o sin tickets")
+        Boolean tickets,
         @NotEmpty(message = "Por lo menos debe haber una etiqueta")
         @Size(max = 5, message = "Como máximo puede haber 5 etiquetas")
         List<@NotBlank String> tagsList,

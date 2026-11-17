@@ -141,24 +141,24 @@
     <div class="ticketoption">
       <button
         type="button"
-        [class.selected]="tickets()"
-        [attr.aria-pressed]="tickets()"
-        (click)="tickets.set(true)"
+        [class.selected]="partyForm.tickets().value()"
+        [attr.aria-pressed]="partyForm.tickets().value()"
+        (click)="setTickets(true)"
       >
         Con entradas / Tickets pagos
       </button>
       <button
         type="button"
-        [class.selected]="!tickets()"
-        [attr.aria-pressed]="!tickets()"
-        (click)="tickets.set(false)"
+        [class.selected]="!partyForm.tickets().value()"
+        [attr.aria-pressed]="!partyForm.tickets().value()"
+        (click)="setTickets(false)"
       >
         Sin entradas / Gratuito
       </button>
     </div>
 
     <div class="ticketsFormControl">
-      @if (tickets()) {
+      @if (partyForm.tickets().value()) {
         <h4>ENTRADA GENERAL</h4>
         <div class="cant">
           <div class="cantidad">

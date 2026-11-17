@@ -23,6 +23,8 @@
             <button class="user-avatar-btn" (click)="toggleUserMenu()" aria-label="Abrir menú de usuario">
                 @if (userProfile()?.imageUrl; as imageUrl) {
                 <img [src]="imageUrl" alt="Foto de perfil">
+                }@else {
+                    <img [src]="defaulImage" alt="Foto de perfil">
                 }
             </button>
             @if (isMenuOpen()) {
