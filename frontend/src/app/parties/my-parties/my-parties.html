@@ -7,7 +7,10 @@
       <h1>Mis eventos</h1>
       <p>Consultá tus eventos y accedé a sus detalles o edición.</p>
     </div>
-    <a class="primary-button" routerLink="/parties/new">Crear evento</a>
+    <a class="primary-button" routerLink="/parties/new">
+      <span class="button-icon" aria-hidden="true">+</span>
+      <span>Crear Evento</span>
+    </a>
   </header>
 
   @if (isLoading()) {
@@ -20,7 +23,10 @@
     <section class="empty-state">
       <h2>Todavía no creaste eventos</h2>
       <p>Cuando publiques uno, aparecerá acá.</p>
-      <a class="primary-button" routerLink="/parties/new">Crear mi primer evento</a>
+      <a class="primary-button" routerLink="/parties/new">
+        <span class="button-icon" aria-hidden="true">+</span>
+        <span>Crear mi primer evento</span>
+      </a>
     </section>
   } @else {
     <ul class="party-grid">

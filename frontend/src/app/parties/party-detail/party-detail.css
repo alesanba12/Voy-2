@@ -2,17 +2,26 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-areas: 'superior' 'details' 'recomendaciones';
-  gap: 1rem;
-  padding: 1rem;
+  gap: 1.5rem;
+  padding: 2rem;
 }
 .superior {
   grid-area: superior;
   display: flex;
   justify-content: space-between;
   margin: 1rem;
+  .volver {
+    font-size: clamp(0.85rem, 1vw, 1rem);
+  }
+
   .followshare {
     display: flex;
-    gap: 1rem;
+    gap: clamp(0.5rem, 1vw, 1rem);
+
+    button {
+      padding: clamp(0.45rem, 0.8vw, 0.65rem) clamp(0.65rem, 1.2vw, 1rem);
+      font-size: clamp(0.85rem, 1vw, 1rem);
+    }
   }
 }
 a {
@@ -22,27 +31,39 @@ a {
 .details {
   grid-area: details;
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
   grid-template-areas: 'left right';
   gap: 1rem;
   margin: 1rem;
+  align-items: start;
   .left {
     grid-area: left;
     min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    .ubiYfecha {
+      h5 {
+        font-size: clamp(0.72rem, 1vw, 0.875rem);
+      }
+
+      p {
+        font-size: clamp(0.8rem, 1vw, 1rem);
+        line-height: 1.45;
+      }
+    }
     > img {
       display: block;
       width: 100%;
-      max-width: 100%;
+      height: 100%;
       max-height: 32rem;
-      object-fit: contain;
-      border-radius: 1rem;
+      object-fit: cover; /* Llena todo el espacio disponible recortando bordes si hace falta */
+      object-position: center; /* Centra el encuadre */
+      border-radius: 0.4rem;
     }
     .ubiYfecha {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
       justify-content: space-evenly;
       .ubi {
         display: flex;
@@ -50,7 +71,7 @@ a {
         gap: 0.5rem;
         background-color: var(--background-terciario);
         padding: 1rem;
-        border-radius: 1rem;
+        border-radius: 0.4rem;
         img {
           margin-top: 1rem;
           width: 30px;
@@ -67,7 +88,7 @@ a {
         gap: 0.5rem;
         background-color: var(--background-terciario);
         padding: 1rem;
-        border-radius: 1rem;
+        border-radius: 0.4rem;
         img {
           margin-top: 1rem;
           width: 30px;
@@ -85,10 +106,19 @@ a {
       width: 100%;
       gap: 0.5rem;
       background-color: var(--background-terciario);
-      padding: 1rem;
-      border-radius: 1rem;
+      padding: 1.5rem;
+      border-radius: 0.4rem;
+      font-size: clamp(0.9rem, 1.1vw, 1.1rem);
+      line-height: 1.55;
+
+      h3 {
+        font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+        line-height: 1.2;
+      }
+
       .tagggs {
         color: var(--color-primario);
+        font-size: clamp(0.75rem, 0.95vw, 0.9rem);
       }
     }
   }
@@ -98,13 +128,18 @@ a {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    > h1 {
+      font-size: clamp(1.75rem, 3.2vw, 3rem);
+      line-height: 1.1;
+    }
+
     .creator {
       display: flex;
       align-items: center;
       gap: 1rem;
       background-color: var(--background-terciario);
       padding: 1rem;
-      border-radius: 1rem;
+      border-radius: 0.4rem;
       .name {
         display: flex;
         align-items: center;
@@ -113,6 +148,10 @@ a {
       img {
         height: 50px;
         width: 50px;
+      }
+
+      h3 {
+        font-size: clamp(1rem, 1.5vw, 1.4rem);
       }
       justify-content: space-between;
     }
@@ -133,6 +172,19 @@ a {
   display: flex;
   flex-direction: column;
   margin: 1rem;
+
+  > h5 {
+    font-size: clamp(0.8rem, 1vw, 1rem);
+  }
+
+  > h3 {
+    font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  }
+
+  > p {
+    font-size: clamp(0.9rem, 1vw, 1.1rem);
+  }
+
   .eventos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 360px));
