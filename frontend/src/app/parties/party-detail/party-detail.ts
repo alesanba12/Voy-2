@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
-import { httpResource } from '@angular/common/http';
+import { HttpErrorResponse, httpResource } from '@angular/common/http';
 import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, forkJoin, map, of, switchMap, timer } from 'rxjs';
@@ -208,7 +208,11 @@ export class PartyDetail {
 
   private canBePartner(user: UserDto) {
     const party = this.party();
-    return user.email !== party?.organizerName && !party?.coOrganizerName.includes(user.email);
+    return (
+      user.isOrganizer &&
+      user.email !== party?.organizerName &&
+      !party?.coOrganizerName.includes(user.email)
+    );
   }
 
   protected initials(name: string) {
@@ -261,11 +265,28 @@ export class PartyDetail {
         this.partnerLoading.set(false);
         onSuccess?.();
       },
-      error: () => {
+      error: (error: unknown) => {
         this.partnerLoading.set(false);
-        this.toastService.show(errorMessage, 'error');
+        this.toastService.show(this.partnerErrorMessage(error) ?? errorMessage, 'error');
       },
     });
+  }
+
+  private partnerErrorMessage(error: unknown): string | null {
+    if (!(error instanceof HttpErrorResponse)) return null;
+
+    const details: unknown = error.error;
+    if (
+      typeof details === 'object' &&
+      details !== null &&
+      'message' in details &&
+      typeof details.message === 'string' &&
+      details.message.trim()
+    ) {
+      return details.message;
+    }
+
+    return null;
   }
 
   // ───────── Recomendaciones ─────────
