@@ -12,12 +12,12 @@ import {
   FormRoot,
   FormField,
 } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TagsService } from '../../tags/tags.service';
 import { FormsModule } from '@angular/forms';
 import { ImageUpload } from '../../shared/components/image-upload/image-upload';
 import { ConfirmModalService } from '../../shared/components/modal-dialog/modal-dialog-service';
-import { firstValueFrom } from 'rxjs';
+import { finalize, firstValueFrom } from 'rxjs';
 
 @Component({
   imports: [FormRoot, RouterLink, FormField, FormsModule, ImageUpload],
@@ -30,10 +30,16 @@ export class PartyForm implements OnInit {
   private readonly tagService = inject(TagsService);
   private readonly confirmModal = inject(ConfirmModalService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly editingPartyId = this.route.snapshot.paramMap.get('id');
 
   public readonly editingParty = input<PartyRes>();
-  protected readonly isEditing = computed(() => this.editingParty() !== undefined);
+  protected readonly isEditing = computed(
+    () => this.editingParty() !== undefined || this.editingPartyId !== null,
+  );
   public readonly edited = output<PartyRes>();
+  protected readonly isLoadingParty = signal(false);
+  protected readonly partyLoadError = signal<string | null>(null);
   protected readonly submitAttempted = signal(false);
   protected readonly submitError = signal<string | null>(null);
   protected readonly submitSuccess = signal<string | null>(null);
@@ -43,6 +49,16 @@ export class PartyForm implements OnInit {
     const editingParty = this.editingParty();
     if (editingParty) {
       this.loadForEdit(editingParty);
+    } else if (this.editingPartyId) {
+      this.isLoadingParty.set(true);
+      this.partyClient
+        .getById(this.editingPartyId)
+        .pipe(finalize(() => this.isLoadingParty.set(false)))
+        .subscribe({
+          next: (party) => this.loadForEdit(party),
+          error: () =>
+            this.partyLoadError.set('No se pudo cargar el evento para editar. Intentá nuevamente.'),
+        });
     }
   }
 

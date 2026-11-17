@@ -1,8 +1,13 @@
-<div class="volver">
-  <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
-</div>
+@if (isLoadingParty()) {
+  <p class="form-state" role="status">Cargando el evento para editar...</p>
+} @else if (partyLoadError()) {
+  <p class="form-state form-state-error" role="alert">{{ partyLoadError() }}</p>
+} @else {
+  <div class="volver">
+    <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
+  </div>
 
-<form [formRoot]="partyForm">
+  <form [formRoot]="partyForm">
   <div class="headline">
     <h1>{{ isEditing() ? 'Editando tu evento' : 'Creando tu nuevo evento' }}</h1>
     <p>
@@ -248,4 +253,5 @@
       {{ isSubmitting() ? 'Guardando...' : isEditing() ? 'Guardar cambios' : 'Publicar Evento' }}
     </button>
   </div>
-</form>
+  </form>
+}
