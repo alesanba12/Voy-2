@@ -1,0 +1,25 @@
+import { PartyRes } from "../parties/party";
+
+export interface Ticket {
+        userExternalId: string,
+        userEmail: string,
+        ticketExternalId: string,
+}
+export interface TicketDto {
+        userEmail: string,
+        ticketExternalId: string
+        party: PartyRes
+}
+export interface TicketReqDto{
+        paymentMethod: string,
+        quantity: number,
+        partyIdExternal: string,
+}
+
+export interface TicketAndReceiptDto {
+  userExternalId: string;
+  userEmail: string;
+  party: PartyRes;
+  //receipt: ReceiptResponseDto; // ajustalo a tu ReceiptResponseDTO
+  ticketsExternalIds: string[];
+}

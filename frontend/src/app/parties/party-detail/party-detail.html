@@ -121,8 +121,13 @@
             <small>Sin cargos ocultos</small>
           </div>
 
-          <button type="button" class="comprar" [disabled]="p.guestLimit < 1" (click)="buy()">
-            Unirme al evento / Comprar Tickets &rarr;
+          <button
+            type="button"
+            class="comprar"
+            [disabled]="p.guestLimit < 1 || buyLoading()"
+            (click)="buy()"
+          >
+            {{ buyLoading() ? 'Procesando...' : 'Unirme al evento / Comprar Tickets →' }}
           </button>
         } @else {
           @if (isOwner()) {
@@ -220,9 +225,7 @@
     @if (partiesResource.isLoading()) {
       <app-loading-spinner />
     } @else if (partiesResource.error()) {
-      <p class="recommendation-error" role="alert">
-        No se pudieron cargar las recomendaciones.
-      </p>
+      <p class="recommendation-error" role="alert">No se pudieron cargar las recomendaciones.</p>
     } @else if (recomended.length) {
       <ul class="eventos">
         @for (party of recomended; track $index) {
