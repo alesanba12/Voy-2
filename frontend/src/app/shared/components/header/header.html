@@ -28,7 +28,7 @@
                 }
             </button>
             @if (isMenuOpen()) {
-            <div class="dropdown-menu">
+            <div class="dropdown-menu" (click)="closeUserMenu()">
                 <a routerLink="/profile" class="dropdown-item">Mi Perfil</a>
                 @if (isAdmin()) {
                 <a routerLink="/admin" class="dropdown-item admin-link">Panel Admin</a>

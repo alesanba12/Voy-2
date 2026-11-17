@@ -8,9 +8,10 @@ import { PartyRes } from '../party';
 import { EventDatePipe, PartyCard } from '../party-card/party-card';
 import { UserService } from '../../user/user-service';
 import { PartySummaryDto, UserDto, UserFollowDto } from '../../user/user';
+import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
-  imports: [RouterLink, EventDatePipe, PartyCard],
+  imports: [RouterLink, EventDatePipe, PartyCard, LoadingSpinner],
   selector: 'app-party-detail',
   styleUrl: './party-detail.css',
   templateUrl: './party-detail.html',

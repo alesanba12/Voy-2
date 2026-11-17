@@ -214,16 +214,34 @@
   </div>
 
   <div class="recomendaciones">
-    @if (recomended.length) {
-      <h5>Recomendaciones</h5>
-      <h3>Eventos similares en la zona</h3>
+    <h5>Recomendaciones</h5>
+    <h3>Eventos similares en la zona</h3>
+
+    @if (partiesResource.isLoading()) {
+      <app-loading-spinner />
+    } @else if (partiesResource.error()) {
+      <p class="recommendation-error" role="alert">
+        No se pudieron cargar las recomendaciones.
+      </p>
+    } @else if (recomended.length) {
       <ul class="eventos">
-        @for (rec of recomended; track rec.externalId) {
-          <li><app-party-card [party]="rec" /></li>
+        @for (party of recomended; track $index) {
+          <li><app-party-card [party]="party"></app-party-card></li>
         }
       </ul>
     } @else {
-      <p>No hay eventos similares en la zona</p>
+      <div class="recommendation-empty" role="status">
+        <span class="recommendation-empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3.5" y="5" width="17" height="16" rx="3"></rect>
+            <path d="M8 3v4M16 3v4M3.5 10h17M9 14l5 5m0-5-5 5"></path>
+          </svg>
+        </span>
+        <div>
+          <h4>Todavía no hay eventos similares</h4>
+          <p>Cuando haya más eventos en la zona, los vas a encontrar acá.</p>
+        </div>
+      </div>
     }
   </div>
 }
