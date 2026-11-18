@@ -86,14 +86,6 @@
             </div>
 
             @if (canTransfer(t)) {
-              <button
-                type="button"
-                class="scan-button"
-                [disabled]="transferLoading()"
-                (click)="openTransfer(t)"
-              >
-                Transferir entrada
-              </button>
 
               @if (transferTicketId() === t.ticketExternalId) {
                 <form class="transfer-form" (submit)="transferTicket(t); $event.preventDefault()">
