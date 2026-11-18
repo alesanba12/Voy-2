@@ -11,6 +11,7 @@ import { PartySummaryDto, UserDto, UserFollowDto } from '../../user/user';
 import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
 import { ConfirmModalService } from '../../shared/components/modal-dialog/modal-dialog-service';
 import { ToastService } from '../../shared/components/toast/toast-service';
+import { TicketClient } from '../../tickets/ticket-service';
 
 @Component({
   imports: [RouterLink, EventDatePipe, PartyCard, LoadingSpinner],
@@ -18,7 +19,6 @@ import { ToastService } from '../../shared/components/toast/toast-service';
   styleUrl: './party-detail.css',
   templateUrl: './party-detail.html',
 })
-
 export class PartyDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -155,11 +155,42 @@ export class PartyDetail {
     }
   }
 
+  // Seguir coorganizadores (loading por usuario, para no bloquear los demás botones)
+protected readonly followingUserId = signal<string | null>(null);
+
+private readonly followedUserIds = computed(
+  () => new Set(this.followedUsers().map((u) => u.externalId)),
+);
+
+protected isFollowingUser(user: UserDto) {
+  return this.followedUserIds().has(user.externalId);
+}
+
+protected isCurrentUser(user: UserDto) {
+  return user.email === this.currentUser()?.email;
+}
+
+protected toggleFollowPartner(user: UserDto) {
+  if (this.followingUserId() || this.isCurrentUser(user)) return;
+
+  this.followingUserId.set(user.externalId);
+  this.userService.alterFollowUser(user.externalId).subscribe({
+    next: (list) => {
+      this.followedUsers.set(list);
+      this.followingUserId.set(null);
+    },
+    error: (err) => {
+      this.followingUserId.set(null);
+      this.handleFollowError(err);
+    },
+  });
+}
+
   // ───────── Tickets ─────────
   protected readonly MIN_TICKETS = 1;
   protected readonly MAX_TICKETS = 5;
   protected readonly quantity = signal(1);
-
+  private readonly ticketClient = inject(TicketClient);
   protected readonly maxQuantity = computed(() =>
     Math.min(this.MAX_TICKETS, this.party()?.guestLimit ?? this.MAX_TICKETS),
   );
@@ -170,9 +201,50 @@ export class PartyDetail {
     const next = Math.trunc(this.quantity() + delta);
     this.quantity.set(Math.min(this.maxQuantity(), Math.max(this.MIN_TICKETS, next)));
   }
+  protected readonly buyLoading = signal(false);
 
-  protected buy() {}
+  // Pago ficticio mientras no haya pasarela real
+  private readonly SIMULATED_PAYMENT = 'SIMULADO';
 
+  protected buy() {
+    const id = this.partyId();
+    if (!id || this.isOwner() || this.buyLoading()) return;
+
+    const quantity = this.quantity();
+    this.buyLoading.set(true);
+
+    this.ticketClient
+      .purchase({
+        paymentMethod: this.SIMULATED_PAYMENT,
+        quantity,
+        partyIdExternal: id,
+      })
+      .subscribe({
+        next: (res) => {
+          this.buyLoading.set(false);
+          // Refresca el evento para actualizar el cupo
+          this.partyOverride.set(undefined);
+          this.partyResource.reload();
+          this.quantity.set(1);
+          this.toastService.show(
+            `¡Compra exitosa! Se generaron ${res.ticketsExternalIds.length} entrada(s).`,
+            'success',
+          );
+        },
+        error: (err: unknown) => {
+          this.buyLoading.set(false);
+          if (err instanceof HttpErrorResponse && err.status === 401) {
+            this.router.navigate(['/login']);
+            return;
+          }
+          // Muestra el mensaje del back (ej: "Solo quedan 2 entradas disponibles")
+          this.toastService.show(
+            this.partnerErrorMessage(err) ?? 'No se pudo completar la compra. Intentá nuevamente.',
+            'error',
+          );
+        },
+      });
+  }
   // ───────── Partners (coorganizadores) ─────────
   protected readonly adding = signal(false);
   protected readonly searchTerm = signal('');

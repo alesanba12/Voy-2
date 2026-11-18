@@ -1,10 +1,17 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { PartySummaryDto } from '../../user/user';
 import { UserService } from '../../user/user-service';
+import { TicketClient } from '../../tickets/ticket-service';
+import { OrganizerTicketDto } from '../../tickets/ticket';
 
 type PartyFilter = 'all' | 'upcoming' | 'past';
+
+interface PartySalesSummary {
+  soldTickets: number;
+  totalRevenue: number;
+}
 
 @Component({
   imports: [RouterLink],
@@ -14,11 +21,19 @@ type PartyFilter = 'all' | 'upcoming' | 'past';
 })
 export class MyParties implements OnInit {
   private readonly userService = inject(UserService);
+  private readonly ticketClient = inject(TicketClient);
   protected readonly parties = signal<PartySummaryDto[]>([]);
+  private readonly sales = signal<Record<string, PartySalesSummary>>({});
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
   protected readonly searchTerm = signal('');
   protected readonly activeFilter = signal<PartyFilter>('all');
+  protected readonly totalSoldTickets = computed(() =>
+    Object.values(this.sales()).reduce((total, summary) => total + summary.soldTickets, 0),
+  );
+  protected readonly totalRevenue = computed(() =>
+    Object.values(this.sales()).reduce((total, summary) => total + summary.totalRevenue, 0),
+  );
 
   protected readonly upcomingParties = computed(() =>
     this.parties().filter((party) => this.isUpcoming(party)),
@@ -49,13 +64,57 @@ export class MyParties implements OnInit {
   });
 
   ngOnInit(): void {
-    this.userService
-      .listMyParties()
+    forkJoin({
+      parties: this.userService.listMyParties(),
+      tickets: this.ticketClient.listOrganizerTickets(),
+    })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (parties) => this.parties.set(parties),
+        next: ({ parties, tickets }) => {
+          this.parties.set(parties);
+          this.sales.set(this.summarizeSales(tickets, parties));
+        },
         error: () => this.hasError.set(true),
       });
+  }
+
+  protected salesFor(partyId: string): PartySalesSummary {
+    return this.sales()[partyId] ?? { soldTickets: 0, totalRevenue: 0 };
+  }
+
+  protected formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  }
+
+  private summarizeSales(
+    tickets: OrganizerTicketDto[],
+    parties: PartySummaryDto[],
+  ): Record<string, PartySalesSummary> {
+    const summaries: Record<string, PartySalesSummary> = {};
+    const partyIds = new Set(parties.map((party) => party.externalId));
+
+    for (const ticket of tickets) {
+      if (
+        !partyIds.has(ticket.party.externalId) ||
+        ticket.receipt.status !== 'APROBADA' ||
+        ticket.receipt.price <= 0
+      ) {
+        continue;
+      }
+
+      const partyId = ticket.party.externalId;
+      const summary = summaries[partyId] ?? { soldTickets: 0, totalRevenue: 0 };
+      summary.soldTickets += 1;
+      // The receipt price is per ticket; finalPrice would count a multi-ticket purchase repeatedly.
+      summary.totalRevenue += ticket.receipt.price;
+      summaries[partyId] = summary;
+    }
+
+    return summaries;
   }
 
   protected setFilter(filter: PartyFilter): void {

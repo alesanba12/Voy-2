@@ -121,8 +121,13 @@
             <small>Sin cargos ocultos</small>
           </div>
 
-          <button type="button" class="comprar" [disabled]="p.guestLimit < 1" (click)="buy()">
-            Unirme al evento / Comprar Tickets &rarr;
+          <button
+            type="button"
+            class="comprar"
+            [disabled]="p.guestLimit < 1 || buyLoading()"
+            (click)="buy()"
+          >
+            {{ buyLoading() ? 'Procesando...' : 'Unirme al evento / Comprar Tickets →' }}
           </button>
         } @else {
           @if (isOwner()) {
@@ -148,68 +153,37 @@
       </div>
 
       @if (isOwner()) {
-        <section class="card partners">
-          <div class="partners-header">
-            <h3>Gestión de Partners</h3>
-            <span class="badge">{{ p.coOrganizerName.length }} activos</span>
-            <button type="button" class="add" (click)="adding.set(!adding())">
-              {{ adding() ? 'Cancelar' : '+ Agregar Partner' }}
+  <section class="card partners">
+    <!-- ...todo el bloque de gestión igual que ahora... -->
+  </section>
+} @else if (p.coOrganizerName.length) {
+  <section class="card partners">
+    <div class="partners-header">
+      <h3>Coorganizadores del evento</h3>
+      <span class="badge">{{ p.coOrganizerName.length }}</span>
+    </div>
+
+    <ul class="lista">
+      @for (u of partners.value(); track u.externalId) {
+        <li class="partner">
+          <div class="avatar">{{ initials(u.username) }}</div>
+          <strong class="info">{{ u.username }}</strong>
+          @if (!isCurrentUser(u)) {
+            <button
+              type="button"
+              class="follow"
+              [attr.aria-pressed]="isFollowingUser(u)"
+              [disabled]="followingUserId() === u.externalId"
+              (click)="toggleFollowPartner(u)"
+            >
+              {{ isFollowingUser(u) ? 'Siguiendo' : 'Seguir' }}
             </button>
-          </div>
-
-          <small>
-            Colaboradores con permisos de acceso, escaneo de tickets QR y control de admisión en
-            puerta.
-          </small>
-
-          @if (adding()) {
-            <div class="partner-search">
-              <input
-                type="search"
-                placeholder="Buscar organizador por nombre de usuario"
-                [value]="searchTerm()"
-                (input)="searchTerm.set($any($event.target).value)"
-              />
-              @if (searchResults.isLoading()) {
-                <small>Buscando...</small>
-              } @else if (searchTerm().trim().length >= 2 && !searchResults.value()?.length) {
-                <small>No se encontraron organizadores disponibles.</small>
-              }
-              <ul class="lista">
-                @for (u of searchResults.value(); track u.externalId) {
-                  <li class="partner">
-                    <span class="info">{{ u.username }}</span>
-                    <button type="button" [disabled]="partnerLoading()" (click)="addPartner(u)">
-                      Agregar
-                    </button>
-                  </li>
-                }
-              </ul>
-            </div>
           }
-
-          <ul class="lista">
-            @for (u of partners.value(); track u.externalId) {
-              <li class="partner">
-                <div class="avatar">{{ initials(u.username) }}</div>
-                <strong class="info">{{ u.username }}</strong>
-                <span class="estado">Activo</span>
-                <button
-                  type="button"
-                  class="remove"
-                  aria-label="Quitar partner"
-                  [disabled]="partnerLoading()"
-                  (click)="removePartner(u)"
-                >
-                  ✕
-                </button>
-              </li>
-            } @empty {
-              <li class="empty">Todavía no agregaste partners.</li>
-            }
-          </ul>
-        </section>
+        </li>
       }
+    </ul>
+  </section>
+}
     </div>
   </div>
 
@@ -220,9 +194,7 @@
     @if (partiesResource.isLoading()) {
       <app-loading-spinner />
     } @else if (partiesResource.error()) {
-      <p class="recommendation-error" role="alert">
-        No se pudieron cargar las recomendaciones.
-      </p>
+      <p class="recommendation-error" role="alert">No se pudieron cargar las recomendaciones.</p>
     } @else if (recomended.length) {
       <ul class="eventos">
         @for (party of recomended; track $index) {

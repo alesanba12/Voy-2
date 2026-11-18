@@ -85,6 +85,47 @@
   line-height: 1;
 }
 
+.sales-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sales-overview-card {
+  display: grid;
+  gap: 0.2rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--borde);
+  border-left: 3px solid var(--color-primario);
+  border-radius: var(--radio-lg);
+  background: var(--background-secundario);
+}
+
+.sales-overview-card span {
+  color: var(--texto-secundario);
+  font-size: 0.8rem;
+}
+
+.sales-overview-card strong {
+  color: var(--texto-principal);
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.sales-overview-card.revenue {
+  border-left-color: var(--color-exito);
+}
+
+.sales-overview-card.revenue strong {
+  color: var(--color-exito);
+}
+
+.sales-overview-card small {
+  color: var(--texto-muteado);
+  font-size: 0.7rem;
+}
+
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -270,6 +311,32 @@
 .party-date,
 .party-location {
   font-size: 0.8rem;
+}
+
+.party-sales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 0.7rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--borde);
+  color: var(--texto-secundario);
+  font-size: 0.78rem;
+}
+
+.party-sales span {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: baseline;
+}
+
+.party-sales strong {
+  color: var(--color-primario-claro);
+}
+
+.party-sales span:last-child strong {
+  color: var(--color-exito);
 }
 
 .party-actions {

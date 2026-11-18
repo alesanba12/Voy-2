@@ -2,6 +2,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service, signal } from '@angular/core';
 import { OrganizerVerifyReqDTO, PartySummaryDto, UserDto, UserFollowDto } from './user';
+import { TicketDto } from '../tickets/ticket';
 
 @Service()
 export class UserService {
@@ -73,10 +74,10 @@ export class UserService {
     return this.client.patch<PartySummaryDto[]>(`${this.url}/follow/party/${idParty}`, {});
   }
 
-  // 12. Listar mis tickets
-  // listMyTickets() {
-  //   return this.client.get<TicketU[]>(`${this.url}/myTickets`);
-  // }
+  //12. Listar mis tickets
+  listMyTickets() {
+    return this.client.get<TicketDto[]>(`${this.url}/myTickets`);
+  }
 
   // // 13. Listar mis recibos
   // listMyReceipts() {
