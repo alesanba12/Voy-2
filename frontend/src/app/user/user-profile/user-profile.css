@@ -15,7 +15,12 @@
 }
 
 .first-block {
-  background-color: var(--background-secundario);
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(38, 38, 43, 0.95) 0%,
+    rgba(27, 27, 31, 0.98) 60%,
+    var(--background-secundario) 100%
+  );
   border: 1px solid var(--borde);
   border-radius: var(--radio-lg);
   padding: 32px;
@@ -27,7 +32,7 @@
   align-items: center;
   gap: 24px;
   flex-wrap: wrap;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 
 /* Foto y datos a la izquierda */
@@ -53,7 +58,6 @@
   color: var(--texto-principal);
   margin-bottom: 4px;
   letter-spacing: -0.02em;
-  font-style:var(--fuente-principal) ;
 }
 
 .name h3 {
@@ -62,7 +66,7 @@
   max-width: 400px;
 }
 
-/* Botones laterales a la derecha (respetando tus estilos originales) */
+/* Botones laterales a la derecha */
 .side-buttons {
   display: flex;
   align-items: center;
@@ -103,20 +107,26 @@
 
 
 /* ==========================================================================
-   Segundo Bloque (Próxima Salida Inminente) — Contenedor tipo card compacto
+   Segundo Bloque (Próxima Salida Inminente / Estado Vacío con Vito)
    ========================================================================== */
 .second-block {
-  background-color: var(--background-secundario);
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(38, 38, 43, 0.95) 0%,
+    rgba(27, 27, 31, 0.98) 60%,
+    var(--background-secundario) 100%
+  );
   border: 1px solid var(--borde);
   border-radius: var(--radio-lg);
-  padding: 24px 32px; /* Padding vertical equilibrado para menor altura */
+  padding: 28px 32px;
   width: calc(100% - 6rem);
   max-width: 1300px;
   margin: 30px auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  align-items: center; /* Centramos todo el contenido horizontalmente */
+  gap: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 
 .second-block h2 {
@@ -124,6 +134,7 @@
   font-weight: 600;
   color: var(--texto-principal);
   letter-spacing: -0.01em;
+  align-self: flex-start; /* Alinea el título a la izquierda mientras Vito queda protagonista al centro */
   margin-left: 4px;
 }
 
@@ -137,6 +148,17 @@
 }
 
 
+.second-block img,
+.vito-work img {
+  max-height: 400px; /* Tamaño ideal: protagonista total que entra perfecto en la pantalla */
+  width: auto;
+  object-fit: contain;
+  margin: 10px auto;
+  display: block;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+}
+
+
 /* ==========================================================================
    Tercer Bloque (Banner Espacio para Creadores)
    ========================================================================== */
@@ -146,8 +168,7 @@
   margin: 30px auto;
   padding: 32px 36px;
   border-radius: var(--radio-lg);
-  border: 1px solid var(--border);
-  /* Fondo oscuro con el sutil resplandor violeta en la esquina superior derecha */
+  border: 1px solid var(--borde);
   background: radial-gradient(
       circle at 88% 30%,
       rgba(139, 92, 246, 0.16) 0%,
@@ -162,12 +183,10 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 
-/* Si el usuario ya es organizador y el bloque queda vacío, lo ocultamos */
 .third-block:empty {
   display: none;
 }
 
-/* Columna izquierda con badge, título y descripción */
 .third-block .text {
   display: flex;
   flex-direction: column;
@@ -176,7 +195,6 @@
   max-width: 560px;
 }
 
-/* Primer <p>: Pill "Espacio para creadores"*/
 .third-block .text p:first-of-type {
   display: inline-flex;
   align-items: center;
@@ -190,16 +208,6 @@
   position: relative;
 }
 
-.third-block .text p:first-of-type::after {
-  position: absolute;
-  left: calc(100% + 12px);
-  white-space: nowrap;
-  color: var(--texto-muteado);
-  font-weight: 400;
-  font-size: 0.8rem;
-}
-
-/* Título principal */
 .third-block .text h3 {
   font-size: 1.5rem;
   font-weight: 500;
@@ -209,21 +217,18 @@
   margin-top: 2px;
 }
 
-/* Descripción inferior */
 .third-block .text p:last-of-type {
   font-size: 0.9rem;
   color: var(--texto-secundario);
   line-height: 1.55;
 }
 
-/* Columna derecha con el botón */
 .button-OrganizerForm {
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
 
-/* Botón lila con brillo suave */
 .button-OrganizerForm > button {
   background-color: var(--color-primario-claro) !important;
   color: var(--texto-sobre-primario) !important;
@@ -247,7 +252,6 @@
   transform: scale(0.98);
 }
 
-/* Responsivo para pantallas chicas */
 @media (max-width: 720px) {
   .third-block,
   .first-block,
