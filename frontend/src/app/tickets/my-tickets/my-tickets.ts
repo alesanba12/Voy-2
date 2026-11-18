@@ -51,6 +51,13 @@ export class MyTickets implements OnInit {
   protected readonly pastGroups = computed(() =>
     this.groups().filter((g) => !this.isUpcoming(g.party)),
   );
+  protected readonly totalTickets = computed(() => this.tickets().length);
+  protected readonly upcomingTickets = computed(() =>
+    this.upcomingGroups().reduce((count, group) => count + group.ticketIds.length, 0),
+  );
+  protected readonly pastTickets = computed(() =>
+    this.pastGroups().reduce((count, group) => count + group.ticketIds.length, 0),
+  );
 
   protected readonly visibleGroups = computed(() => {
     const filter = this.activeFilter();
