@@ -10,6 +10,18 @@ export interface TicketDto {
         ticketExternalId: string
         party: PartyRes
 }
+
+export type ReceiptStatus = 'APROBADA' | 'PENDIENTE' | 'RECHAZADA';
+
+export interface OrganizerTicketDto {
+  idExternal: string;
+  party: PartyRes;
+  receipt: {
+    price: number;
+    status: ReceiptStatus;
+  };
+}
+
 export interface TicketReqDto{
         paymentMethod: string,
         quantity: number,
