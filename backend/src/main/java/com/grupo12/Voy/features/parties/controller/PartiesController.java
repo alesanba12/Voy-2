@@ -66,6 +66,7 @@ public class PartiesController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PartyResDTO> findById(
             @PathVariable UUID id,
             @AuthenticationPrincipal(expression = "usuario.externalId") UUID currentUserId
