@@ -101,4 +101,18 @@ public class UserEntity {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    @PreRemove
+    private void preRemove() {
+        // 1. Quitar este usuario de la lista de seguidos de todos sus seguidores
+        for (UserEntity follower : new HashSet<>(followersList)) {
+            follower.getFollowsList().remove(this);
+        }
+        followersList.clear();
+
+        // 2. Vaciar los usuarios y eventos que este usuario sigue
+        followsList.clear();
+        followedParties.clear();
+    }
 }
+
