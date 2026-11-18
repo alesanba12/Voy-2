@@ -1,0 +1,245 @@
+:host {
+  display: block;
+}
+
+.party-tickets {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: 1.5rem 0 4rem;
+}
+
+.back-link {
+  color: var(--texto-secundario);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--texto-principal);
+}
+
+.page-heading {
+  margin: 1.5rem 0 1.75rem;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  color: var(--color-primario-claro);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.page-heading h1 {
+  margin-bottom: 0.35rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.15;
+}
+
+.page-heading p:last-child {
+  color: var(--texto-secundario);
+}
+
+.page-heading a {
+  color: var(--color-primario-claro);
+}
+
+.ticket-list {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.ticket-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 210px) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.85rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background: var(--background-secundario);
+}
+
+.ticket-image {
+  height: 128px;
+  overflow: hidden;
+  border-radius: var(--radio-sm);
+  background: var(--background-terciario);
+}
+
+.ticket-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ticket-info {
+  min-width: 0;
+}
+
+.ticket-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ticket-number {
+  color: var(--texto-secundario);
+}
+
+.ticket-state {
+  color: var(--color-exito);
+}
+
+.ticket-state.pending {
+  color: var(--color-advertencia, #f59e0b);
+}
+
+.ticket-info h2 {
+  margin-bottom: 0.4rem;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.3;
+}
+
+.muted {
+  color: var(--texto-secundario);
+  font-size: 0.8rem;
+}
+
+.ticket-code {
+  margin-top: 0.6rem;
+  color: var(--color-primario-claro);
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.ticket-qr {
+  display: grid;
+  place-items: center;
+  width: 156px;
+  height: 156px;
+  border-radius: var(--radio-md);
+  background: #fff; /* el QR necesita fondo claro para poder escanearse */
+}
+
+.ticket-qr img {
+  display: block;
+}
+
+.ticket-actions {
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.scan-button {
+  min-height: 36px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: var(--background-terciario);
+  color: var(--texto-principal);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.scan-button:hover {
+  border-color: var(--color-primario);
+  color: var(--color-primario-claro);
+}
+
+.return-button {
+  min-height: 36px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--color-peligro);
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--color-peligro);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.return-button:hover:not(:disabled) {
+  background: var(--color-peligro);
+  color: var(--texto-principal);
+}
+
+.return-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.state-message {
+  padding: 1.5rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background: var(--background-secundario);
+}
+
+.error {
+  color: var(--color-peligro);
+}
+
+@media (max-width: 900px) {
+  .ticket-row {
+    grid-template-columns: minmax(140px, 190px) minmax(0, 1fr);
+  }
+
+  .ticket-qr {
+    grid-column: 1;
+  }
+
+  .ticket-actions {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .ticket-row {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 0.8rem;
+    padding: 0.65rem;
+  }
+
+  .ticket-image {
+    height: 92px;
+  }
+}
+.transfer-form {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--borde);
+}
+
+.transfer-form label {
+  display: grid;
+  flex: 1 1 260px;
+  gap: 0.3rem;
+  color: var(--texto-secundario);
+  font-size: 0.8rem;
+}
+
+.transfer-form input {
+  min-height: 36px;
+  border-radius: var(--radio-md);
+  background: var(--background-terciario);
+}

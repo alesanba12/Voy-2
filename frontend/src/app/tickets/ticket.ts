@@ -1,4 +1,5 @@
 import { PartyRes } from "../parties/party";
+import { ReceiptResponseDto } from "../receipts/receipts";
 
 export interface Ticket {
         userExternalId: string,
@@ -32,7 +33,7 @@ export interface TicketAndReceiptDto {
   userExternalId: string;
   userEmail: string;
   party: PartyRes;
-  //receipt: ReceiptResponseDto; // ajustalo a tu ReceiptResponseDTO
+  receipt: ReceiptResponseDto;
   ticketsExternalIds: string[];
 }
 
@@ -42,5 +43,5 @@ export interface TicketDto {
   userEmail: string;
   party: PartyRes;
   confirmed: boolean;
-  //receipt: ReceiptResponseDto; // el tipo que uses para el recibo
+  receipt: ReceiptResponseDto;
 }

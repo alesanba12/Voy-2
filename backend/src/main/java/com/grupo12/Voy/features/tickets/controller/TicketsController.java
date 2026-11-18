@@ -153,8 +153,8 @@ public class TicketsController {
     @PreAuthorize("hasRole('USER')")
     public  ResponseEntity<TicketResponseDTO> transferTicket(@AuthenticationPrincipal(expression = "usuario.externalId")UUID userExtId,
                                                              @PathVariable UUID ticketId,
-                                                             @RequestParam UUID newUserExtId){
-        return ResponseEntity.ok(ticketsService.transferTicket(ticketId,userExtId,newUserExtId));
+                                                             @RequestParam String newUserEmail){
+        return ResponseEntity.ok(ticketsService.transferTicket(ticketId,userExtId,newUserEmail));
     }
 
     @Operation(summary = "Confirmar compra (Admin)", description = "Confirma todos los tickets asociados a un recibo y los marca como aprobados. Requiere rol ADMIN.")

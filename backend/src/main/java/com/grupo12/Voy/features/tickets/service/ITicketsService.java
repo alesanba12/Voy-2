@@ -19,7 +19,7 @@ public interface ITicketsService {
                                    String title, String usernameOrganizer, UUID userExtId);
     List<TicketResponseDTO> getByParty(UUID partyId);
     TicketAndReceiptDto createTicket(UUID userId,TicketRequestDTO request, ReceiptEntity receipt);
-    TicketResponseDTO transferTicket(UUID externalId, UUID oldUserId, UUID newUserExtID);
+    TicketResponseDTO transferTicket(UUID externalId, UUID oldUserId, String newUserEmail);
     TicketAndReceiptDto confirmPurchase(UUID receiptExtId);
     void rejectPurchase(UUID receiptExtId);
     void returnTicket(UUID ticketExtId, UUID userExtId);

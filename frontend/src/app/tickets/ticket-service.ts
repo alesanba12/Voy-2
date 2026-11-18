@@ -1,5 +1,4 @@
-import { Service } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OrganizerTicketDto, TicketAndReceiptDto, TicketReqDto } from './ticket';
@@ -14,5 +13,15 @@ export class TicketClient {
 
   listOrganizerTickets(): Observable<OrganizerTicketDto[]> {
     return this.http.get<OrganizerTicketDto[]>('/api/tickets/organizer');
+  }
+
+  return(ticketExternalId: string): Observable<void> {
+    return this.http.delete<void>(`/api/tickets/returnTicket/${ticketExternalId}`);
+  }
+
+  transfer(ticketExternalId: string, newUserEmail: string): Observable<unknown> {
+    return this.http.patch(`/api/tickets/transferTicket/${ticketExternalId}`, null, {
+      params: new HttpParams().set('newUserEmail', newUserEmail),
+    });
   }
 }

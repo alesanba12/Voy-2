@@ -1,0 +1,133 @@
+<main class="party-tickets">
+  <a class="back-link" routerLink="/tickets">← Mis tickets</a>
+
+  @if (isLoading()) {
+    <p class="state-message" role="status">Cargando tus entradas…</p>
+  } @else if (hasError()) {
+    <p class="state-message error" role="alert">
+      No pudimos cargar tus entradas. Intentá nuevamente más tarde.
+    </p>
+  } @else if (!party()) {
+    <section class="state-message">
+      <h2>No tenés entradas para este evento</h2>
+      <a routerLink="/tickets">Volver a mis tickets</a>
+    </section>
+  } @else {
+    @let p = party()!;
+
+    <header class="page-heading">
+      <p class="eyebrow">ENTRADAS DEL EVENTO</p>
+      <h1>{{ p.title }}</h1>
+      <p>
+        {{ tickets().length }} {{ tickets().length === 1 ? 'entrada' : 'entradas' }} ·
+        <a [routerLink]="['/parties', p.externalId]">Ver evento</a>
+      </p>
+    </header>
+
+    <ul class="ticket-list">
+      @for (t of tickets(); track t.ticketExternalId; let i = $index) {
+        <li>
+          <article class="ticket-row">
+            <div class="ticket-image">
+              <img
+                [src]="p.imageUrl || 'Show.webp'"
+                [alt]="p.title"
+                (error)="onImageError($event)"
+              />
+            </div>
+
+            <div class="ticket-info">
+              <div class="ticket-meta">
+                <span class="ticket-number">Entrada {{ i + 1 }}</span>
+                <span class="ticket-state" [class.pending]="!t.confirmed">
+                  {{ t.confirmed ? 'Confirmada' : 'Pendiente' }}
+                </span>
+              </div>
+              <h2>{{ p.title }}</h2>
+              <p class="muted">{{ formatDate(p.dateTime) }}</p>
+              @if (p.adress || p.city) {
+                <p class="muted">{{ p.adress }}{{ p.adress && p.city ? ' · ' : '' }}{{ p.city }}</p>
+              }
+              <p class="ticket-code">
+                #{{ shortCode(t.ticketExternalId) }} · {{ formatPrice(t.receipt.price) }}
+              </p>
+            </div>
+
+            <div class="ticket-qr">
+              @if (qrCodes()[t.ticketExternalId]; as qr) {
+                <img [src]="qr" alt="Código QR de la entrada" width="140" height="140" />
+              }
+            </div>
+
+            <div class="ticket-actions">
+              <button type="button" class="scan-button" (click)="scanTicket(t)">Ver QR</button>
+
+              @if (t.confirmed) {
+                <button
+                  type="button"
+                  class="scan-button"
+                  [disabled]="transferLoading()"
+                  (click)="openTransfer(t)"
+                >
+                  Transferir entrada
+                </button>
+              }
+
+              @if (canReturn(t)) {
+                <button
+                  type="button"
+                  class="return-button"
+                  [disabled]="returningId() !== null"
+                  (click)="returnTicket(t)"
+                >
+                  {{ returningId() === t.ticketExternalId ? 'Devolviendo…' : 'Devolver entrada' }}
+                </button>
+              }
+            </div>
+
+            @if (canTransfer(t)) {
+              <button
+                type="button"
+                class="scan-button"
+                [disabled]="transferLoading()"
+                (click)="openTransfer(t)"
+              >
+                Transferir entrada
+              </button>
+
+              @if (transferTicketId() === t.ticketExternalId) {
+                <form class="transfer-form" (submit)="transferTicket(t); $event.preventDefault()">
+                  <label>
+                    <span>Email del destinatario</span>
+                    <input
+                      type="email"
+                      required
+                      placeholder="persona@ejemplo.com"
+                      [value]="transferEmail()"
+                      (input)="transferEmail.set($any($event.target).value)"
+                    />
+                  </label>
+                  <button
+                    type="submit"
+                    class="scan-button"
+                    [disabled]="transferLoading() || !transferEmail().trim()"
+                  >
+                    {{ transferLoading() ? 'Transfiriendo…' : 'Confirmar transferencia' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="scan-button"
+                    [disabled]="transferLoading()"
+                    (click)="cancelTransfer()"
+                  >
+                    Cancelar
+                  </button>
+                </form>
+              }
+            }
+          </article>
+        </li>
+      }
+    </ul>
+  }
+</main>
