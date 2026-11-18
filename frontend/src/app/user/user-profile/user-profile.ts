@@ -32,6 +32,7 @@ export class UserProfile implements OnInit {
   }
 
   readonly defaulImage = '/user-alt-1-svgrepo-com.svg';
+
   goToOrganizerProfile() {
     this.router.navigateByUrl('/profile/organizerProfile');
   }
