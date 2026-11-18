@@ -33,7 +33,7 @@ export class UsersTableService {
   /**
    * Elimina un usuario por su UUID externo (DELETE /api/users/{id})
    */
-  deleteUserByAdmin(id: string): Promise<void> {
+  deleteUserByAdmin(id: string) {
     return lastValueFrom(
       this.http.delete<void>(`${this.apiUrl}/${id}`)
     );
