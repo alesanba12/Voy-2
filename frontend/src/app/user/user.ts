@@ -48,3 +48,7 @@ export interface OrganizerVerifyReqDTO{
 //    // image:blob?
 // }
 
+export interface UserFilterParams {
+  username?: string;
+  email?: string;
+}

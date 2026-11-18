@@ -1,1 +1,219 @@
-<p>users-table works!</p>
+<section class="users-panel">
+  <!-- Cabecera de la Card -->
+  <header class="panel-header">
+    <div class="panel-title-group">
+      <div class="panel-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="panel-title">Gestión de Usuarios</h2>
+        <p class="panel-subtitle">
+          Administra las cuentas registradas, asigna permisos de organizador o revoca accesos.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-badges">
+      <span class="badge-pill badge-neutral">{{ organizersCount() }} organizadores</span>
+      <span class="badge-pill badge-primary">{{ totalCount() }} totales</span>
+    </div>
+  </header>
+
+  <!-- Alerta de feedback -->
+  @if (feedbackMessage(); as msg) {
+    <div class="feedback-banner" [class.is-error]="msg.type === 'error'">
+      <span>{{ msg.text }}</span>
+      <button type="button" class="btn-close-banner" (click)="feedbackMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- Barra de búsqueda y filtros -->
+  <div class="filters-bar">
+    <div class="search-inputs">
+      <div class="input-wrapper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Buscar por username..."
+          [ngModel]="searchUsername()"
+          (ngModelChange)="searchUsername.set($event)"
+        />
+      </div>
+
+      <div class="input-wrapper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect width="20" height="16" x="2" y="4" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Filtrar por email..."
+          [ngModel]="searchEmail()"
+          (ngModelChange)="searchEmail.set($event)"
+        />
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <select
+        aria-label="Filtrar por rol"
+        [ngModel]="roleFilter()"
+        (ngModelChange)="roleFilter.set($event)"
+      >
+        <option value="ALL">Todos los roles</option>
+        <option value="ORGANIZER">Solo Organizadores</option>
+        <option value="USER">Solo Usuarios</option>
+      </select>
+
+      <button
+        type="button"
+        class="btn-ghost"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor de Tabla -->
+  <div class="table-container">
+    @if (usersResource.isLoading()) {
+      <div class="empty-state">
+        <app-loading-spinner/>
+        <p>Cargando usuarios registrados...</p>
+      </div>
+    } @else if (usersResource.error()) {
+      <div class="empty-state is-error">
+        <p>Ocurrió un error al cargar los usuarios. Verifica tu sesión de administrador.</p>
+        <button type="button" class="btn-ghost" (click)="usersResource.reload()">
+          Reintentar
+        </button>
+      </div>
+    } @else if (filteredUsers().length === 0) {
+      <div class="empty-state">
+        <p>No se encontraron usuarios con los criterios aplicados.</p>
+      </div>
+    } @else {
+      <table class="users-table">
+        <!-- Anchos fijos proporcionales para evitar que la tabla salte -->
+        <colgroup>
+          <col class="col-user" />
+          <col class="col-email" />
+          <col class="col-bio" />
+          <col class="col-role" />
+          <col class="col-actions" />
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>USUARIO</th>
+            <th>EMAIL</th>
+            <th>BIOGRAFÍA</th>
+            <th>ROL</th>
+            <th class="align-right">ACCIONES</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (user of filteredUsers(); track user.externalId) {
+            <tr>
+              <!-- Usuario + Avatar -->
+              <td>
+                <div class="user-cell">
+                  @if (user.imageUrl) {
+                    <img [src]="user.imageUrl" [alt]="user.username" class="user-avatar" />
+                  } @else {
+                    <div class="user-avatar is-fallback">
+                      {{ getInitials(user.username) }}
+                    </div>
+                  }
+                  <div class="user-identity">
+                    <span class="username" [title]="user.username">{{ user.username }}</span>
+                    <span class="user-id" [title]="user.externalId">
+                      #{{ user.externalId.slice(0, 8) }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Email -->
+              <td class="cell-email" [title]="user.email">
+                {{ user.email }}
+              </td>
+
+              <!-- Bio -->
+              <td>
+                @if (user.bio) {
+                  <span class="bio-text" [title]="user.bio">{{ user.bio }}</span>
+                } @else {
+                  <span class="bio-empty">Sin biografía</span>
+                }
+              </td>
+
+              <!-- Rol -->
+              <td>
+                <span class="role-badge" [class.is-organizer]="user.isOrganizer">
+                  {{ user.isOrganizer ? 'Organizador' : 'Usuario' }}
+                </span>
+              </td>
+
+              <!-- Acciones -->
+              <td class="align-right">
+                <div class="actions-group">
+                  <button
+                    type="button"
+                    class="btn-delete"
+                    [disabled]="isProcessing(user.externalId)"
+                    (click)="openDeleteModal(user)"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 6h18" />
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    </svg>
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>
+
+<!-- Modal de confirmación de borrado -->
+@if (userToDelete(); as target) {
+  <div class="modal-backdrop" (click)="closeDeleteModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>Eliminar usuario</h3>
+      <p class="modal-body">
+        ¿Estás seguro de que deseas eliminar permanentemente a
+        <strong>{{ target.username }}</strong> ({{ target.email }})? Esta acción no se puede deshacer.
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="closeDeleteModal()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn-danger-solid"
+          [disabled]="isProcessing(target.externalId)"
+          (click)="confirmDelete()"
+        >
+          {{ isProcessing(target.externalId) ? 'Eliminando...' : 'Sí, eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
