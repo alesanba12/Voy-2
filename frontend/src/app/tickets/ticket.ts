@@ -23,3 +23,12 @@ export interface TicketAndReceiptDto {
   //receipt: ReceiptResponseDto; // ajustalo a tu ReceiptResponseDTO
   ticketsExternalIds: string[];
 }
+
+export interface TicketDto {
+  ticketExternalId: string;
+  userName: string;
+  userEmail: string;
+  party: PartyRes;
+  confirmed: boolean;
+  //receipt: ReceiptResponseDto; // el tipo que uses para el recibo
+}

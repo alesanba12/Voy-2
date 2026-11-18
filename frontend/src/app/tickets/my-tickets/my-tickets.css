@@ -116,11 +116,7 @@
   z-index: 0;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(
-    circle at top right,
-    rgba(139, 92, 246, 0.16),
-    transparent 65%
-  );
+  background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.16), transparent 65%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -391,6 +387,7 @@
   .party-actions a {
     min-height: 32px;
     font-size: 0.75rem;
+    cursor: pointer;
   }
 }
 

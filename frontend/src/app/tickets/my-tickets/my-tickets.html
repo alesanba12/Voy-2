@@ -111,17 +111,15 @@
                   }
                   <p class="ticket-codes">
                     <strong>
-                      {{ group.ticketIds.length }}
-                      {{ group.ticketIds.length === 1 ? 'entrada' : 'entradas' }}
+                      {{ group.tickets.length }}
+                      {{ group.tickets.length === 1 ? 'entrada' : 'entradas' }}
                     </strong>
-                    @for (id of group.ticketIds; track id) {
-                      <span class="ticket-code">#{{ shortCode(id) }}</span>
-                    }
                   </p>
                 </div>
 
                 <div class="party-actions">
                   <a [routerLink]="['/parties', group.party.externalId]">Ver evento</a>
+                  <a>Ver entradas</a>
                 </div>
               </article>
             </li>

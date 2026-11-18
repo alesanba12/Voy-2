@@ -10,7 +10,7 @@ type TicketFilter = 'all' | 'upcoming' | 'past';
 
 interface TicketGroup {
   party: PartyRes;
-  ticketIds: string[];
+  tickets: { id: string; confirmed: boolean }[];
 }
 
 @Component({
@@ -32,14 +32,12 @@ export class MyTickets implements OnInit {
   protected readonly groups = computed(() => {
     const byParty = new Map<string, TicketGroup>();
     for (const ticket of this.tickets()) {
+      const entry = { id: ticket.ticketExternalId, confirmed: ticket.confirmed };
       const group = byParty.get(ticket.party.externalId);
       if (group) {
-        group.ticketIds.push(ticket.ticketExternalId);
+        group.tickets.push(entry);
       } else {
-        byParty.set(ticket.party.externalId, {
-          party: ticket.party,
-          ticketIds: [ticket.ticketExternalId],
-        });
+        byParty.set(ticket.party.externalId, { party: ticket.party, tickets: [entry] });
       }
     }
     return [...byParty.values()].sort(
@@ -76,15 +74,18 @@ export class MyTickets implements OnInit {
     );
   });
 
-ngOnInit(): void {
-  this.userService
-    .listMyTickets()
-    .pipe(finalize(() => this.isLoading.set(false)))
-    .subscribe({
-      next: (tickets) => this.tickets.set(tickets),
-      error: () => this.hasError.set(true),
-    });
-}
+  ngOnInit(): void {
+    this.userService
+      .listMyTickets()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (tickets) => {
+          console.log(tickets[0]);
+          this.tickets.set(tickets);
+        },
+        error: () => this.hasError.set(true),
+      });
+  }
 
   protected setFilter(filter: TicketFilter): void {
     this.activeFilter.set(filter);
@@ -112,9 +113,6 @@ ngOnInit(): void {
   }
 
   // Código corto para mostrar en pantalla (el UUID completo es muy largo)
-  protected shortCode(id: string): string {
-    return id.slice(0, 8).toUpperCase();
-  }
 
   protected onImageError(event: Event): void {
     if (event.target instanceof HTMLImageElement) {
