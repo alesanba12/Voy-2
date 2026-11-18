@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { form, FormField, FormRoot, required } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
@@ -14,6 +14,7 @@ import { AuthRequest } from '../../core/auth/auth.models';
 export class Login {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly showPassword = signal(false);
 
@@ -33,7 +34,15 @@ export class Login {
         action: async (field) => {
           try {
             await firstValueFrom(this.authService.login(field().value()));
-            await this.router.navigate(['/']);
+
+            const rawReturnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+            // Validación básica para evitar open-redirect a dominios externos
+            const targetUrl =
+              rawReturnUrl && rawReturnUrl.startsWith('/') && !rawReturnUrl.startsWith('//')
+                ? rawReturnUrl
+                : '/';
+
+            await this.router.navigateByUrl(targetUrl);
             return;
           } catch (err: any) {
             return {

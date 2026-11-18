@@ -11,7 +11,6 @@ export const PARTIES_ROUTES : Routes = [
     },
     {
         path: 'catalogo',
-        canActivate:[authGuard],
         loadComponent: () => import('./party-list/party-list').then(m => m.PartyList),
     },
     {
@@ -28,6 +27,7 @@ export const PARTIES_ROUTES : Routes = [
     },
     {
         path: ':id',
+        canActivate: [authGuard],
         loadComponent: () => import('./party-detail/party-detail').then(m => m.PartyDetail),
     },
     {
