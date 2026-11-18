@@ -50,7 +50,8 @@
 }
 
 /* Variante 4: Danger / Rojo (Eliminar evento) */
-.modal-card[data-variant='danger'] {
+.modal-card[data-variant='danger'],
+.modal-card[data-variant='destructive-delete'] {
   --accent-bg: rgba(220, 38, 38, 0.18);
   --accent-color: #fca5a5;
   --accent-glow: rgba(220, 38, 38, 0.25);

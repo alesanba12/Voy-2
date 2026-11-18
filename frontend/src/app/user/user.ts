@@ -1,9 +1,9 @@
-export interface NewUserDto{
-    email:string
-    username:string
-    bio:string
-    password:string
-    birthday:string
+export interface NewUserDto {
+  email: string;
+  username: string;
+  bio?: string | null;
+  password: string;
+  birthdate: string;
 }
 
 export interface UserDto {
@@ -12,7 +12,7 @@ export interface UserDto {
   email: string;
   bio: string;
   isOrganizer: boolean;
-  imageUrl: string;
+  imageUrl: string | null;
 }
 
 export interface UserFollowDto{
@@ -48,3 +48,7 @@ export interface OrganizerVerifyReqDTO{
 //    // image:blob?
 // }
 
+export interface UserFilterParams {
+  username?: string;
+  email?: string;
+}

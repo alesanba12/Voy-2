@@ -1,1 +1,142 @@
-<p>my-tickets works!</p>
+<main class="ticket-wallet">
+  <a class="back-link" routerLink="/actividad">← Mi actividad</a>
+
+  <header class="wallet-heading">
+    <div>
+      <p class="eyebrow">TU BILLETERA</p>
+      <h1>Mis tickets</h1>
+      <p>Tené a mano las entradas y los datos de cada evento.</p>
+    </div>
+    <a class="discover-link" routerLink="/parties/catalogo">
+      <span aria-hidden="true">＋</span>
+      Explorar eventos
+    </a>
+  </header>
+
+  @if (isLoading()) {
+    <p class="wallet-message" role="status">Cargando tus entradas…</p>
+  } @else if (hasError()) {
+    <p class="wallet-message error" role="alert">
+      No pudimos cargar tus entradas. Intentá nuevamente más tarde.
+    </p>
+  } @else if (groups().length === 0) {
+    <section class="empty-wallet">
+      <div class="empty-ticket" aria-hidden="true">✦</div>
+      <p class="eyebrow">TU BILLETERA ESTÁ VACÍA</p>
+      <h2>Todavía no tenés entradas</h2>
+      <p>Cuando compres un ticket, vas a encontrar acá su código y toda la información del evento.</p>
+      <a class="discover-link" routerLink="/parties/catalogo">Descubrir eventos</a>
+    </section>
+  } @else {
+    <section class="wallet-toolbar" aria-label="Buscar y filtrar entradas">
+      <label class="search-field">
+        <span class="visually-hidden">Buscar en tu billetera</span>
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input
+          type="search"
+          placeholder="Buscar evento, ciudad o lugar…"
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+        />
+      </label>
+
+      <nav class="ticket-filters" aria-label="Filtrar entradas">
+        <button
+          type="button"
+          [class.active]="activeFilter() === 'all'"
+          [attr.aria-pressed]="activeFilter() === 'all'"
+          (click)="setFilter('all')"
+        >
+          Todas <span>{{ totalTickets() }}</span>
+        </button>
+        <button
+          type="button"
+          [class.active]="activeFilter() === 'upcoming'"
+          [attr.aria-pressed]="activeFilter() === 'upcoming'"
+          (click)="setFilter('upcoming')"
+        >
+          Próximas <span>{{ upcomingTickets() }}</span>
+        </button>
+        <button
+          type="button"
+          [class.active]="activeFilter() === 'past'"
+          [attr.aria-pressed]="activeFilter() === 'past'"
+          (click)="setFilter('past')"
+        >
+          Anteriores <span>{{ pastTickets() }}</span>
+        </button>
+      </nav>
+    </section>
+
+    @if (visibleGroups().length === 0) {
+      <p class="wallet-message no-results" role="status">
+        No encontramos entradas con esos criterios.
+      </p>
+    } @else {
+      <section class="ticket-collection" aria-label="Mis entradas por evento">
+        <div class="collection-heading">
+          <h2>Tu colección</h2>
+          <span>{{ visibleGroups().length }} {{ visibleGroups().length === 1 ? 'evento' : 'eventos' }}</span>
+        </div>
+
+        <ul class="ticket-list">
+          @for (group of visibleGroups(); track group.party.externalId) {
+            <li>
+              <article class="event-ticket" [class.past]="!isUpcoming(group.party)">
+                <div class="ticket-art">
+                  <img
+                    [src]="group.party.imageUrl || 'Show.webp'"
+                    [alt]="group.party.title"
+                    (error)="onImageError($event)"
+                  />
+                  <span class="ticket-status">
+                    {{ isUpcoming(group.party) ? 'Próximo' : 'Finalizado' }}
+                  </span>
+                </div>
+
+                <div class="ticket-content">
+                  <div class="ticket-event">
+                    <p class="event-category">{{ group.party.tags?.[0] || 'Evento' }}</p>
+                    <h3>
+                      <a [routerLink]="['/parties', group.party.externalId]">{{ group.party.title }}</a>
+                    </h3>
+                    <div class="event-facts">
+                      <p>
+                        <span aria-hidden="true">◷</span>
+                        {{ formatDate(group.party.dateTime) }}
+                      </p>
+                      @if (group.party.adress || group.party.city) {
+                        <p>
+                          <span aria-hidden="true">⌖</span>
+                          @if (group.party.adress) {
+                            <span>{{ group.party.adress }}</span>
+                          }
+                          @if (group.party.adress && group.party.city) {
+                            <span aria-hidden="true"> · </span>
+                          }
+                          @if (group.party.city) {
+                            <span>{{ group.party.city }}</span>
+                          }
+                        </p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="ticket-stub">
+                    <div class="stub-heading">
+                      <span>ENTRADAS</span>
+                      <strong>{{ group.tickets.length }}</strong>
+                    </div>
+                    <a [routerLink]="['/parties', group.party.externalId]">
+                      Ver evento <span aria-hidden="true">↗</span>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</main>

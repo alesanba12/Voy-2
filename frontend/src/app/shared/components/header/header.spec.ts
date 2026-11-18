@@ -30,6 +30,7 @@ describe('Header', () => {
             currentUser: signal({ userId: 'user-id' }),
             isAuthenticated: signal(true),
             hasRole: () => false,
+            logout: vi.fn(),
           },
         },
         { provide: UserService, useValue: { profileRefreshVersion } },
@@ -44,6 +45,26 @@ describe('Header', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('closes the user menu when clicking outside it', () => {
+    component.toggleUserMenu();
+    fixture.detectChanges();
+
+    document.body.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.dropdown-menu')).toBeNull();
+  });
+
+  it('closes the user menu when selecting an option', () => {
+    component.toggleUserMenu();
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelector('.logout-btn').click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.dropdown-menu')).toBeNull();
   });
 
   it('reloads the profile image when the profile is updated', async () => {

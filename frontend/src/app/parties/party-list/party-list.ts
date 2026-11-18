@@ -62,6 +62,31 @@ export class PartyList {
     return parties;
   });
 
+  protected readonly emptyState = computed(() => {
+    const title = this.filterByPartyTitle()?.trim();
+    const city = this.filterByCity()?.trim();
+    const tag = this.filterByTags();
+    let context = 'con los filtros seleccionados';
+
+    if (title && city) {
+      context = `para “${title}” en ${city}`;
+    } else if (title) {
+      context = `para “${title}”`;
+    } else if (city) {
+      context = `en ${city}`;
+    } else if (tag) {
+      context = `de ${tag}`;
+    }
+
+    return {
+      title: `No encontramos eventos ${context}`,
+      description:
+        title || city || tag
+          ? 'Probá cambiar alguno de los filtros o ampliar el rango de fechas.'
+          : 'Todavía no hay eventos publicados para las fechas seleccionadas. Probá ampliar el rango de fechas.',
+    };
+  });
+
   protected onDateChange(range: DateRange) {
     this.filterFrom.set(range.from);
     this.filterTo.set(range.to);

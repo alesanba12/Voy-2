@@ -3,227 +3,251 @@
 @let recomended = this.recomendedparties();
 
 @if (p) {
-  <div class="superior">
-    <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
-    <div class="acciones">
-      <button type="button" (click)="share()">
-        {{ copied() ? '¡Enlace copiado!' : 'Compartir' }}
-      </button>
-      @if (!isOwner()) {
-        <button
-          type="button"
-          aria-label="Seguir evento"
-          [attr.aria-pressed]="followParty()"
-          [disabled]="followLoading()"
-          (click)="toggleFollow()"
-        >
-          {{ followParty() ? '♥' : '♡' }}
-        </button>
-      }
-    </div>
-  </div>
-
-  <div class="details">
-    <div class="left">
-      <img class="portada" [src]="p.imageUrl" alt="Imagen del evento" />
-
-      <div class="ubiYfecha">
-        <div class="card info-card">
-          <img src="location-pin-svgrepo-com.svg" alt="" />
-          <div>
-            <h5>UBICACION</h5>
-            <p><strong>Direccion:</strong> {{ p.adress }}</p>
-            <p><strong>Localidad:</strong> {{ p.city }}</p>
-          </div>
-        </div>
-        <div class="card info-card">
-          <img src="calendar-svgrepo-com.svg" alt="" />
-          <div>
-            <h5>FECHA Y HORARIO</h5>
-            <p>
-              <strong>{{ p.dateTime | eventDate }}</strong>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card descripcion">
-        <p class="tags">
-          @for (tag of p.tags; track tag) {
-            &dotsquare; {{ tag }}
-          }
-        </p>
-        <h3>Que esperar?</h3>
-        {{ p.description }}
-      </div>
-    </div>
-
-    <div class="right">
-      <h1>{{ p.title }}</h1>
-
-      <div class="card creator">
-        <div class="name">
-          <img [src]="organizer?.imageUrl" alt="Organizador" />
-          <h3>{{ organizer?.username ?? p.organizerName }}</h3>
-        </div>
-        @if (!isOwner()) {
-          <button
-            type="button"
-            [attr.aria-pressed]="followOrganizer()"
-            [disabled]="!organizer || followOrganizerLoading()"
-            (click)="toggleFollowOrganizer()"
-          >
-            {{ followOrganizer() ? 'Siguiendo' : 'Seguir' }}
-          </button>
-        }
-      </div>
-
-      <div class="card tickets">
-        @if (p.tickets) {
-          <p class="stock">Quedan {{ p.guestLimit }} entradas</p>
-          <h5>TIPO DE ENTRADA</h5>
-
-          <div class="entrada">
-            <div class="fila tipo">
-              <h4>Entrada General</h4>
-              <p class="precio">$ {{ p.price.toLocaleString('es-AR') }} ARS</p>
-            </div>
-
-            <div class="fila">
-              <small>Cantidad (máx. {{ maxQuantity() }})</small>
-              <div class="stepper">
-                <button
-                  type="button"
-                  aria-label="Quitar una entrada"
-                  [disabled]="quantity() <= MIN_TICKETS"
-                  (click)="changeQuantity(-1)"
-                >
-                  -
-                </button>
-                <output aria-live="polite">{{ quantity() }}</output>
-                <button
-                  type="button"
-                  aria-label="Agregar una entrada"
-                  [disabled]="quantity() >= maxQuantity()"
-                  (click)="changeQuantity(1)"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="fila total">
-            <div>
-              <h5>TOTAL ESTIMADO</h5>
-              <p>$ {{ total().toLocaleString('es-AR') }} <small>ARS</small></p>
-            </div>
-            <small>Sin cargos ocultos</small>
-          </div>
-
-          <button type="button" class="comprar" [disabled]="p.guestLimit < 1" (click)="buy()">
-            Unirme al evento / Comprar Tickets &rarr;
-          </button>
-        } @else {
-          @if (isOwner()) {
-            <p class="aviso">Sos el organizador de este evento.</p>
-          } @else {
-            <div class="mensaje">
-              <h3>No necesitas entradas para este evento</h3>
-              <p>Puedes disfrutar de este evento de forma libre y gratuita.</p>
-              <p>Ten en cuenta que el acceso es por orden de llegada y sin reservas.</p>
-              <small>El aforo maximo es {{ p.guestLimit }} personas</small>
-            </div>
-            <button
-              type="button"
-              class="comprar"
-              [attr.aria-pressed]="followParty()"
-              [disabled]="followLoading()"
-              (click)="toggleFollow()"
-            >
-              {{ followParty() ? 'Dejar de seguir el evento' : 'Unirme al evento' }} &rarr;
-            </button>
-          }
-        }
-      </div>
-
-      @if (isOwner()) {
-        <section class="card partners">
-          <div class="partners-header">
-            <h3>Gestión de Partners</h3>
-            <span class="badge">{{ p.coOrganizerName.length }} activos</span>
-            <button type="button" class="add" (click)="adding.set(!adding())">
-              {{ adding() ? 'Cancelar' : '+ Agregar Partner' }}
-            </button>
-          </div>
-
-          <small>
-            Colaboradores con permisos de acceso, escaneo de tickets QR y control de admisión en
-            puerta.
-          </small>
-
-          @if (adding()) {
-            <div class="partner-search">
-              <input
-                type="search"
-                placeholder="Buscar por nombre de usuario"
-                [value]="searchTerm()"
-                (input)="searchTerm.set($any($event.target).value)"
-              />
-              @if (searchResults.isLoading()) {
-                <small>Buscando...</small>
-              } @else if (searchTerm().trim().length >= 2 && !searchResults.value()?.length) {
-                <small>Sin resultados</small>
-              }
-              <ul class="lista">
-                @for (u of searchResults.value(); track u.externalId) {
-                  <li class="partner">
-                    <span class="info">{{ u.username }}</span>
-                    <button type="button" [disabled]="partnerLoading()" (click)="addPartner(u)">
-                      Agregar
-                    </button>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-
-          <ul class="lista">
-            @for (u of partners.value(); track u.externalId) {
-              <li class="partner">
-                <div class="avatar">{{ initials(u.username) }}</div>
-                <strong class="info">{{ u.username }}</strong>
-                <span class="estado">Activo</span>
-                <button
-                  type="button"
-                  class="remove"
-                  aria-label="Quitar partner"
-                  [disabled]="partnerLoading()"
-                  (click)="removePartner(u)"
-                >
-                  ✕
-                </button>
-              </li>
-            } @empty {
-              <li class="empty">Todavía no agregaste partners.</li>
-            }
-          </ul>
-        </section>
-      }
-    </div>
-  </div>
-
-  <div class="recomendaciones">
-    @if (recomended.length) {
-      <h5>Recomendaciones</h5>
-      <h3>Eventos similares en la zona</h3>
-      <ul class="eventos">
-        @for (rec of recomended; track rec.externalId) {
-          <li><app-party-card [party]="rec" /></li>
-        }
-      </ul>
-    } @else {
-      <p>No hay eventos similares en la zona</p>
+<div class="superior">
+  <a routerLink="/parties/catalogo">&leftarrow; Volver a Explorar</a>
+  <div class="acciones">
+    <button type="button" (click)="share()">
+      {{ copied() ? '¡Enlace copiado!' : 'Compartir' }}
+    </button>
+    @if (!isOwner()) {
+    <button type="button" aria-label="Seguir evento" [attr.aria-pressed]="followParty()" [disabled]="followLoading()"
+      (click)="toggleFollow()">
+      {{ followParty() ? '♥' : '♡' }}
+    </button>
     }
   </div>
+</div>
+
+<div class="details">
+  <div class="left">
+    <img class="portada" [src]="p.imageUrl" alt="Imagen del evento" />
+
+    <div class="ubiYfecha">
+      <div class="card info-card">
+        <img src="location-pin-svgrepo-com.svg" alt="" />
+        <div>
+          <h5>UBICACION</h5>
+          <p><strong>Direccion:</strong> {{ p.adress }}</p>
+          <p><strong>Localidad:</strong> {{ p.city }}</p>
+        </div>
+      </div>
+      <div class="card info-card">
+        <img src="calendar-svgrepo-com.svg" alt="" />
+        <div>
+          <h5>FECHA Y HORARIO</h5>
+          <p>
+            <strong>{{ p.dateTime | eventDate }}</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card descripcion">
+      <p class="tags">
+        @for (tag of p.tags; track tag) {
+        &dotsquare; {{ tag }}
+        }
+      </p>
+      <h3>Que esperar?</h3>
+      {{ p.description }}
+    </div>
+  </div>
+
+  <div class="right">
+    <h1>{{ p.title }}</h1>
+
+    <div class="card creator">
+      <div class="name">
+        <img [src]="organizer?.imageUrl" alt="Organizador" />
+        <h3>{{ organizer?.username ?? p.organizerName }}</h3>
+      </div>
+      @if (!isOwner()) {
+      <button type="button" [attr.aria-pressed]="followOrganizer()" [disabled]="!organizer || followOrganizerLoading()"
+        (click)="toggleFollowOrganizer()">
+        {{ followOrganizer() ? 'Siguiendo' : 'Seguir' }}
+      </button>
+      }
+    </div>
+
+    <div class="card tickets">
+      @if (p.tickets) {
+      <p class="stock">Quedan {{ p.guestLimit }} entradas</p>
+      <h5>TIPO DE ENTRADA</h5>
+
+      <div class="entrada">
+        <div class="fila tipo">
+          <h4>Entrada General</h4>
+          <p class="precio">$ {{ p.price.toLocaleString('es-AR') }} ARS</p>
+        </div>
+
+        <div class="fila">
+          <small>Cantidad (máx. {{ maxQuantity() }})</small>
+          <div class="stepper">
+            <button type="button" aria-label="Quitar una entrada" [disabled]="quantity() <= MIN_TICKETS"
+              (click)="changeQuantity(-1)">
+              -
+            </button>
+            <output aria-live="polite">{{ quantity() }}</output>
+            <button type="button" aria-label="Agregar una entrada" [disabled]="quantity() >= maxQuantity()"
+              (click)="changeQuantity(1)">
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="fila total">
+        <div>
+          <h5>TOTAL ESTIMADO</h5>
+          <p>$ {{ total().toLocaleString('es-AR') }} <small>ARS</small></p>
+        </div>
+        <small>Sin cargos ocultos</small>
+      </div>
+
+      <button type="button" class="comprar" [disabled]="p.guestLimit < 1 || buyLoading()" (click)="buy()">
+        {{ buyLoading() ? 'Procesando...' : 'Unirme al evento / Comprar Tickets →' }}
+      </button>
+      } @else {
+      @if (isOwner()) {
+      <p class="aviso">Sos el organizador de este evento.</p>
+      } @else {
+      <div class="mensaje">
+        <h3>No necesitas entradas para este evento</h3>
+        <p>Puedes disfrutar de este evento de forma libre y gratuita.</p>
+        <p>Ten en cuenta que el acceso es por orden de llegada y sin reservas.</p>
+        <small>El aforo maximo es {{ p.guestLimit }} personas</small>
+      </div>
+      <button type="button" class="comprar" [attr.aria-pressed]="followParty()" [disabled]="followLoading()"
+        (click)="toggleFollow()">
+        {{ followParty() ? 'Dejar de seguir el evento' : 'Unirme al evento' }} &rarr;
+      </button>
+      }
+      }
+    </div>
+
+    @if (isOwner()) {
+
+    <section class="card partners">
+      <div class="partners-header">
+        <h3>Gestión de Partners</h3>
+        <span class="badge">{{ p.coOrganizerName.length }} activos</span>
+        <button type="button" class="add" (click)="adding.set(!adding())">
+          {{ adding() ? 'Cancelar' : '+ Agregar Partner' }}
+        </button>
+      </div>
+
+      <small>
+        Colaboradores con permisos de acceso, escaneo de tickets QR y control de admisión en
+        puerta.
+      </small>
+
+      @if (adding()) {
+      <div class="partner-search">
+        <input type="search" placeholder="Buscar organizador por nombre de usuario" [value]="searchTerm()"
+          (input)="searchTerm.set($any($event.target).value)" />
+        @if (searchResults.isLoading()) {
+        <small>Buscando...</small>
+        } @else if (searchTerm().trim().length >= 2 && !searchResults.value()?.length) {
+        <small>No se encontraron organizadores disponibles.</small>
+        }
+        <ul class="lista">
+          @for (u of searchResults.value(); track u.externalId) {
+          <li class="partner">
+            <span class="info">{{ u.username }}</span>
+            <button type="button" [disabled]="partnerLoading()" (click)="addPartner(u)">
+              Agregar
+            </button>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+
+      <ul class="lista">
+        @for (u of partners.value(); track u.externalId) {
+        <li class="partner">
+          <div class="avatar">
+            <img
+              class="avatar-image"
+              [src]="u.imageUrl || defaultPartnerImage"
+              [alt]="'Foto de ' + u.username"
+              (error)="onPartnerImageError($event)"
+            />
+            <span>{{ initials(u.username) }}</span>
+          </div>
+          <strong class="info">{{ u.username }}</strong>
+          <span class="estado">Activo</span>
+          <button type="button" class="remove" aria-label="Quitar partner" [disabled]="partnerLoading()"
+            (click)="removePartner(u)">
+            ✕
+          </button>
+        </li>
+        } @empty {
+        <li class="empty">Todavía no agregaste partners.</li>
+        }
+      </ul>
+    </section>
+    } @else if (p.coOrganizerName.length) {
+    <section class="card partners">
+      <div class="partners-header">
+        <h3>Coorganizadores del evento</h3>
+        <span class="badge">{{ p.coOrganizerName.length }}</span>
+      </div>
+
+      <ul class="lista">
+        @for (u of partners.value(); track u.externalId) {
+        <li class="partner">
+          <div class="avatar">
+            <img
+              class="avatar-image"
+              [src]="u.imageUrl || defaultPartnerImage"
+              [alt]="'Foto de ' + u.username"
+              (error)="onPartnerImageError($event)"
+            />
+            <span>{{ initials(u.username) }}</span>
+          </div>
+          <strong class="info">{{ u.username }}</strong>
+          @if (!isCurrentUser(u)) {
+          <button type="button" class="follow" [attr.aria-pressed]="isFollowingUser(u)"
+            [disabled]="followingUserId() === u.externalId" (click)="toggleFollowPartner(u)">
+            {{ isFollowingUser(u) ? 'Siguiendo' : 'Seguir' }}
+          </button>
+          }
+        </li>
+        }
+      </ul>
+    </section>
+    }
+  </div>
+</div>
+
+<div class="recomendaciones">
+  <h5>Recomendaciones</h5>
+  <h3>Eventos similares en la zona</h3>
+
+  @if (partiesResource.isLoading()) {
+  <app-loading-spinner />
+  } @else if (partiesResource.error()) {
+  <p class="recommendation-error" role="alert">No se pudieron cargar las recomendaciones.</p>
+  } @else if (recomended.length) {
+  <ul class="eventos">
+    @for (party of recomended; track $index) {
+    <li><app-party-card [party]="party"></app-party-card></li>
+    }
+  </ul>
+  } @else {
+  <div class="recommendation-empty" role="status">
+    <span class="recommendation-empty-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <rect x="3.5" y="5" width="17" height="16" rx="3"></rect>
+        <path d="M8 3v4M16 3v4M3.5 10h17M9 14l5 5m0-5-5 5"></path>
+      </svg>
+    </span>
+    <div>
+      <h4>Todavía no hay eventos similares</h4>
+      <p>Cuando haya más eventos en la zona, los vas a encontrar acá.</p>
+    </div>
+  </div>
+  }
+</div>
 }

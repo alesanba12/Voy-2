@@ -1,6 +1,7 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { UserService } from '../user-service';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../shared/components/toast/toast-service';
 
 @Component({
   imports: [FormsModule],
@@ -10,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class OrganizerModal {
   private readonly userService = inject(UserService);
+  private readonly toastService = inject(ToastService);
   
   // Señales para manejar el estado del formulario con Signals
   readonly dniFrontFile = signal<File | null>(null);
@@ -42,7 +44,7 @@ export class OrganizerModal {
     const back = this.dniBackFile();
 
     if (!front || !back) {
-      alert('Por favor, subí ambas fotos de tu DNI (frente y dorso).');
+      this.toastService.show('Por favor, subí ambas fotos de tu DNI (frente y dorso).', 'warning');
       return;
     }
 

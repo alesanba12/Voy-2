@@ -1,0 +1,281 @@
+/* ==========================================================================
+   Panel / Perfil de Organizador — Estilos del Componente
+   ========================================================================== */
+
+.first-block,
+.second-block,
+.third-block {
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(38, 38, 43, 0.95) 0%,
+    rgba(27, 27, 31, 0.98) 60%,
+    var(--background-secundario) 100%
+  );
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  padding: 32px;
+  width: calc(100% - 6rem);
+  max-width: 1300px;
+  margin: 30px auto;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* ==========================================================================
+   Bloque 1: Cabecera de Identidad
+   ========================================================================== */
+.first-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.name-photo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-image {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primario);
+  background-color: var(--background-secundario);
+  flex-shrink: 0;
+}
+
+.name h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
+.name p {
+  font-size: 0.95rem;
+  color: var(--texto-secundario);
+  max-width: 450px;
+}
+
+.buttons .organizer-profile {
+  background-color: var(--background-secundario);
+  color: var(--texto-principal);
+  border: 1px solid var(--borde);
+  font-weight: 500;
+  padding: 11px 20px;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.buttons .organizer-profile:hover {
+  background-color: var(--borde);
+  border-color: var(--color-primario);
+}
+
+/* ==========================================================================
+   Bloque 2: Métricas de Confianza & VitoWork
+   ========================================================================== */
+.second-block {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  align-items: center;
+  gap: 24px;
+  padding: 28px 36px;
+}
+
+.total-events,
+.total-followers {
+  background-color: var(--background-secundario);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+.total-events h3,
+.total-followers h3 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--texto-muteado);
+  letter-spacing: 0.05em;
+}
+
+.total-events p,
+.total-followers p {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-primario-claro);
+}
+
+.vito-work {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vito-work img {
+  max-height: 130px;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radio-sm);
+}
+
+/* ==========================================================================
+   Bloque 3: Próximos Eventos & Carrusel (Flechas cerca del borde sin tocarlo)
+   ========================================================================== */
+.third-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.third-block .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.third-block .title h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--texto-principal);
+}
+
+.third-block .title p {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-primario-claro);
+  background-color: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  padding: 6px 14px;
+  border-radius: var(--radio-pill);
+}
+
+.parties-carrusel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.parties {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  z-index: 2;
+}
+
+.parties app-party-card {
+  width: 100%;
+  max-width: 820px;
+  display: block;
+}
+
+/* Botones de navegación */
+.parties-carrusel button.left,
+.parties-carrusel button.right {
+  position: absolute;
+  top: 38%;
+  transform: translateY(-50%);
+  background-color: rgba(27, 27, 31, 0.85);
+  backdrop-filter: blur(6px);
+  color: var(--texto-principal);
+  border: 1px solid var(--borde);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+
+.parties-carrusel button.left {
+  left: calc(50% - 455px); 
+}
+
+.parties-carrusel button.right {
+  right: calc(50% - 455px);
+}
+
+.parties-carrusel button.left:hover,
+.parties-carrusel button.right:hover {
+  background-color: var(--color-primario-claro);
+  color: var(--texto-sobre-primario);
+  border-color: var(--color-primario-claro);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 20px rgba(212, 196, 255, 0.45);
+}
+
+.parties-carrusel button.left:active,
+.parties-carrusel button.right:active {
+  background-color: var(--color-primario);
+  color: #fff;
+  transform: translateY(-50%) scale(0.95);
+  box-shadow: none;
+}
+
+.empty-message {
+  color: var(--texto-muteado);
+  font-size: 0.95rem;
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Responsivo
+   ========================================================================== */
+@media (max-width: 980px) {
+  .parties-carrusel button.left {
+    left: 4px;
+  }
+  .parties-carrusel button.right {
+    right: 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  .first-block,
+  .second-block,
+  .third-block {
+    width: calc(100% - 2rem);
+    padding: 20px;
+  }
+
+  .first-block {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .buttons,
+  .buttons .organizer-profile {
+    width: 100%;
+  }
+
+  .parties-carrusel {
+    padding: 0;
+  }
+
+  
+
+}

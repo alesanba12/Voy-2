@@ -30,6 +30,18 @@
     </section>
   } @else {
     <section class="dashboard" aria-label="Resumen de eventos">
+      <div class="sales-overview" aria-label="Resumen de ventas">
+        <article class="sales-overview-card">
+          <span>Tickets vendidos</span>
+          <strong>{{ totalSoldTickets() }}</strong>
+        </article>
+        <article class="sales-overview-card revenue">
+          <span>Recaudación total</span>
+          <strong>{{ formatCurrency(totalRevenue()) }}</strong>
+          <small>Compras aprobadas</small>
+        </article>
+      </div>
+
       <div class="summary-cards">
         <button
           class="summary-card"
@@ -111,6 +123,16 @@
                       }
                     </p>
                   }
+                  <div class="party-sales" aria-label="Ventas de este evento">
+                    <span>
+                      <strong>{{ salesFor(party.externalId).soldTickets }}</strong>
+                      {{ salesFor(party.externalId).soldTickets === 1 ? 'ticket vendido' : 'tickets vendidos' }}
+                    </span>
+                    <span>
+                      <strong>{{ formatCurrency(salesFor(party.externalId).totalRevenue) }}</strong>
+                      recaudados
+                    </span>
+                  </div>
                 </div>
 
                 <div class="party-actions">
