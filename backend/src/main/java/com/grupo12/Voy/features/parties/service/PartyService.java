@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -181,6 +182,10 @@ public class PartyService implements IPartyService {
 
         if (tags.size() != dto.tagsList().size()) {
             throw new IllegalArgumentException("Alguna etiqueta no existe");
+        }
+
+        if(dto.dateTime().isAfter(LocalDateTime.now())){
+            party.setHasPassed(false);
         }
 
         party.setTagsList(tags);
