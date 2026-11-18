@@ -20,6 +20,8 @@ import { TicketClient } from '../../tickets/ticket-service';
   templateUrl: './party-detail.html',
 })
 export class PartyDetail {
+  protected readonly defaultPartnerImage = '/user-alt-1-svgrepo-com.svg';
+
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly partyClient = inject(PartyClient);
@@ -289,6 +291,12 @@ protected toggleFollowPartner(user: UserDto) {
 
   protected initials(name: string) {
     return name.slice(0, 2).toUpperCase();
+  }
+
+  protected onPartnerImageError(event: Event) {
+    if (event.target instanceof HTMLImageElement) {
+      event.target.src = this.defaultPartnerImage;
+    }
   }
 
   protected addPartner(user: UserDto) {

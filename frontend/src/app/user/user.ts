@@ -12,7 +12,7 @@ export interface UserDto {
   email: string;
   bio: string;
   isOrganizer: boolean;
-  imageUrl: string;
+  imageUrl: string | null;
 }
 
 export interface UserFollowDto{
