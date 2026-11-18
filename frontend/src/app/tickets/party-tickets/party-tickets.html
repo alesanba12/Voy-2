@@ -60,7 +60,7 @@
             </div>
 
             <div class="ticket-actions">
-              <button type="button" class="scan-button" (click)="scanTicket(t)">Ver QR</button>
+              <button type="button" class="scan-button" (click)="showQr(t)">Ver QR</button>
 
               @if (t.confirmed) {
                 <button
@@ -129,5 +129,32 @@
         </li>
       }
     </ul>
+    @if (qrTicket(); as q) {
+      <div class="qr-backdrop" (click)="closeQr()">
+        <div
+          class="qr-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="qr-title"
+          (click)="$event.stopPropagation()"
+        >
+          <button type="button" class="qr-close" aria-label="Cerrar" (click)="closeQr()">✕</button>
+
+          <h2 id="qr-title">{{ q.party.title }}</h2>
+          <p class="muted">{{ formatDate(q.party.dateTime) }}</p>
+
+          <div class="qr-frame">
+            @if (bigQr(); as qr) {
+              <img [src]="qr" alt="Código QR de la entrada" width="320" height="320" />
+            } @else {
+              <p class="muted">Generando QR…</p>
+            }
+          </div>
+
+          <p class="ticket-code">#{{ shortCode(q.ticketExternalId) }}</p>
+          <small class="muted">Mostrá este código en la puerta del evento.</small>
+        </div>
+      </div>
+    }
   }
 </main>

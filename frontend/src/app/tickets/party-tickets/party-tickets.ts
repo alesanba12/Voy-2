@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -139,9 +139,30 @@ export class PartyTickets implements OnInit {
     }
   }
 
-  protected scanTicket(ticket: TicketDto) {
-    // TODO: definir qué hace "escanear" (ver nota abajo)
-    console.log('Escanear', ticket.ticketExternalId);
+  protected readonly qrTicket = signal<TicketDto | null>(null);
+  protected readonly bigQr = signal<string | null>(null);
+
+  protected async showQr(ticket: TicketDto) {
+    this.qrTicket.set(ticket);
+    this.bigQr.set(null);
+
+    // Se genera más grande que el de la lista para que se escanee bien a distancia
+    const url = await toDataURL(ticket.ticketExternalId, { margin: 2, width: 480 });
+
+    // Si el usuario cerró el modal mientras se generaba, no lo reabre
+    if (this.qrTicket()?.ticketExternalId === ticket.ticketExternalId) {
+      this.bigQr.set(url);
+    }
+  }
+
+  protected closeQr() {
+    this.qrTicket.set(null);
+    this.bigQr.set(null);
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape() {
+    this.closeQr();
   }
 
   protected canTransfer(ticket: TicketDto): boolean {

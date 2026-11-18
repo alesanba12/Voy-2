@@ -243,3 +243,69 @@
   border-radius: var(--radio-md);
   background: var(--background-terciario);
 }
+
+.qr-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 0.7);
+}
+
+.qr-modal {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  width: min(100%, 420px);
+  padding: 1.5rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background: var(--background-secundario);
+  text-align: center;
+}
+
+.qr-modal h2 {
+  padding: 0 2rem;
+  font-size: 1.25rem;
+}
+
+.qr-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--texto-principal);
+  cursor: pointer;
+}
+
+.qr-close:hover {
+  border-color: var(--color-primario);
+  color: var(--color-primario-claro);
+}
+
+.qr-frame {
+  display: grid;
+  place-items: center;
+  width: min(100%, 340px);
+  min-height: 340px;
+  margin: 0.5rem 0;
+  border-radius: var(--radio-md);
+  background: #fff; /* el QR necesita fondo claro para escanearse */
+}
+
+.qr-frame img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.qr-frame .muted {
+  color: #555;
+}
