@@ -1,14 +1,14 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { PartySummaryDto, UserDto } from '../user';
 import { UserService } from '../user-service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { EditModal } from '../edit-modal/edit-modal';
 import { PartyCard } from '../../parties/party-card/party-card';
 import { OrganizerModal } from '../organizer-modal/organizer-modal';
 import { ToastService } from '../../shared/components/toast/toast-service';
 
 @Component({
-  imports: [EditModal, PartyCard, OrganizerModal],
+  imports: [EditModal, PartyCard, OrganizerModal, RouterLink],
   selector: 'app-user-profile',
   styleUrl: './user-profile.css',
   templateUrl: './user-profile.html',
