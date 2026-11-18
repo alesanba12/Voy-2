@@ -1,1 +1,375 @@
-<p>parties-table works!</p>
+<section class="admin-parties-page">
+  <!-- Panel Principal -->
+  <div class="panel-card">
+    <header class="panel-header">
+      <div class="header-title-group">
+        <div class="header-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+            <path d="M13 5v2" />
+            <path d="M13 17v2" />
+            <path d="M13 11v2" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="panel-title">Gestión de Eventos</h1>
+          <p class="panel-subtitle">Supervisa la cartelera, modera etiquetas y controla la visibilidad de eventos públicos y privados.</p>
+        </div>
+      </div>
+
+      <div class="header-badges">
+        <span class="badge-pill badge-success">{{ activeCount() }} en cartelera</span>
+        <span class="badge-pill badge-primary">{{ publicCount() }} públicos</span>
+        <span class="badge-pill badge-neutral">{{ parties().length }} totales</span>
+      </div>
+    </header>
+
+    <!-- Barra de Filtros -->
+    <form class="filters-bar" (ngSubmit)="loadParties()">
+      <div class="filter-field filter-search">
+        <label for="filter-title">Título</label>
+        <input
+          id="filter-title"
+          type="text"
+          placeholder="Buscar por nombre..."
+          [ngModel]="filterTitle()"
+          (ngModelChange)="filterTitle.set($event)"
+          name="title"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-city">Ciudad</label>
+        <input
+          id="filter-city"
+          type="text"
+          placeholder="Ej. Mar del Plata"
+          [ngModel]="filterCity()"
+          (ngModelChange)="filterCity.set($event)"
+          name="city"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-from">Desde</label>
+        <input
+          id="filter-from"
+          type="date"
+          [ngModel]="filterFrom()"
+          (ngModelChange)="filterFrom.set($event)"
+          name="from"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-to">Hasta</label>
+        <input
+          id="filter-to"
+          type="date"
+          [ngModel]="filterTo()"
+          (ngModelChange)="filterTo.set($event)"
+          name="to"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-status">Estado</label>
+        <select
+          id="filter-status"
+          [ngModel]="filterStatus()"
+          (ngModelChange)="filterStatus.set($event)"
+          name="status"
+        >
+          <option value="ALL">Todos</option>
+          <option value="ACTIVE">Activos</option>
+          <option value="INACTIVE">Inactivos</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-visibility">Acceso</label>
+        <select
+          id="filter-visibility"
+          [ngModel]="filterVisibility()"
+          (ngModelChange)="filterVisibility.set($event)"
+          name="visibility"
+        >
+          <option value="ALL">Todos</option>
+          <option value="PUBLIC">Públicos</option>
+          <option value="PRIVATE">Privados</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button type="submit" class="btn-primary">Buscar</button>
+        <button
+          type="button"
+          class="btn-secondary"
+          [disabled]="!hasActiveFilters()"
+          (click)="resetFilters()"
+        >
+          Limpiar
+        </button>
+      </div>
+    </form>
+
+    @if (errorMessage()) {
+      <div class="error-banner">
+        <span>{{ errorMessage() }}</span>
+        <button type="button" class="btn-ghost-sm" (click)="mutationError.set(null)">✕</button>
+      </div>
+    }
+
+    <!-- Tabla de Eventos -->
+    <div class="table-wrapper">
+      <table class="parties-table">
+        <thead>
+          <tr>
+            <th class="col-event">EVENTO</th>
+            <th class="col-organizer">ORGANIZADOR</th>
+            <th class="col-location">UBICACIÓN</th>
+            <th class="col-date">FECHA Y HORA</th>
+            <th class="col-price">PRECIO / CUPO</th>
+            <th class="col-access">ACCESO</th>
+            <th class="col-state">ESTADO</th>
+            <th class="col-actions">ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (isLoading()) {
+            <tr>
+              <td colspan="8" class="empty-state-cell">Cargando eventos...</td>
+            </tr>
+          } @else if (filteredParties().length === 0) {
+            <tr>
+              <td colspan="8" class="empty-state-cell">
+                No se encontraron eventos con los criterios seleccionados.
+              </td>
+            </tr>
+          } @else {
+            @for (party of filteredParties(); track party.externalId) {
+              <tr>
+                <td class="col-event">
+                  <div class="event-cell">
+                    @if (party.imageUrl) {
+                      <img [src]="party.imageUrl" [alt]="party.title" class="event-thumb" />
+                    } @else {
+                      <div class="event-thumb-placeholder">V.</div>
+                    }
+                    <div class="event-info">
+                      <span class="event-title" [title]="party.title">{{ party.title }}</span>
+                      <div class="event-tags-mini">
+                        @for (tag of party.tags.slice(0, 2); track tag) {
+                          <span class="mini-tag">{{ tag }}</span>
+                        }
+                        @if (party.tags.length > 2) {
+                          <span class="mini-tag">+{{ party.tags.length - 2 }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="col-organizer">
+                  <span class="cell-primary-text" [title]="party.organizerName">{{ party.organizerName }}</span>
+                  @if (party.coOrganizerName.length > 0) {
+                    <span class="cell-secondary-text">+{{ party.coOrganizerName.length }} co-org.</span>
+                  }
+                </td>
+
+                <td class="col-location">
+                  <span class="cell-primary-text">{{ party.city }}</span>
+                  <span class="cell-secondary-text" [title]="party.adress">{{ party.adress }}</span>
+                </td>
+
+                <td class="col-date">
+                  <span class="cell-primary-text">{{ party.dateTime | date: 'dd/MM/yyyy' }}</span>
+                  <span class="cell-secondary-text">{{ party.dateTime | date: 'HH:mm' }} hs</span>
+                </td>
+
+                <td class="col-price">
+                  <span class="cell-primary-text">
+                    {{ party.price === 0 ? 'Gratis' : (party.price | currency: 'ARS' : 'symbol-narrow' : '1.0-0') }}
+                  </span>
+                  <span class="cell-secondary-text">Máx. {{ party.guestLimit }}</span>
+                </td>
+
+                <td class="col-access">
+                  @if (party.partyAccesibility) {
+                    <span class="status-badge badge-public">Público</span>
+                  } @else {
+                    <span class="status-badge badge-private">Privado</span>
+                  }
+                </td>
+
+                <td class="col-state">
+                  @if (party.state) {
+                    <span class="status-badge badge-active">Activo</span>
+                  } @else {
+                    <span class="status-badge badge-inactive">Inactivo</span>
+                  }
+                </td>
+
+                <td class="col-actions">
+                  <div class="actions-group">
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      title="Ver detalle y moderar etiquetas"
+                      (click)="openDetailModal(party)"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      [class.btn-icon-warning]="party.state"
+                      [class.btn-icon-success]="!party.state"
+                      [disabled]="actionLoadingId() === party.externalId"
+                      [title]="party.state ? 'Pausar evento' : 'Activar evento'"
+                      (click)="onToggleState(party)"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                        <line x1="12" y1="2" x2="12" y2="12" />
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-icon btn-icon-danger"
+                      [disabled]="actionLoadingId() === party.externalId"
+                      title="Eliminar evento"
+                      (click)="confirmDelete(party)"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de Detalle y Moderación de Etiquetas -->
+  @if (selectedParty(); as party) {
+    <div class="modal-backdrop" (click)="closeDetailModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <div>
+            <h2 class="modal-title">{{ party.title }}</h2>
+            <span class="modal-id">ID: {{ party.externalId }}</span>
+          </div>
+          <button type="button" class="btn-icon" (click)="closeDetailModal()">✕</button>
+        </header>
+
+        <div class="modal-body">
+          @if (party.imageUrl) {
+            <img [src]="party.imageUrl" [alt]="party.title" class="modal-banner" />
+          }
+
+          <p class="modal-description">{{ party.description || 'Sin descripción proporcionada.' }}</p>
+
+          <div class="detail-grid">
+            <div class="detail-box">
+              <span class="detail-label">ORGANIZADOR</span>
+              <span class="detail-value">{{ party.organizerName }}</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-label">DIRECCIÓN</span>
+              <span class="detail-value">{{ party.adress }}, {{ party.city }}</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-label">FECHA Y HORA</span>
+              <span class="detail-value">{{ party.dateTime | date: 'dd/MM/yyyy HH:mm' }} hs</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-label">ENTRADA Y CUPO</span>
+              <span class="detail-value">
+                {{ party.price === 0 ? 'Gratis' : (party.price | currency: 'ARS' : 'symbol-narrow') }} · {{ party.guestLimit }} pers.
+              </span>
+            </div>
+          </div>
+
+          @if (party.coOrganizerName.length > 0) {
+            <div class="modal-section">
+              <span class="detail-label">CO-ORGANIZADORES</span>
+              <div class="chips-list">
+                @for (coOrg of party.coOrganizerName; track coOrg) {
+                  <span class="chip-neutral">{{ coOrg }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Moderación de Etiquetas del Evento -->
+          <div class="modal-section">
+            <span class="detail-label">ETIQUETAS ASIGNADAS</span>
+            <div class="tag-add-row">
+              <input
+                type="text"
+                placeholder="Nombre de etiqueta existente..."
+                [ngModel]="newTagInput()"
+                (ngModelChange)="newTagInput.set($event)"
+                (keydown.enter)="onAddTag()"
+              />
+              <button type="button" class="btn-primary" [disabled]="!newTagInput().trim()" (click)="onAddTag()">
+                + Asignar
+              </button>
+            </div>
+
+            <div class="chips-list">
+              @for (tag of party.tags; track tag) {
+                <span class="chip-tag">
+                  {{ tag }}
+                  <button type="button" class="chip-remove" (click)="onRemoveTag(tag)">×</button>
+                </span>
+              } @empty {
+                <span class="cell-secondary-text">Este evento no tiene etiquetas asignadas.</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="onToggleState(party)">
+            {{ party.state ? 'Desactivar evento' : 'Activar evento' }}
+          </button>
+          <button type="button" class="btn-primary" (click)="closeDetailModal()">Cerrar</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Modal de Confirmación de Eliminación -->
+  @if (partyToDelete(); as target) {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <h2 class="modal-title">Eliminar evento</h2>
+          <button type="button" class="btn-icon" (click)="cancelDelete()">✕</button>
+        </header>
+        <div class="modal-body">
+          <p class="modal-description">
+            ¿Estás seguro de que deseas dar de baja lógica el evento <strong>{{ target.title }}</strong>? Dejará de mostrarse en la cartelera pública.
+          </p>
+        </div>
+        <footer class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="cancelDelete()">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="executeDelete()">Sí, eliminar</button>
+        </footer>
+      </div>
+    </div>
+  }
+</section>

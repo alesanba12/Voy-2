@@ -46,3 +46,10 @@ export function toFormModel(party: PartyRes): PartyFormModel {
     imageUrl: null,
   };
 }
+
+export interface PartyFilters {
+  title?: string;
+  city?: string;
+  from?: string;
+  to?: string;
+}
