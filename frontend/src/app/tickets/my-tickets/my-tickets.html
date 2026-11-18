@@ -125,12 +125,7 @@
                   <div class="ticket-stub">
                     <div class="stub-heading">
                       <span>ENTRADAS</span>
-                      <strong>{{ group.ticketIds.length }}</strong>
-                    </div>
-                    <div class="ticket-codes">
-                      @for (id of group.ticketIds; track id) {
-                        <code>#{{ shortCode(id) }}</code>
-                      }
+                      <strong>{{ group.tickets.length }}</strong>
                     </div>
                     <a [routerLink]="['/parties', group.party.externalId]">
                       Ver evento <span aria-hidden="true">↗</span>

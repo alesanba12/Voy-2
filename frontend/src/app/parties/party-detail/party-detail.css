@@ -399,3 +399,20 @@ ul {
   }
 
 }
+
+.partner .follow {
+  margin-left: auto;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--texto-principal);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.partner .follow[aria-pressed='true'] {
+  background: var(--background-terciario);
+  color: var(--color-primario-claro);
+}

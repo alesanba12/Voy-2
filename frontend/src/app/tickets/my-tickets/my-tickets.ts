@@ -45,6 +45,16 @@ export class MyTickets implements OnInit {
     );
   });
 
+  protected shortCode(id: string | undefined): string {
+    return id ? id.slice(0, 8).toUpperCase() : '—';
+  }
+
+  protected readonly upcomingTickets = computed(() =>
+    this.upcomingGroups().reduce((count, group) => count + group.tickets.length, 0),
+  );
+  protected readonly pastTickets = computed(() =>
+    this.pastGroups().reduce((count, group) => count + group.tickets.length, 0),
+  );
   protected readonly upcomingGroups = computed(() =>
     this.groups().filter((g) => this.isUpcoming(g.party)),
   );
@@ -52,12 +62,6 @@ export class MyTickets implements OnInit {
     this.groups().filter((g) => !this.isUpcoming(g.party)),
   );
   protected readonly totalTickets = computed(() => this.tickets().length);
-  protected readonly upcomingTickets = computed(() =>
-    this.upcomingGroups().reduce((count, group) => count + group.ticketIds.length, 0),
-  );
-  protected readonly pastTickets = computed(() =>
-    this.pastGroups().reduce((count, group) => count + group.ticketIds.length, 0),
-  );
 
   protected readonly visibleGroups = computed(() => {
     const filter = this.activeFilter();
@@ -118,8 +122,6 @@ export class MyTickets implements OnInit {
       hour12: false,
     }).format(new Date(dateTime));
   }
-
-  // Código corto para mostrar en pantalla (el UUID completo es muy largo)
 
   protected onImageError(event: Event): void {
     if (event.target instanceof HTMLImageElement) {
