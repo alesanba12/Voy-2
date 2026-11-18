@@ -7,7 +7,7 @@ import { AuthRequest } from '../../core/auth/auth.models';
 
 @Component({
   selector: 'app-login',
-  imports: [FormField, FormRoot, RouterLink],
+  imports: [FormField, FormRoot],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
