@@ -54,6 +54,27 @@ public class PartiesController {
         return ResponseEntity.ok(partyService.getAll(partyId, organizerId, title, city, from, to));
     }
 
+    @Operation(summary = "Listar todos los eventos (Admin)", description = "Retorna todos los eventos, incluyendo aquellos eliminados lÃ³gicamente o privados. Requiere rol ADMIN.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de eventos obtenida",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = PartyResDTO.class)))),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado. Se requiere rol ADMIN", content = @Content)
+    })
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<PartyResDTO>> findAllAdmin(
+            @RequestParam(required = false) UUID partyId,
+            @RequestParam(required = false) UUID organizerId,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to,
+            @RequestParam(required = false) Boolean logicState,
+            @RequestParam(required = false) Boolean isPublic
+    ) {
+        return ResponseEntity.ok(partyService.getAllAdmin(partyId, organizerId, title, city, from, to, logicState, isPublic));
+    }
+
     @Operation(summary = "Obtener evento por ID", description = """
             Retorna un evento por su ID externo.
             Si el evento es privado, solo el organizador o un ADMIN pueden verlo.

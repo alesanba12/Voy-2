@@ -56,4 +56,10 @@ public class PartySpecification {
     public static PredicateSpecification<PartyEntity> LogicStateTrue(){
         return ((root,cb) -> cb.isTrue(root.get("logicState")));
     }
+
+    public static PredicateSpecification<PartyEntity> logicStateEqual(Boolean logicState){
+        return ((root,cb) -> logicState == null ?
+                cb.conjunction() :
+                cb.equal(root.get("logicState"), logicState));
+    }
 }

@@ -13,6 +13,8 @@ public interface IPartyService {
 
     List<PartyResDTO> getAll(UUID partyId, UUID organizerId, String title, String city, LocalDate from, LocalDate to);
 
+    List<PartyResDTO> getAllAdmin(UUID partyId, UUID organizerId, String title, String city, LocalDate from, LocalDate to, Boolean logicState, Boolean isPublic);
+
     PartyResDTO getByExternalId(UUID id);
     PartyResDTO getById(UUID id, UUID currentUserId);
 

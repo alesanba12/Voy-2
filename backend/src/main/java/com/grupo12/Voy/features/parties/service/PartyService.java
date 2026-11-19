@@ -63,6 +63,28 @@ public class PartyService implements IPartyService {
     }
 
     @Override
+    public List<PartyResDTO> getAllAdmin(UUID partyId, UUID organizerId, String title, String city, LocalDate from,
+            LocalDate to, Boolean logicState, Boolean isPublic) {
+        if (from != null && to != null && to.isBefore(from)) {
+            throw new NotAllowedException("La fecha límite no puede ser anterior a la fecha de inicio");
+        }
+        PredicateSpecification<PartyEntity> spec = PredicateSpecification.allOf(
+                PartySpecification.externalIdEqual(partyId),
+                PartySpecification.externalIdOrganizerEqual(organizerId),
+                PartySpecification.titleContains(title),
+                PartySpecification.isPublic(isPublic),
+                PartySpecification.cityContains(city),
+                PartySpecification.betweenDates(from, to),
+                PartySpecification.logicStateEqual(logicState));
+
+        return partyRepository
+                .findAll(spec)
+                .stream()
+                .map(partyMapper::toResDTO)
+                .toList();
+    }
+
+    @Override
     public PartyResDTO getByExternalId(UUID id) {
         return partyRepository.findByExternalIdAndLogicStateTrue(id)
                 .map(partyMapper::toResDTO)
