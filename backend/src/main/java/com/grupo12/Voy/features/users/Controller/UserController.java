@@ -152,6 +152,12 @@ public class UserController {
         return ResponseEntity.ok(userService.listMyParties(idExternal));
     }
 
+    @GetMapping("/partiesICoOrganize")
+    @PreAuthorize("hasRole('USER')")
+    ResponseEntity<List<PartyUsersDto>> listMyCoOrganizedParties(@AuthenticationPrincipal(expression = "usuario.externalId") UUID isExternal){
+        return ResponseEntity.ok(userService.listMyCoOrganizedParties(isExternal));
+    }
+
     @Operation(summary = "Listar eventos seguidos", description = "Retorna la lista de eventos que sigue el usuario autenticado.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Lista de eventos seguidos",

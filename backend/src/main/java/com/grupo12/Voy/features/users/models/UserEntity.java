@@ -74,6 +74,10 @@ public class UserEntity {
     private List<PartyEntity> myParties = new ArrayList<>();
 
     @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "coOrganizer")
+    private List<PartyEntity> myCoOrganiedParties = new ArrayList<>();
+
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<TicketEntity> myTickets = new ArrayList<>();
 

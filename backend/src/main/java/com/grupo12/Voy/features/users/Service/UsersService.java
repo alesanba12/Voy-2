@@ -14,6 +14,7 @@ import com.grupo12.Voy.features.parties.Dto.PartyUsersDto;
 import com.grupo12.Voy.features.parties.mapper.PartyMapper;
 import com.grupo12.Voy.features.parties.models.PartyEntity;
 import com.grupo12.Voy.features.parties.repository.PartyRepository;
+import com.grupo12.Voy.features.parties.service.PartyService;
 import com.grupo12.Voy.features.receipts.DTO.ReceiptResponseDTO;
 import com.grupo12.Voy.features.receipts.ReceiptMapper;
 import com.grupo12.Voy.features.tickets.TicketMapper;
@@ -57,6 +58,7 @@ public class UsersService implements IUsersService{
     private final PasswordEncoder passwordEncoder;
     private final CredentialsRepository credentialsRepository;
     private final CloudinaryService  cloudinaryService;
+    private final PartyService partyService;
 
 
     @Override
@@ -220,6 +222,15 @@ public class UsersService implements IUsersService{
     public List<PartyUsersDto> listMyParties(UUID userId){
         UserEntity user = getUser(userId);
         return user.getMyParties().stream().map(partyMapper::toUserFromEntity).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PartyUsersDto> listMyCoOrganizedParties(UUID userId) {
+        UserEntity user = getUser(userId);
+        return user.getMyCoOrganiedParties().stream()
+                .map(partyMapper::toUserFromEntity)
+                .toList();
     }
 
     @Override

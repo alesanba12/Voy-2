@@ -21,6 +21,7 @@ public interface IUsersService {
     List<UserFollowDto> alterFollow(UUID userId, UUID otherUserId);
     List<UserFollowDto> listFollowersList(UUID userUuid);
     List<PartyUsersDto> listMyParties(UUID userId);
+    List<PartyUsersDto> listMyCoOrganizedParties(UUID userId);
     List<PartyUsersDto> listFollowedParties(UUID userUuid);
     List<PartyUsersDto> alterFollowParty(UUID userId, UUID partyId);
     List<TicketUsersDto> listTickets(UUID userUuid);
