@@ -20,7 +20,6 @@ interface TicketGroup {
   templateUrl: './my-tickets.html',
 })
 export class MyTickets implements OnInit {
-  private readonly ticketClient = inject(TicketClient);
   private readonly userService = inject(UserService);
   protected readonly tickets = signal<TicketDto[]>([]);
   protected readonly isLoading = signal(true);

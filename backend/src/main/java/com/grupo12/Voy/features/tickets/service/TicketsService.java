@@ -133,11 +133,11 @@ public class TicketsService  implements ITicketsService{
     }
 
     @Transactional
-    public TicketResponseDTO transferTicket(UUID externalId, UUID oldUserId, UUID newUserExtId){
+    public TicketResponseDTO transferTicket(UUID externalId, UUID oldUserId, String newUserEmail){
         TicketEntity ticket = ticketRepository.findByIdExternal(externalId)
                 .orElseThrow(() -> new EntityNotFoundException("No se encuentra el ticket"));
-        UserEntity user = userRepository.findByExternalId(newUserExtId)
-                .orElseThrow(() -> new EntityNotFoundException("El usuario destino no se encuentra"));
+        UserEntity user = userRepository.findByEmail(newUserEmail)
+                .orElseThrow(() -> new EntityNotFoundException("No existe un usuario con ese email"));
         if(!ticket.getUser().getExternalId().equals(oldUserId)){
             throw new NotAllowedException("Solo el propietario del ticket puede transferirlo");
         }

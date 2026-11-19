@@ -45,7 +45,7 @@ public class TicketEntity {
             idExternal = UUID.randomUUID();
         }
         if(confirmed == null){
-            confirmed = false;
+            confirmed = true;
         }
     }
 }

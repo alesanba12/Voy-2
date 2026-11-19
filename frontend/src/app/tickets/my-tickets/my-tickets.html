@@ -24,7 +24,9 @@
       <div class="empty-ticket" aria-hidden="true">✦</div>
       <p class="eyebrow">TU BILLETERA ESTÁ VACÍA</p>
       <h2>Todavía no tenés entradas</h2>
-      <p>Cuando compres un ticket, vas a encontrar acá su código y toda la información del evento.</p>
+      <p>
+        Cuando compres un ticket, vas a encontrar acá su código y toda la información del evento.
+      </p>
       <a class="discover-link" routerLink="/parties/catalogo">Descubrir eventos</a>
     </section>
   } @else {
@@ -76,7 +78,10 @@
       <section class="ticket-collection" aria-label="Mis entradas por evento">
         <div class="collection-heading">
           <h2>Tu colección</h2>
-          <span>{{ visibleGroups().length }} {{ visibleGroups().length === 1 ? 'evento' : 'eventos' }}</span>
+          <span
+            >{{ visibleGroups().length }}
+            {{ visibleGroups().length === 1 ? 'evento' : 'eventos' }}</span
+          >
         </div>
 
         <ul class="ticket-list">
@@ -98,7 +103,9 @@
                   <div class="ticket-event">
                     <p class="event-category">{{ group.party.tags?.[0] || 'Evento' }}</p>
                     <h3>
-                      <a [routerLink]="['/parties', group.party.externalId]">{{ group.party.title }}</a>
+                      <a [routerLink]="['/parties', group.party.externalId]">{{
+                        group.party.title
+                      }}</a>
                     </h3>
                     <div class="event-facts">
                       <p>
@@ -129,6 +136,9 @@
                     </div>
                     <a [routerLink]="['/parties', group.party.externalId]">
                       Ver evento <span aria-hidden="true">↗</span>
+                    </a>
+                    <a [routerLink]="[group.party.externalId]">
+                      Ver entradas <span aria-hidden="true">↗</span>
                     </a>
                   </div>
                 </div>
