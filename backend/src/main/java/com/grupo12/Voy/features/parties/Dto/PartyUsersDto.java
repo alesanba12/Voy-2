@@ -15,6 +15,7 @@ public record PartyUsersDto(
                 BigDecimal price,
                 String adress,
                 LocalDateTime dateTime,
+                Boolean tickets,
                 UserDto organizer,
                 String imageUrl,
                 Set<String> tags) {

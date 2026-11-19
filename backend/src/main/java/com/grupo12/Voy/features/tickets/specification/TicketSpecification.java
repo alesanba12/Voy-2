@@ -13,6 +13,16 @@ public class TicketSpecification {
                 cb.equal(root.get("idExternal"), externalId);
     }
 
+    public static PredicateSpecification<TicketEntity> partyExternalIdEqual(UUID partyId) {
+        return (root, cb) -> partyId == null ?
+                cb.conjunction() :
+                cb.equal(root.get("party").get("externalId"), partyId);
+    }
+
+    public static PredicateSpecification<TicketEntity> partyOrganizerIdEqual(UUID organizerId) {
+        return (root, cb) -> cb.equal(root.get("party").get("organizer").get("externalId"), organizerId);
+    }
+
     public static PredicateSpecification<TicketEntity> isConfirmed(Boolean confirmed) {
         return (root, cb) -> confirmed == null ?
                 cb.conjunction() :

@@ -57,13 +57,23 @@ public class TicketsController {
     @GetMapping("/organizer")
     @PreAuthorize("hasRole('ORGANIZATOR')")
     public ResponseEntity<List<TicketResponseDTO>> getAllOrganizer(@RequestParam(required = false) UUID externalId,
+                                                          @RequestParam(required = false) UUID partyId,
                                                           @RequestParam(required = false) Boolean isConfirmed,
                                                           @RequestParam(required = false) String title,
                                                           @AuthenticationPrincipal(expression = "usuario.externalId")UUID userExtId,
                                                           @RequestParam(required = false) String usernameUser
     ){
-        return ResponseEntity.ok(ticketsService.getAllOrganizer(externalId,isConfirmed,
+        return ResponseEntity.ok(ticketsService.getAllOrganizer(externalId,partyId,isConfirmed,
                 title,userExtId,usernameUser));
+    }
+
+    @Operation(summary = "Validar entrada de evento pago (Organizador)", description = "Marca como ingresada una entrada confirmada del evento pago propio del organizador.")
+    @PatchMapping("/organizer/{ticketId}/check-in")
+    @PreAuthorize("hasRole('ORGANIZATOR')")
+    public ResponseEntity<TicketResponseDTO> checkInOrganizerTicket(
+            @PathVariable UUID ticketId,
+            @AuthenticationPrincipal(expression = "usuario.externalId") UUID organizerId) {
+        return ResponseEntity.ok(ticketsService.checkInOrganizerTicket(ticketId, organizerId));
     }
 
     @Operation(summary = "Listar mis tickets (Usuario)", description = "Retorna los tickets del usuario autenticado. El ID se obtiene del token JWT. Requiere rol USER.")

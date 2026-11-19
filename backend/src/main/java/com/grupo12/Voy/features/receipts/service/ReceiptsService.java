@@ -96,7 +96,7 @@ public class ReceiptsService implements IReceiptService {
         if (dto.price().doubleValue() == 0.0 ){
             receipt.setStatus(Status.APROBADA);
         }else{
-            receipt.setStatus(Status.PENDIENTE);
+            receipt.setStatus(Status.APROBADA); //TODO Cambiar por pendiente cuando se utilice el endpoint de aprobar desde el admin
         }
         receipt.setFinalPrice(receipt.getPrice().multiply(BigDecimal.valueOf(receipt.getQuantity())));
         receipt.setPaymentDate(LocalDateTime.now());

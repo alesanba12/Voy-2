@@ -34,6 +34,7 @@ public class AdminOrganizerController {
     public ResponseEntity<List<OrganizerVerificationResDTO>> getPendingVerifications() {
         return ResponseEntity.ok(verificationService.getPendingVerifications());
     }
+    
 
     @Operation(summary = "Aprobar verificación", description = "Cambia el estado a VERIFIED y promueve accesibilityUser = true.")
     @ApiResponses({

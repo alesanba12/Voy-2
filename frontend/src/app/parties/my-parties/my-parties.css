@@ -85,47 +85,6 @@
   line-height: 1;
 }
 
-.sales-overview {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.sales-overview-card {
-  display: grid;
-  gap: 0.2rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--borde);
-  border-left: 3px solid var(--color-primario);
-  border-radius: var(--radio-lg);
-  background: var(--background-secundario);
-}
-
-.sales-overview-card span {
-  color: var(--texto-secundario);
-  font-size: 0.8rem;
-}
-
-.sales-overview-card strong {
-  color: var(--texto-principal);
-  font-size: 1.6rem;
-  line-height: 1.2;
-}
-
-.sales-overview-card.revenue {
-  border-left-color: var(--color-exito);
-}
-
-.sales-overview-card.revenue strong {
-  color: var(--color-exito);
-}
-
-.sales-overview-card small {
-  color: var(--texto-muteado);
-  font-size: 0.7rem;
-}
-
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -346,7 +305,8 @@
   padding-right: 0.25rem;
 }
 
-.party-actions a {
+.party-actions a,
+.party-actions button {
   display: inline-flex;
   min-height: 36px;
   align-items: center;
@@ -359,9 +319,11 @@
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
+  cursor: pointer;
 }
 
-.party-actions a:hover {
+.party-actions a:hover,
+.party-actions button:hover {
   border-color: var(--color-primario);
   color: var(--color-primario-claro);
 }
@@ -369,6 +331,17 @@
 .party-actions .edit-link {
   border-color: transparent;
   background: var(--background-terciario);
+}
+
+.party-actions .manage-tickets-button {
+  border-color: var(--color-primario);
+  background: var(--color-primario);
+  color: var(--texto-sobre-primario);
+}
+
+.party-actions .manage-tickets-button:hover {
+  filter: brightness(1.08);
+  color: var(--texto-sobre-primario);
 }
 
 .empty-state,
@@ -455,7 +428,8 @@
     flex-wrap: wrap;
   }
 
-  .party-actions a {
+  .party-actions a,
+  .party-actions button {
     min-height: 32px;
     font-size: 0.75rem;
   }
