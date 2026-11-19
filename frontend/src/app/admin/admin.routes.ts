@@ -20,7 +20,7 @@ export const ADMIN_ROUTES : Routes = [
             },
             {
                 path: 'solicitudes',
-                loadComponent: () => import('./organizer-requests/organizer-requests').then(m=>m.OrganizerRequests),
+                loadComponent: () => import('./organizer-requests-table/organizer-requests-table').then(m=>m.OrganizerRequestsTable),
             },
             {
                 path: 'usuarios',

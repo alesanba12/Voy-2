@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record OrganizerVerificationResDTO(
-        Long id,
         UUID userExternalId,
         String userEmail,
         VerificationStatus status,
