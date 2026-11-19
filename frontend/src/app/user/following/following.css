@@ -88,6 +88,19 @@
   font-weight: 600;
 }
 
+.organizer-profile-link {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--color-primario-claro);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.organizer-profile-link:hover {
+  text-decoration: underline;
+}
+
 .party-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
