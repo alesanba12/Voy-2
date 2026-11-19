@@ -65,15 +65,14 @@ public class TicketsService  implements ITicketsService{
                 .stream().map(ticketMapper::toResponseDto).toList();
     }
     @Override
-    public List<TicketResponseDTO> getAllOrganizer(UUID ticketId, Boolean isConfimed,
+    public List<TicketResponseDTO> getAllOrganizer(UUID ticketId, UUID partyId, Boolean isConfimed,
                                           String title, UUID userExtId, String usernameUser){
-        UserEntity user = userRepository.findByExternalId(userExtId)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         PredicateSpecification<TicketEntity> spec = PredicateSpecification.allOf(
                 TicketSpecification.externalIdEqual(ticketId),
+                TicketSpecification.partyExternalIdEqual(partyId),
                 TicketSpecification.isConfirmed(isConfimed),
                 TicketSpecification.partyTitleContains(title),
-                TicketSpecification.partyOrganizerNameContains(user.getUsername()),
+                TicketSpecification.partyOrganizerIdEqual(userExtId),
                 TicketSpecification.userUsernameContains(usernameUser)
         );
         return ticketRepository.findAll(spec)
@@ -147,6 +146,29 @@ public class TicketsService  implements ITicketsService{
         ticket.setUser(user);
         TicketEntity ticket1 = ticketRepository.save(ticket);
         return ticketMapper.toResponseDto(ticket1);
+    }
+
+    @Transactional
+    public TicketResponseDTO checkInOrganizerTicket(UUID ticketExtId, UUID organizerId){
+        TicketEntity ticket = ticketRepository.findByIdExternal(ticketExtId)
+                .orElseThrow(() -> new EntityNotFoundException("No se encuentra el ticket"));
+
+        if (!ticket.getParty().getOrganizer().getExternalId().equals(organizerId)) {
+            throw new NotAllowedException("Solo el organizador del evento puede validar esta entrada");
+        }
+        if (ticket.getParty().getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new NotAllowedException("El check-in solo está disponible para eventos pagos");
+        }
+        if (!Boolean.TRUE.equals(ticket.getConfirmed()) ||
+                !ticket.getReceiptEntity().getStatus().equals(Status.APROBADA)) {
+            throw new NotAllowedException("La entrada debe estar confirmada para validar el ingreso");
+        }
+
+        if (!Boolean.TRUE.equals(ticket.getCheckedIn())) {
+            ticket.setCheckedIn(true);
+            ticket = ticketRepository.save(ticket);
+        }
+        return ticketMapper.toResponseDto(ticket);
     }
 
     @Transactional

@@ -35,6 +35,9 @@ public class TicketEntity {
 
     private Boolean confirmed;
 
+    @Column(nullable = false)
+    private Boolean checkedIn;
+
     @ManyToOne
     @JoinColumn(name = "id_factura", nullable = false)
     private ReceiptEntity receiptEntity;
@@ -46,6 +49,9 @@ public class TicketEntity {
         }
         if(confirmed == null){
             confirmed = true;
+        }
+        if(checkedIn == null){
+            checkedIn = false;
         }
     }
 }

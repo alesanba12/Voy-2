@@ -14,5 +14,6 @@ public record TicketResponseDTO (
     String userEmail,
     PartyResDTO party,
     Boolean confirmed,
+    Boolean checkedIn,
     ReceiptResponseDTO receipt){
 }

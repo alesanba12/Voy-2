@@ -13,13 +13,14 @@ import java.util.UUID;
 public interface ITicketsService {
     List<TicketResponseDTO> getAllAdmin(UUID ticketId, Boolean isConfimed,
                                    String title, String usernameOrganizer, String usernameUser);
-    List<TicketResponseDTO> getAllOrganizer(UUID ticketId, Boolean isConfimed,
+    List<TicketResponseDTO> getAllOrganizer(UUID ticketId, UUID partyId, Boolean isConfimed,
                                         String title, UUID userExtId, String usernameUser);
     List<TicketResponseDTO> getAllUser(UUID ticketId, Boolean isConfimed,
                                    String title, String usernameOrganizer, UUID userExtId);
     List<TicketResponseDTO> getByParty(UUID partyId);
     TicketAndReceiptDto createTicket(UUID userId,TicketRequestDTO request, ReceiptEntity receipt);
     TicketResponseDTO transferTicket(UUID externalId, UUID oldUserId, String newUserEmail);
+    TicketResponseDTO checkInOrganizerTicket(UUID ticketExtId, UUID organizerId);
     TicketAndReceiptDto confirmPurchase(UUID receiptExtId);
     void rejectPurchase(UUID receiptExtId);
     void returnTicket(UUID ticketExtId, UUID userExtId);
