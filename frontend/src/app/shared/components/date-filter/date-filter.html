@@ -1,11 +1,6 @@
 <div class="filter">
-  <!-- Botón que abre/cierra el menú -->
-  <button
-    class="trigger"
-    [class.is-open]="open()"
-    [attr.aria-expanded]="open()"
-    (click)="toggle()">
-    <span>📅</span>
+  <button class="trigger" [class.is-open]="open()" [attr.aria-expanded]="open()" (click)="toggle()">
+    <img class="icon" src="/icons/calendar.svg" alt="" />
     <span>{{ label() }}</span>
     <span class="chev" aria-hidden="true">
       <svg viewBox="0 0 20 20" fill="none">
@@ -14,19 +9,15 @@
     </span>
   </button>
 
-  <!-- Panel -->
   @if (open()) {
     <div class="menu">
       <p class="section-title">Filtrar por fecha</p>
 
       @for (p of presets; track p.id) {
-        <button
-          class="option"
-          [class.active]="draft().id === p.id"
-          (click)="selectPreset(p.id)">
-          <span>{{ p.icon }}</span>
+        <button class="option" [class.active]="draft().id === p.id" (click)="selectPreset(p.id)">
+          <img class="icon" [src]="'/icons/' + p.icon + '.svg'" alt="" />
           <span>{{ p.label }}</span>
-          <span class="check">✓</span>
+          <img class="check" src="/icons/check.svg" alt="" />
         </button>
       }
 
@@ -36,13 +27,21 @@
       <div class="range">
         <label>
           Desde
-          <input type="date" #from [value]="draft().from"
-                 (change)="onManualChange(from.value, to.value)" />
+          <input
+            type="date"
+            #from
+            [value]="draft().from"
+            (change)="onManualChange(from.value, to.value)"
+          />
         </label>
         <label>
           Hasta
-          <input type="date" #to [value]="draft().to"
-                 (change)="onManualChange(from.value, to.value)" />
+          <input
+            type="date"
+            #to
+            [value]="draft().to"
+            (change)="onManualChange(from.value, to.value)"
+          />
         </label>
       </div>
 

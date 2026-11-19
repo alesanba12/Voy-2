@@ -1,9 +1,18 @@
-import { Component, ElementRef, EventEmitter, HostListener, inject, Input, Output, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  Output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 export interface DateRange {
-  id: string;     // 'hoy' | 'finde' | '7d' | 'mes' | 'custom'
-  from: string;   // 'YYYY-MM-DD'
+  id: string; // 'hoy' | 'finde' | '7d' | 'mes' | 'custom'
+  from: string; // 'YYYY-MM-DD'
   to: string;
 }
 
@@ -41,40 +50,47 @@ export class DateFilterComponent {
   @Output() applied = new EventEmitter<DateRange>();
 
   readonly presets: Preset[] = [
-    { id: 'hoy', label: 'Hoy', icon: '📌', range: t => [t, t] },
+    { id: 'hoy', label: 'Hoy', icon: 'today', range: (t) => [t, t] },
     {
-      id: 'finde', label: 'Este finde', icon: '📅',
-      range: t => {
-        const dow = t.getDay(); // 0 = domingo ... 6 = sábado
+      id: 'finde',
+      label: 'Este finde',
+      icon: 'weekend',
+      range: (t) => {
+        const dow = t.getDay();
         if (dow === 0) return [addDays(t, -1), t];
         const sat = addDays(t, 6 - dow);
         return [sat, addDays(sat, 1)];
       },
     },
-    { id: '7d', label: 'Próximos 7 días', icon: '🔁', range: t => [t, addDays(t, 6)] },
+    { id: '7d', label: 'Próximos 7 días', icon: 'next-7-days', range: (t) => [t, addDays(t, 6)] },
     {
-      id: 'mes', label: 'Este mes', icon: '🗓️',
-      range: t => [
+      id: 'mes',
+      label: 'Este mes',
+      icon: 'month',
+      range: (t) => [
         new Date(t.getFullYear(), t.getMonth(), 1),
         new Date(t.getFullYear(), t.getMonth() + 1, 0),
       ],
     },
   ];
-
+  
   // --- estado ---
   open = signal(false);
   current = signal<DateRange>(this.buildFromPreset('hoy')); // lo ya aplicado
-  draft = signal<DateRange>(this.current());                // lo que se edita en el menú
+  draft = signal<DateRange>(this.current()); // lo que se edita en el menú
 
   // etiqueta del botón
   label = () => {
     const c = this.current();
-    return this.presets.find(p => p.id === c.id)?.label ?? `${c.from} → ${c.to}`;
+    return this.presets.find((p) => p.id === c.id)?.label ?? `${c.from} → ${c.to}`;
   };
 
   // --- acciones ---
   toggle() {
-    if (this.open()) { this.close(); return; }
+    if (this.open()) {
+      this.close();
+      return;
+    }
     this.draft.set({ ...this.current() }); // al abrir, partimos de lo aplicado
     this.open.set(true);
   }
@@ -113,7 +129,7 @@ export class DateFilterComponent {
 
   // --- helper ---
   private buildFromPreset(id: string): DateRange {
-    const preset = this.presets.find(p => p.id === id)!;
+    const preset = this.presets.find((p) => p.id === id)!;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const [from, to] = preset.range(today);
@@ -121,8 +137,8 @@ export class DateFilterComponent {
   }
 
   @Input() set initialPreset(id: string) {
-  const range = this.buildFromPreset(id);
-  this.current.set(range);
-  this.draft.set(range);
+    const range = this.buildFromPreset(id);
+    this.current.set(range);
+    this.draft.set(range);
   }
 }
