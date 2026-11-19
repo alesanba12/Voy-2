@@ -33,7 +33,15 @@
               <span class="avatar" aria-hidden="true">
                 {{ organizer.username.charAt(0).toUpperCase() }}
               </span>
-              <span class="organizer-name">{{ organizer.username }}</span>
+              <span class="organizer-name">
+                {{ organizer.username }}
+                <a
+                  class="organizer-profile-link"
+                  [routerLink]="['/profile/organizerProfile', organizer.externalId]"
+                >
+                  Ver perfil
+                </a>
+              </span>
               <button
                 type="button"
                 class="secondary-button"
