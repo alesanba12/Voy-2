@@ -53,16 +53,23 @@
               </p>
             </div>
 
-            <div class="ticket-qr">
+            <div class="ticket-qr" [class.used]="t.checkedIn">
               @if (qrCodes()[t.ticketExternalId]; as qr) {
                 <img [src]="qr" alt="Código QR de la entrada" width="140" height="140" />
+              }
+              @if (t.checkedIn) {
+                <div class="ticket-used-label" role="status">
+                  <span class="ticket-used-stamp">Entrada utilizada</span>
+                </div>
               }
             </div>
 
             <div class="ticket-actions">
-              <button type="button" class="scan-button" (click)="showQr(t)">Ver QR</button>
+              @if (!t.checkedIn) {
+                <button type="button" class="scan-button" (click)="showQr(t)">Ver QR</button>
+              }
 
-              @if (t.confirmed) {
+              @if (canTransfer(t)) {
                 <button
                   type="button"
                   class="scan-button"
@@ -86,7 +93,6 @@
             </div>
 
             @if (canTransfer(t)) {
-
               @if (transferTicketId() === t.ticketExternalId) {
                 <form class="transfer-form" (submit)="transferTicket(t); $event.preventDefault()">
                   <label>

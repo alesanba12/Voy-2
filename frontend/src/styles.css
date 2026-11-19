@@ -31,6 +31,7 @@
   /* ---------- Estados ---------- */
   --color-exito: #34d399; /* Publicado, +14%, Activo */
   --color-peligro: #ffb4ab; /* Cancelar evento, eliminar */
+  --color-peligro-fuerte: #ce1804; /* Entradas utilizadas */
 
   /* ---------- Tipografía ---------- */
   --fuente-principal: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
