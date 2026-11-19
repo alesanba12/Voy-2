@@ -16,7 +16,7 @@ public record PartyResDTO (
         LocalDateTime dateTime,
         Integer guestLimit,
         Boolean partyAccesibility,
-        Boolean state,
+        Boolean logicState,
         Boolean tickets,
         String organizerName,///deberia mostrar username no el email, pero por ahora dejo el email como identificador
         String imageUrl,

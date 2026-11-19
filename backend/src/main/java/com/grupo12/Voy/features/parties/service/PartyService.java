@@ -303,7 +303,7 @@ public class PartyService implements IPartyService {
     @Transactional
     @Override
     public PartyResDTO changePartyStatus(UUID partyId) {
-        PartyEntity party = partyRepository.findByExternalIdAndLogicStateTrue(partyId)
+        PartyEntity party = partyRepository.findByExternalId(partyId)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
         party.setLogicState(!party.getLogicState());
         return partyMapper.toResDTO(party);

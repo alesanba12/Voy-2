@@ -1,15 +1,15 @@
 import { Service } from '@angular/core';
 import { inject } from '@angular/core';
 import { HttpClient, httpResource } from '@angular/common/http';
-import { PartyFilters, PartyRes } from '../../../parties/party';
+import { PartyAdminFilters, PartyRes } from '../../../parties/party';
 
 @Service()
 export class AdminPartiesService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/parties'; 
+  private readonly apiUrl = '/api/parties';
+  private readonly adminApiUrl = '/api/parties/admin';
 
-
-  getPartiesResource(filters: () => PartyFilters) {
+  getPartiesResource(filters: () => PartyAdminFilters) {
     return httpResource<PartyRes[]>(
       () => {
         const current = filters();
@@ -19,9 +19,11 @@ export class AdminPartiesService {
         if (current.city?.trim()) params['city'] = current.city.trim();
         if (current.from) params['from'] = current.from;
         if (current.to) params['to'] = current.to;
+        if (current.logicState !== undefined) params['logicState'] = String(current.logicState);
+        if (current.isPublic !== undefined) params['isPublic'] = String(current.isPublic);
 
         return {
-          url: this.apiUrl,
+          url: this.adminApiUrl,
           params,
         };
       },

@@ -15,6 +15,7 @@ import java.util.UUID;
 @Repository
 public interface PartyRepository extends JpaRepository<PartyEntity,Long>, JpaSpecificationExecutor<PartyEntity> {
     Optional<PartyEntity> findByExternalIdAndLogicStateTrue(UUID externalId);
+    Optional<PartyEntity> findByExternalId(UUID externalId);
     Boolean existsByTitle(String title);
     // PartyRepository
     List<PartyEntity> findByDateTimeBeforeAndLogicStateTrue(LocalDateTime dateTime);

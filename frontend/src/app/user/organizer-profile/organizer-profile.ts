@@ -92,7 +92,7 @@ export class OrganizerProfile implements OnInit {
       guestLimit: 0,
       partyAccesibility: false,
       tickets: dto.price > 0,
-      state: true,
+      logicState: true,
       // Mapeo del organizador (prioriza username si existe, sino email)
       organizerName: dto.organizer?.username ?? dto.organizer?.email ?? '',
       coOrganizerName: [],

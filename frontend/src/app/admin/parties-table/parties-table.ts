@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { AdminPartiesService } from './service/admin-parties-service';
-import { PartyFilters, PartyRes } from '../../parties/party';
+import { PartyAdminFilters, PartyRes } from '../../parties/party';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
@@ -23,7 +23,7 @@ export class PartiesTable {
   readonly filterTo = signal<string>('');
 
   // Signal que dispara el httpResource cuando se envía el formulario
-  readonly appliedFilters = signal<PartyFilters>({});
+  readonly appliedFilters = signal<PartyAdminFilters>({});
 
   // Recurso reactivo: se ejecuta al montar y cada vez que cambia appliedFilters()
   readonly partiesResource = this.partiesService.getPartiesResource(this.appliedFilters);
@@ -51,28 +51,13 @@ export class PartiesTable {
     return null;
   });
 
-  readonly filteredParties = computed(() => {
-    const status = this.filterStatus();
-    const visibility = this.filterVisibility();
+readonly filteredParties = computed(() => {
     const selectedTags = this.filterTags();
+    if (selectedTags.length === 0) return this.parties();
 
-    return this.parties().filter((p) => {
-      const matchesStatus =
-        status === 'ALL' ||
-        (status === 'ACTIVE' && p.state) ||
-        (status === 'INACTIVE' && !p.state);
-
-      const matchesVisibility =
-        visibility === 'ALL' ||
-        (visibility === 'PUBLIC' && p.partyAccesibility) ||
-        (visibility === 'PRIVATE' && !p.partyAccesibility);
-
-      const matchesTags =
-        selectedTags.length === 0 ||
-        selectedTags.every((tag) => p.tags.includes(tag));
-
-      return matchesStatus && matchesVisibility && matchesTags;
-    });
+    return this.parties().filter((p) =>
+      selectedTags.every((tag) => p.tags.includes(tag))
+    );
   });
 
   readonly hasActiveFilters = computed(() => {
@@ -87,7 +72,18 @@ export class PartiesTable {
     );
   });
 
-  readonly activeCount = computed(() => this.parties().filter((p) => p.state).length);
+  onStatusFilterChange(value: 'ALL' | 'ACTIVE' | 'INACTIVE'): void {
+    this.filterStatus.set(value);
+    this.loadParties();
+  }
+
+  onVisibilityFilterChange(value: 'ALL' | 'PUBLIC' | 'PRIVATE'): void {
+    this.filterVisibility.set(value);
+    this.loadParties();
+  }
+
+  readonly activeCount = computed(() => this.parties().filter((p) => p.logicState).length);
+  readonly inactiveCount = computed(() => this.parties().filter((p) => !p.logicState).length);
   readonly publicCount = computed(() => this.parties().filter((p) => p.partyAccesibility).length);
 
   @HostListener('document:click', ['$event'])
@@ -106,11 +102,17 @@ export class PartiesTable {
   loadParties(): void {
     this.mutationError.set(null);
     this.tagsDropdownOpen.set(false);
-    const nextFilters: PartyFilters = {
+
+    const status = this.filterStatus();
+    const visibility = this.filterVisibility();
+
+    const nextFilters: PartyAdminFilters = {
       title: this.filterTitle(),
       city: this.filterCity(),
       from: this.filterFrom(),
       to: this.filterTo(),
+      logicState: status === 'ALL' ? undefined : status === 'ACTIVE',
+      isPublic: visibility === 'ALL' ? undefined : visibility === 'PUBLIC',
     };
 
     if (JSON.stringify(this.appliedFilters()) === JSON.stringify(nextFilters)) {
@@ -137,28 +139,26 @@ export class PartiesTable {
   onToggleState(party: PartyRes): void {
     if (this.actionLoadingId()) return;
     this.actionLoadingId.set(party.externalId);
+    this.mutationError.set(null);
 
     this.partiesService.togglePartyState(party.externalId).subscribe({
-      next: (updatedParty) => {
-        // Actualizamos localmente el valor del httpResource sin rehacer el GET completo
-        this.partiesResource.update((list) =>
-          list.map((item) => (item.externalId === updatedParty.externalId ? updatedParty : item))
-        );
-        if (this.selectedParty()?.externalId === updatedParty.externalId) {
-          this.selectedParty.set(updatedParty);
-        }
+      next: () => {
         this.actionLoadingId.set(null);
+        this.partiesResource.reload();
       },
-      error: () => {
-        this.mutationError.set('Error al cambiar el estado del evento.');
+      error: (err) => {
         this.actionLoadingId.set(null);
+        this.mutationError.set(
+          err.error?.message || 'No se pudo cambiar el estado del evento.'
+        );
       },
     });
   }
 
   openDetailModal(party: PartyRes): void {
-    this.selectedParty.set(party);
+    this.mutationError.set(null);
     this.newTagInput.set('');
+    this.selectedParty.set(party);
   }
 
   closeDetailModal(): void {
@@ -166,45 +166,56 @@ export class PartiesTable {
     this.newTagInput.set('');
   }
 
-  onAddTag(): void {
-    const party = this.selectedParty();
-    const tag = this.newTagInput().trim();
-    if (!party || !tag) return;
+  onAddTagToParty(partyId: string): void {
+    const tagName = this.newTagInput().trim();
+    if (!tagName || this.actionLoadingId()) return;
 
-    this.partiesService.addTag(party.externalId, tag).subscribe({
+    this.actionLoadingId.set(partyId);
+    this.mutationError.set(null);
+
+    this.partiesService.addTag(partyId, tagName).subscribe({
       next: (updatedParty) => {
-        this.selectedParty.set(updatedParty);
-        this.partiesResource.update((list) =>
-          list.map((p) => (p.externalId === updatedParty.externalId ? updatedParty : p))
-        );
+        this.actionLoadingId.set(null);
         this.newTagInput.set('');
-      },
-      error: () => {
-        this.mutationError.set('No se pudo agregar la etiqueta (verifica que exista o no esté duplicada).');
-      },
-    });
-  }
-
-  onRemoveTag(tagName: string): void {
-    const party = this.selectedParty();
-    if (!party) return;
-
-    this.partiesService.removeTag(party.externalId, tagName).subscribe({
-      next: () => {
-        const updatedTags = party.tags.filter((t) => t !== tagName);
-        const updatedParty: PartyRes = { ...party, tags: updatedTags };
         this.selectedParty.set(updatedParty);
-        this.partiesResource.update((list) =>
-          list.map((p) => (p.externalId === updatedParty.externalId ? updatedParty : p))
+        this.partiesResource.reload();
+      },
+      error: (err) => {
+        this.actionLoadingId.set(null);
+        this.mutationError.set(
+          err.error?.message || 'No se pudo asociar la etiqueta al evento.'
         );
       },
-      error: () => {
-        this.mutationError.set('Error al quitar la etiqueta del evento.');
+    });
+  }
+
+  onRemoveTagFromParty(partyId: string, tagName: string): void {
+    if (this.actionLoadingId()) return;
+
+    this.actionLoadingId.set(partyId);
+    this.mutationError.set(null);
+
+    this.partiesService.removeTag(partyId, tagName).subscribe({
+      next: () => {
+        this.actionLoadingId.set(null);
+        const current = this.selectedParty();
+        if (current) {
+          const updatedTags = current.tags.filter((t) => t !== tagName);
+          this.selectedParty.set({ ...current, tags: updatedTags });
+        }
+        this.partiesResource.reload();
+      },
+      error: (err) => {
+        this.actionLoadingId.set(null);
+        this.mutationError.set(
+          err.error?.message || 'No se pudo remover la etiqueta del evento.'
+        );
       },
     });
   }
 
-  confirmDelete(party: PartyRes): void {
+  confirmDeleteParty(party: PartyRes): void {
+    this.mutationError.set(null);
     this.partyToDelete.set(party);
   }
 
@@ -212,24 +223,24 @@ export class PartiesTable {
     this.partyToDelete.set(null);
   }
 
-  executeDelete(): void {
+  executeDeleteParty(): void {
     const party = this.partyToDelete();
-    if (!party) return;
+    if (!party || this.actionLoadingId()) return;
 
     this.actionLoadingId.set(party.externalId);
+    this.mutationError.set(null);
+
     this.partiesService.deleteParty(party.externalId).subscribe({
       next: () => {
-        this.partiesResource.update((list) => list.filter((p) => p.externalId !== party.externalId));
-        if (this.selectedParty()?.externalId === party.externalId) {
-          this.selectedParty.set(null);
-        }
-        this.partyToDelete.set(null);
         this.actionLoadingId.set(null);
+        this.partyToDelete.set(null);
+        this.partiesResource.reload();
       },
-      error: () => {
-        this.mutationError.set('No se pudo eliminar el evento.');
-        this.partyToDelete.set(null);
+      error: (err) => {
         this.actionLoadingId.set(null);
+        this.mutationError.set(
+          err.error?.message || 'No se pudo eliminar el evento.'
+        );
       },
     });
   }

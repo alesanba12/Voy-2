@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { KpiMetrics } from '../kpi-metrics/kpi-metrics';
-import { OrganizerRequests } from '../organizer-requests/organizer-requests';
 import { TagsAdmin } from '../../tags/tags-admin/tags-admin';
+import { OrganizerRequests } from '../organizer-requests/organizer-requests';
 
 @Component({
   imports: [KpiMetrics, OrganizerRequests , TagsAdmin],
