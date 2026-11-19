@@ -1,18 +1,14 @@
-<input 
-    type="text" 
-    [value]="searchName()" 
-    (input)="searchName.set($any($event.target).value)" 
-    placeholder="Buscar etiqueta..." 
-/>
-
-@if (tagsResource.isLoading()) {
-    <p>Cargando etiquetas...</p>
-} @else if (tagsResource.error()) {
-    <p>Error al cargar las etiquetas.</p>
-} @else {
-    <ul>
-    @for (tag of tagsResource.value(); track tag.name) {
-        <li>{{ tag.name }}</li>
-    }
-    </ul>
-}
+<div class="tag-chips-list">
+  @for (tag of visibleTags(); track $index) {
+    <button
+      type="button"
+      class="tag-chip-btn"
+      [class.selected]="isSelected(tag.name)"
+      (click)="toggleTag(tag.name)"
+    >
+      {{ tag.name }}
+    </button>
+  } @empty {
+    <span class="tags-empty">No hay etiquetas que coincidan</span>
+  }
+</div>
