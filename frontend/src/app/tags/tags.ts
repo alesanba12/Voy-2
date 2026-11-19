@@ -1,3 +1,8 @@
 export interface TagDTO {
-  name: string;
+  readonly name: string;
+}
+
+export interface DeleteTagReqDTO {
+  readonly tagName: string;
+  readonly replacementTagName?: string;
 }

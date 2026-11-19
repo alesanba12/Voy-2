@@ -1,6 +1,6 @@
 import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http';
-import {Service, Signal, inject } from '@angular/core';
-import { TagDTO } from './tags';
+import { Service, Signal, inject } from '@angular/core';
+import { DeleteTagReqDTO, TagDTO } from './tags';
 
 @Service()
 export class TagsService {
@@ -22,17 +22,16 @@ export class TagsService {
     );
   }
 
-  create(tag: TagDTO){
+  create(tag: TagDTO) {
     return this.http.post<TagDTO>(this.apiUrl, tag);
   }
 
-  update(oldName: string, tag: TagDTO){
+  update(oldName: string, tag: TagDTO) {
     const url = `${this.apiUrl}/${encodeURIComponent(oldName)}`;
     return this.http.put<void>(url, tag);
   }
 
-  
-  delete(tag: TagDTO){
-    return this.http.delete<void>(this.apiUrl, { body: tag });
+  delete(payload: DeleteTagReqDTO) {
+    return this.http.delete<void>(this.apiUrl, { body: payload });
   }
 }
