@@ -1,6 +1,7 @@
 package com.grupo12.Voy.features.tags.controller;
 
 import com.grupo12.Voy.features.tags.ITagService;
+import com.grupo12.Voy.features.tags.dto.DeleteTagReqDTO;
 import com.grupo12.Voy.features.tags.dto.TagsDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -75,19 +76,19 @@ public class TagController {
 
     @Operation(
             summary = "Eliminar etiqueta",
-            description = "Elimina una etiqueta existente según el nombre enviado en el cuerpo. Requiere rol ADMIN."
+            description = "Elimina una etiqueta existente. Si está en uso en eventos y alguno queda sin etiquetas, se asigna la etiqueta de reemplazo enviada. Requiere rol ADMIN."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Etiqueta eliminada correctamente", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos en el cuerpo de la petición", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos en el cuerpo de la petición o etiqueta de reemplazo inválida", content = @Content),
             @ApiResponse(responseCode = "401", description = "No autenticado", content = @Content),
-            @ApiResponse(responseCode = "403", description = "No tiene permisos de ADMIN", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Etiqueta no encontrada", content = @Content)
+            @ApiResponse(responseCode = "403", description = "No tiene permisos de ADMIN o dejaría eventos sin etiquetas sin proveer reemplazo", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Etiqueta o etiqueta de reemplazo no encontrada", content = @Content)
     })
     @DeleteMapping
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<TagsDTO> delete(@RequestBody @Valid TagsDTO tagsDTO){
-        tagService.delete(tagsDTO);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    ResponseEntity<Void> delete(@RequestBody @Valid DeleteTagReqDTO deleteTagReqDTO){
+        tagService.delete(deleteTagReqDTO);
+        return ResponseEntity.noContent().build();
     }
 }

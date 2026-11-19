@@ -1,5 +1,6 @@
 package com.grupo12.Voy.features.tags;
 
+import com.grupo12.Voy.features.tags.dto.DeleteTagReqDTO;
 import com.grupo12.Voy.features.tags.dto.TagsDTO;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public interface ITagService {
 
     TagsDTO update(String oldName, TagsDTO tagsDTO);
 
-    void delete(TagsDTO tagsDTO);
+    void delete(DeleteTagReqDTO deleteTagReqDTO);
 }
