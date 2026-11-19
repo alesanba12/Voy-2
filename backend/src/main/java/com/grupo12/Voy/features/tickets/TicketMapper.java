@@ -26,6 +26,8 @@ public interface TicketMapper {
     TicketUsersDto toUsersDto(TicketEntity ticket);
 
     @Mapping(target = "party.externalId", source = "partyIdExternal")
+    @Mapping(target = "confirmed", ignore = true)
+    @Mapping(target = "checkedIn", ignore = true)
     TicketEntity toEntity(TicketRequestDTO ticket);
 
     @Mapping(target = "paymentMethod",constant = "Gratis")

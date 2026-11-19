@@ -16,7 +16,10 @@ export type ReceiptStatus = 'APROBADA' | 'PENDIENTE' | 'RECHAZADA';
 
 export interface OrganizerTicketDto {
   idExternal: string;
+  userEmail: string;
   party: PartyRes;
+  confirmed: boolean;
+  checkedIn: boolean;
   receipt: {
     price: number;
     status: ReceiptStatus;
@@ -43,5 +46,6 @@ export interface TicketDto {
   userEmail: string;
   party: PartyRes;
   confirmed: boolean;
+  checkedIn: boolean;
   receipt: ReceiptResponseDto;
 }

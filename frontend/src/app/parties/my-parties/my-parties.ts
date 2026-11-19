@@ -5,6 +5,7 @@ import { PartySummaryDto } from '../../user/user';
 import { UserService } from '../../user/user-service';
 import { TicketClient } from '../../tickets/ticket-service';
 import { OrganizerTicketDto } from '../../tickets/ticket';
+import { TicketManagementDialog } from '../../tickets/ticket-management-dialog/ticket-management-dialog';
 
 type PartyFilter = 'all' | 'upcoming' | 'past';
 
@@ -14,7 +15,7 @@ interface PartySalesSummary {
 }
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, TicketManagementDialog],
   selector: 'app-my-parties',
   styleUrl: './my-parties.css',
   templateUrl: './my-parties.html',
@@ -28,6 +29,7 @@ export class MyParties implements OnInit {
   protected readonly hasError = signal(false);
   protected readonly searchTerm = signal('');
   protected readonly activeFilter = signal<PartyFilter>('all');
+  protected readonly ticketManagementParty = signal<PartySummaryDto | null>(null);
   protected readonly upcomingParties = computed(() =>
     this.parties().filter((party) => this.isUpcoming(party)),
   );
@@ -111,6 +113,14 @@ export class MyParties implements OnInit {
 
   protected setFilter(filter: PartyFilter): void {
     this.activeFilter.set(filter);
+  }
+
+  protected manageTickets(party: PartySummaryDto): void {
+    this.ticketManagementParty.set(party);
+  }
+
+  protected closeTicketManagement(): void {
+    this.ticketManagementParty.set(null);
   }
 
   protected onSearchInput(event: Event): void {

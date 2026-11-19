@@ -11,8 +11,19 @@ export class TicketClient {
     return this.http.post<TicketAndReceiptDto>('/api/tickets', req);
   }
 
-  listOrganizerTickets(): Observable<OrganizerTicketDto[]> {
-    return this.http.get<OrganizerTicketDto[]>('/api/tickets/organizer');
+  listOrganizerTickets(partyId?: string): Observable<OrganizerTicketDto[]> {
+    let params = new HttpParams();
+    if (partyId) {
+      params = params.set('partyId', partyId);
+    }
+    return this.http.get<OrganizerTicketDto[]>('/api/tickets/organizer', { params });
+  }
+
+  checkInOrganizerTicket(ticketId: string): Observable<OrganizerTicketDto> {
+    return this.http.patch<OrganizerTicketDto>(
+      `/api/tickets/organizer/${ticketId}/check-in`,
+      null,
+    );
   }
 
   return(ticketExternalId: string): Observable<void> {

@@ -91,7 +91,7 @@
               }
             </p>
             }
-               @if (party.price > 0) {
+               @if (party.tickets) {
               <div class="party-sales" aria-label="Ventas de este evento">
                 <span>
                   <strong>{{ salesFor(party.externalId).soldTickets }}</strong>
@@ -113,6 +113,11 @@
             <a class="edit-link" [routerLink]="['/parties', party.externalId, 'edit']">
               Editar
             </a>
+            @if (party.tickets) {
+              <button type="button" class="manage-tickets-button" (click)="manageTickets(party)">
+                Administrar tickets
+              </button>
+            }
           </div>
         </article>
       </li>
@@ -122,3 +127,10 @@
   </section>
   }
 </main>
+
+@if (ticketManagementParty(); as event) {
+  <app-ticket-management-dialog
+    [party]="event"
+    (closed)="closeTicketManagement()"
+  />
+}

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.UUID;
 
@@ -36,6 +37,7 @@ public class TicketEntity {
     private Boolean confirmed;
 
     @Column(nullable = false)
+    @ColumnDefault("false")
     private Boolean checkedIn;
 
     @ManyToOne
@@ -48,7 +50,7 @@ public class TicketEntity {
             idExternal = UUID.randomUUID();
         }
         if(confirmed == null){
-            confirmed = true;
+            confirmed = true; //TODO TRUE PARA NO TENER QUE VALIDAR CADA ENTRADA
         }
         if(checkedIn == null){
             checkedIn = false;

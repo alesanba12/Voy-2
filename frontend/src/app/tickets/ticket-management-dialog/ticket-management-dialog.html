@@ -1,0 +1,113 @@
+@let event = party();
+<div class="management-backdrop" (click)="closeOnBackdrop($event)">
+  <section class="management-dialog" role="dialog" aria-modal="true" aria-labelledby="management-title"
+    (click)="$event.stopPropagation()">
+    <header class="management-header">
+      <div>
+        <p class="eyebrow">GESTIÓN DE ENTRADAS</p>
+        <h2 id="management-title">{{ event.title }}</h2>
+        <p>{{ tickets().length }} {{ tickets().length === 1 ? 'entrada' : 'entradas' }}</p>
+      </div>
+      <button type="button" class="close-button" aria-label="Cerrar" (click)="close()">×</button>
+    </header>
+
+    <section class="check-in-panel" aria-labelledby="check-in-title">
+      <div class="check-in-heading">
+        <div>
+          <h3 id="check-in-title">Registrar ingreso</h3>
+          <p>Escaneá el QR de la entrada o ingresá su código.</p>
+        </div>
+        @if (isScanning()) {
+        <button type="button" class="secondary-button" (click)="stopScanner()">
+          Detener cámara
+        </button>
+        } @else {
+        <button type="button" class="primary-button" (click)="startScanner()">
+          Escanear QR
+        </button>
+        }
+      </div>
+      <video #qrVideo class="qr-video" [hidden]="!isScanning()" aria-label="Escáner QR"></video>
+      @if (scanError()) {
+      <p class="error-message" role="alert">{{ scanError() }}</p>
+      }
+      <form class="manual-code-form" (submit)="validateManualCode(); $event.preventDefault()">
+        <label>
+          <span class="visually-hidden">Código de la entrada</span>
+          <input type="text" autocomplete="off" placeholder="Código de la entrada" [value]="manualCode()"
+            (input)="onManualCodeInput($event)" />
+        </label>
+        <button type="submit" class="secondary-button" [disabled]="!manualCode().trim()">
+          Validar código
+        </button>
+      </form>
+    </section>
+
+    <div class="ticket-toolbar">
+      <label class="ticket-search">
+        <span class="visually-hidden">Buscar por email o código</span>
+        <input type="search" placeholder="Buscar por email o código..." [value]="searchTerm()"
+          (input)="onSearchInput($event)" />
+      </label>
+      <label class="filter-label">
+        <span class="visually-hidden">Filtrar entradas</span>
+        <select [value]="activeFilter()" (change)="onFilterChange($event)">
+          <option value="all">Todos los estados</option>
+          <option value="pending">Pendientes</option>
+          <option value="confirmed">Confirmadas</option>
+          <option value="checked-in">Ingresaron</option>
+        </select>
+      </label>
+      <button type="button" class="secondary-button export-button" [disabled]="visibleTickets().length === 0"
+        (click)="exportCsv()">
+        Exportar CSV
+      </button>
+    </div>
+
+    <div class="ticket-table-wrapper">
+      @if (isLoading()) {
+      <p class="state-message" role="status">Cargando entradas…</p>
+      } @else if (hasError()) {
+      <p class="state-message error-message" role="alert">
+        No se pudieron cargar las entradas del evento.
+      </p>
+      } @else if (visibleTickets().length === 0) {
+      <p class="state-message" role="status">No hay entradas con esos criterios.</p>
+      } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Comprador</th>
+            <th>Estado</th>
+            <th>Puerta</th>
+
+            <th><span class="visually-hidden">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ticket of visibleTickets(); track ticket.idExternal) {
+          <tr>
+            <td class="ticket-code">{{ ticket.idExternal.slice(0, 8).toUpperCase() }}</td>
+            <td>{{ ticket.userEmail }}</td>
+            <td>
+              <span class="ticket-status" [class.pending]="!ticket.confirmed || ticket.receipt.status !== 'APROBADA'">
+                {{ statusLabel(ticket) }}
+              </span>
+            </td>
+            <td>
+              @if(ticket.checkedIn)
+              {<span style="color: var(--color-terciario);">INGRESO</span>}
+              @else{
+              <span style="color: var(--color-primario);">PENDIENTE</span>
+              }
+            </td>
+
+          </tr>
+          }
+        </tbody>
+      </table>
+      }
+    </div>
+  </section>
+</div>

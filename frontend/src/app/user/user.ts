@@ -28,6 +28,7 @@ export interface PartySummaryDto {
   price: number;
   adress: string;
   dateTime: string;
+  tickets:boolean;
   organizer: UserDto;
   imageUrl: string | null;
   tags: string[] | null;

@@ -163,11 +163,12 @@ public class TicketsService  implements ITicketsService{
                 !ticket.getReceiptEntity().getStatus().equals(Status.APROBADA)) {
             throw new NotAllowedException("La entrada debe estar confirmada para validar el ingreso");
         }
-
-        if (!Boolean.TRUE.equals(ticket.getCheckedIn())) {
-            ticket.setCheckedIn(true);
-            ticket = ticketRepository.save(ticket);
+        if (Boolean.TRUE.equals(ticket.getCheckedIn())) {
+            throw new NotAllowedException("Esta entrada ya fue utilizada");
         }
+
+        ticket.setCheckedIn(true);
+        ticket = ticketRepository.save(ticket);
         return ticketMapper.toResponseDto(ticket);
     }
 

@@ -1,0 +1,303 @@
+:host {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+.management-backdrop {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  padding: 1rem;
+  overflow-y: auto;
+  background: rgba(8, 8, 14, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.management-dialog {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  display: flex;
+  width: min(100%, 980px);
+  height: 90%;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background: var(--background-secundario);
+  color: var(--texto-principal);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.management-header,
+.check-in-heading,
+.ticket-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.management-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.management-header h2,
+.management-header p,
+.check-in-heading h3,
+.check-in-heading p {
+  margin: 0;
+}
+
+.management-header h2 {
+  margin: 0.2rem 0;
+  font-size: clamp(1.2rem, 3vw, 1.65rem);
+}
+
+.management-header > div > p:last-child,
+.check-in-heading p {
+  color: var(--texto-secundario);
+  font-size: 0.85rem;
+}
+
+.eyebrow {
+  color: var(--color-primario-claro);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.close-button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--texto-principal);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.check-in-panel {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: var(--background-terciario);
+}
+
+.check-in-heading h3 {
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+}
+
+.primary-button,
+.secondary-button,
+.check-in-button {
+  min-height: 40px;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.primary-button,
+.check-in-button {
+  border-color: var(--color-primario);
+  background: var(--color-primario);
+  color: var(--texto-sobre-primario);
+}
+
+.secondary-button {
+  background: var(--background-secundario);
+  color: var(--texto-principal);
+}
+
+.primary-button:hover,
+.check-in-button:hover {
+  filter: brightness(1.08);
+}
+
+.secondary-button:hover,
+.close-button:hover {
+  border-color: var(--color-primario);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.qr-video {
+  width: min(100%, 520px);
+  max-height: 280px;
+  justify-self: center;
+  border-radius: var(--radio-md);
+  background: #000;
+}
+
+.qr-video[hidden] {
+  display: none;
+}
+
+.manual-code-form {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.manual-code-form label,
+.manual-code-form input {
+  width: 100%;
+}
+
+.manual-code-form input,
+.ticket-search input,
+.filter-label select {
+  min-height: 40px;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: var(--background-secundario);
+  color: var(--texto-principal);
+}
+
+.error-message {
+  color: var(--color-peligro);
+}
+
+.ticket-toolbar {
+  padding: 1rem 1.5rem;
+}
+
+.ticket-search {
+  flex: 1 1 280px;
+}
+
+.ticket-search input {
+  width: 100%;
+}
+
+.filter-label select {
+  min-width: 170px;
+}
+
+.ticket-table-wrapper {
+  min-height: 140px;
+  overflow: auto;
+  margin: 0 1.5rem 1.5rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--borde);
+  font-size: 0.82rem;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background: var(--background-terciario);
+  color: var(--texto-secundario);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ticket-code {
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+.ticket-status {
+  color: var(--color-exito);
+  font-weight: 650;
+}
+
+.ticket-status.pending,
+.already-checked-in {
+  color:var(--color-primario);
+}
+
+.state-message {
+  padding: 1rem;
+  color: var(--texto-secundario);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 680px) {
+  .management-backdrop {
+    padding: 0;
+  }
+
+  .management-dialog {
+    width: 100%;
+    height: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .check-in-panel {
+    margin: 0.75rem 1rem 0;
+    padding: 0.8rem;
+  }
+
+  .management-header,
+  .ticket-toolbar {
+    padding: 1rem;
+  }
+
+  .ticket-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .ticket-search {
+    flex-basis: 100%;
+  }
+
+  .ticket-table-wrapper {
+    margin: 0 1rem 1rem;
+  }
+
+  th,
+  td {
+    padding: 0.6rem 0.45rem;
+    font-size: 0.72rem;
+  }
+
+  .export-button {
+    flex: 1;
+  }
+}
