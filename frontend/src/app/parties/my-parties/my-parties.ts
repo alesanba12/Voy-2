@@ -28,13 +28,6 @@ export class MyParties implements OnInit {
   protected readonly hasError = signal(false);
   protected readonly searchTerm = signal('');
   protected readonly activeFilter = signal<PartyFilter>('all');
-  protected readonly totalSoldTickets = computed(() =>
-    Object.values(this.sales()).reduce((total, summary) => total + summary.soldTickets, 0),
-  );
-  protected readonly totalRevenue = computed(() =>
-    Object.values(this.sales()).reduce((total, summary) => total + summary.totalRevenue, 0),
-  );
-
   protected readonly upcomingParties = computed(() =>
     this.parties().filter((party) => this.isUpcoming(party)),
   );
@@ -109,7 +102,6 @@ export class MyParties implements OnInit {
       const partyId = ticket.party.externalId;
       const summary = summaries[partyId] ?? { soldTickets: 0, totalRevenue: 0 };
       summary.soldTickets += 1;
-      // The receipt price is per ticket; finalPrice would count a multi-ticket purchase repeatedly.
       summary.totalRevenue += ticket.receipt.price;
       summaries[partyId] = summary;
     }
