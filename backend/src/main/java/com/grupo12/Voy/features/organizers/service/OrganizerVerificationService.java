@@ -6,6 +6,7 @@ import com.grupo12.Voy.common.exceptions.InvalidFieldException;
 import com.grupo12.Voy.common.service.CloudinaryService;
 import com.grupo12.Voy.features.organizers.dto.OrganizerRejectReqDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerificationResDTO;
+import com.grupo12.Voy.features.organizers.dto.OrganizerVerificationStatusResDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerifyReqDTO;
 import com.grupo12.Voy.features.organizers.enums.VerificationStatus;
 import com.grupo12.Voy.features.organizers.mapper.OrganizerVerificationMapper;
@@ -15,6 +16,8 @@ import com.grupo12.Voy.features.users.UserRepository;
 import com.grupo12.Voy.features.users.Service.IUsersService;
 import com.grupo12.Voy.features.users.models.UserEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +79,30 @@ public class OrganizerVerificationService implements IOrganizerVerificationServi
                 .stream()
                 .map(verificationMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrganizerVerificationResDTO> getVerifications(VerificationStatus status, Pageable pageable) {
+        Page<OrganizerVerificationEntity> verifications = status == null
+                ? verificationRepository.findAll(pageable)
+                : verificationRepository.findByStatus(status, pageable);
+        return verifications.map(verificationMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrganizerVerificationStatusResDTO getVerificationStatus(UUID idExternal) {
+        OrganizerVerificationEntity verification = verificationRepository.findByUserExternalId(idExternal)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No se encontró solicitud de verificación para el usuario: " + idExternal));
+
+        return new OrganizerVerificationStatusResDTO(
+                verification.getStatus(),
+                verification.getRejectionReason(),
+                verification.getCreatedAt(),
+                verification.getUpdatedAt()
+        );
     }
 
     @Override

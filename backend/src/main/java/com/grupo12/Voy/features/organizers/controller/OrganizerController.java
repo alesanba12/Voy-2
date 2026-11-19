@@ -1,6 +1,7 @@
 package com.grupo12.Voy.features.organizers.controller;
 
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerifyReqDTO;
+import com.grupo12.Voy.features.organizers.dto.OrganizerVerificationStatusResDTO;
 import com.grupo12.Voy.features.organizers.service.IOrganizerVerificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +24,19 @@ import java.util.UUID;
 public class OrganizerController {
 
     private final IOrganizerVerificationService verificationService;
+
+    @Operation(summary = "Consultar el estado de mi solicitud de verificación")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Estado de la solicitud devuelto"),
+            @ApiResponse(responseCode = "404", description = "El usuario todavía no tiene una solicitud"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado")
+    })
+    @GetMapping("/me/verification")
+    @PreAuthorize("hasAnyRole('USER', 'ORGANIZATOR')")
+    public ResponseEntity<OrganizerVerificationStatusResDTO> getMyVerificationStatus(
+            @AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal) {
+        return ResponseEntity.ok(verificationService.getVerificationStatus(idExternal));
+    }
 
     @Operation(summary = "Enviar solicitud de verificación", description = "Suba foto de frente y dorso del DNI. Estado inicial: PENDIENTE.")
     @ApiResponses({

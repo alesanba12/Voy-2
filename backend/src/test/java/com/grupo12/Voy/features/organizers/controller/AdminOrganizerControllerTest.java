@@ -4,6 +4,9 @@ import com.grupo12.Voy.features.organizers.dto.OrganizerRejectReqDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerificationResDTO;
 import com.grupo12.Voy.features.organizers.enums.VerificationStatus;
 import com.grupo12.Voy.features.organizers.service.IOrganizerVerificationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,18 +35,34 @@ class AdminOrganizerControllerTest {
 
     private OrganizerVerificationResDTO createSampleResDTO(UUID idExternal, VerificationStatus status) {
         return new OrganizerVerificationResDTO(
+                1L,
                 idExternal,
-                UUID.randomUUID(),
-                "juanperez",
                 "juan@voy.app",
                 status,
                 "https://cloudinary.com/front.jpg",
                 "https://cloudinary.com/back.jpg",
                 "Info adicional",
                 null,
-                LocalDateTime.now(),
                 LocalDateTime.now()
         );
+    }
+
+    @Test
+    @DisplayName("getVerifications debe retornar una página filtrada por estado")
+    void getVerifications_shouldReturnFilteredPage() {
+        UUID id = UUID.randomUUID();
+        OrganizerVerificationResDTO dto = createSampleResDTO(id, VerificationStatus.REJECTED);
+        PageRequest pageable = PageRequest.of(0, 20);
+        Page<OrganizerVerificationResDTO> page = new PageImpl<>(List.of(dto), pageable, 1);
+        when(verificationService.getVerifications(VerificationStatus.REJECTED, pageable)).thenReturn(page);
+
+        ResponseEntity<Page<OrganizerVerificationResDTO>> response =
+                adminOrganizerController.getVerifications(VerificationStatus.REJECTED, pageable);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getContent()).containsExactly(dto);
+        verify(verificationService).getVerifications(VerificationStatus.REJECTED, pageable);
     }
 
     @Test
@@ -52,7 +71,7 @@ class AdminOrganizerControllerTest {
         // Arrange
         UUID id = UUID.randomUUID();
         OrganizerVerificationResDTO dto = createSampleResDTO(id, VerificationStatus.PENDING);
-        when(verificationService.getPendingVerifications()).willReturn(List.of(dto));
+        when(verificationService.getPendingVerifications()).thenReturn(List.of(dto));
 
         // Act
         ResponseEntity<List<OrganizerVerificationResDTO>> response = adminOrganizerController.getPendingVerifications();
@@ -70,7 +89,7 @@ class AdminOrganizerControllerTest {
         // Arrange
         UUID id = UUID.randomUUID();
         OrganizerVerificationResDTO approvedDto = createSampleResDTO(id, VerificationStatus.VERIFIED);
-        when(verificationService.approveVerification(id)).willReturn(approvedDto);
+        when(verificationService.approveVerification(id)).thenReturn(approvedDto);
 
         // Act
         ResponseEntity<OrganizerVerificationResDTO> response = adminOrganizerController.approveVerification(id);
@@ -89,19 +108,17 @@ class AdminOrganizerControllerTest {
         UUID id = UUID.randomUUID();
         OrganizerRejectReqDTO rejectReq = new OrganizerRejectReqDTO("DNI borroso o ilegible");
         OrganizerVerificationResDTO rejectedDto = new OrganizerVerificationResDTO(
+                1L,
                 id,
-                UUID.randomUUID(),
-                "juanperez",
                 "juan@voy.app",
                 VerificationStatus.REJECTED,
                 "https://cloudinary.com/front.jpg",
                 "https://cloudinary.com/back.jpg",
                 "Info adicional",
                 "DNI borroso o ilegible",
-                LocalDateTime.now(),
                 LocalDateTime.now()
         );
-        when(verificationService.rejectVerification(id, rejectReq)).willReturn(rejectedDto);
+        when(verificationService.rejectVerification(id, rejectReq)).thenReturn(rejectedDto);
 
         // Act
         ResponseEntity<OrganizerVerificationResDTO> response = adminOrganizerController.rejectVerification(id, rejectReq);

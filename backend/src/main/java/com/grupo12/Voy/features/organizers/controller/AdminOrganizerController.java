@@ -2,6 +2,7 @@ package com.grupo12.Voy.features.organizers.controller;
 
 import com.grupo12.Voy.features.organizers.dto.OrganizerRejectReqDTO;
 import com.grupo12.Voy.features.organizers.dto.OrganizerVerificationResDTO;
+import com.grupo12.Voy.features.organizers.enums.VerificationStatus;
 import com.grupo12.Voy.features.organizers.service.IOrganizerVerificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,6 +10,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +29,18 @@ import java.util.UUID;
 public class AdminOrganizerController {
 
     private final IOrganizerVerificationService verificationService;
+
+    @Operation(summary = "Listar solicitudes de verificación", description = "Permite filtrar por estado y pagina los resultados.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Solicitudes devueltas"),
+            @ApiResponse(responseCode = "403", description = "Requiere rol ADMIN")
+    })
+    @GetMapping
+    public ResponseEntity<Page<OrganizerVerificationResDTO>> getVerifications(
+            @RequestParam(required = false) VerificationStatus status,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(verificationService.getVerifications(status, pageable));
+    }
 
     @Operation(summary = "Listar solicitudes de verificación pendientes")
     @ApiResponses({
