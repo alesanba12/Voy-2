@@ -1,23 +1,36 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, model } from '@angular/core';
 import { TagsService } from '../tags.service';
-import { TagDTO } from '../tags';
+import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
-  imports: [],
   selector: 'app-tag-list',
-  styleUrl: './tag-list.css',
   templateUrl: './tag-list.html',
+  styleUrl: './tag-list.css',
+  imports: [LoadingSpinner]
 })
 export class TagList {
-  private readonly tagService = inject(TagsService);
+  private readonly tagsService = inject(TagsService);
 
-  searchName = signal('');
-  
-  tagsResource = this.tagService.getTagsResource(this.searchName);
+  readonly tagsResource = this.tagsService.getTagsResource();
+  readonly selectedTags = model<string[]>([]);
+  readonly searchQuery = input<string>('');
 
-  crearEtiqueta(nueva: TagDTO) {
-    this.tagService.create(nueva).subscribe(() => {
-      this.tagsResource.reload();
-    });
+  readonly visibleTags = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    const allTags = this.tagsResource.value() ?? [];
+    if (!query) return allTags;
+    return allTags.filter((tag) => tag.name.toLowerCase().includes(query));
+  });
+
+  toggleTag(tagName: string): void {
+    this.selectedTags.update((current) =>
+      current.includes(tagName)
+        ? current.filter((t) => t !== tagName)
+        : [...current, tagName]
+    );
+  }
+
+  isSelected(tagName: string): boolean {
+    return this.selectedTags().includes(tagName);
   }
 }

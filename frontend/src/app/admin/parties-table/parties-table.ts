@@ -1,17 +1,20 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { AdminPartiesService } from './service/admin-parties-service';
 import { PartyFilters, PartyRes } from '../../parties/party';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
+import { TagList } from '../../tags/tag-list/tag-list';
 
 @Component({
-  imports: [CommonModule, FormsModule, CurrencyPipe, DatePipe],
+  imports: [CommonModule, FormsModule, CurrencyPipe, DatePipe, LoadingSpinner, TagList],
   selector: 'app-parties-table',
   styleUrl: './parties-table.css',
   templateUrl: './parties-table.html',
 })
 export class PartiesTable {
   private readonly partiesService = inject(AdminPartiesService);
+  private readonly elementRef = inject(ElementRef);
 
   // Inputs de filtros (vinculados al formulario)
   readonly filterTitle = signal<string>('');
@@ -28,6 +31,9 @@ export class PartiesTable {
   // Filtros rápidos en memoria (Frontend)
   readonly filterStatus = signal<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
   readonly filterVisibility = signal<'ALL' | 'PUBLIC' | 'PRIVATE'>('ALL');
+  readonly filterTags = signal<string[]>([]);
+  readonly tagsDropdownOpen = signal<boolean>(false);
+  readonly tagSearchQuery = signal<string>('');
 
   // Estados de UI y modales
   readonly actionLoadingId = signal<string | null>(null);
@@ -48,6 +54,7 @@ export class PartiesTable {
   readonly filteredParties = computed(() => {
     const status = this.filterStatus();
     const visibility = this.filterVisibility();
+    const selectedTags = this.filterTags();
 
     return this.parties().filter((p) => {
       const matchesStatus =
@@ -60,7 +67,11 @@ export class PartiesTable {
         (visibility === 'PUBLIC' && p.partyAccesibility) ||
         (visibility === 'PRIVATE' && !p.partyAccesibility);
 
-      return matchesStatus && matchesVisibility;
+      const matchesTags =
+        selectedTags.length === 0 ||
+        selectedTags.every((tag) => p.tags.includes(tag));
+
+      return matchesStatus && matchesVisibility && matchesTags;
     });
   });
 
@@ -71,16 +82,30 @@ export class PartiesTable {
       this.filterFrom() !== '' ||
       this.filterTo() !== '' ||
       this.filterStatus() !== 'ALL' ||
-      this.filterVisibility() !== 'ALL'
+      this.filterVisibility() !== 'ALL' ||
+      this.filterTags().length > 0
     );
   });
 
   readonly activeCount = computed(() => this.parties().filter((p) => p.state).length);
   readonly publicCount = computed(() => this.parties().filter((p) => p.partyAccesibility).length);
 
-  // Al enviar el formulario, actualizamos appliedFilters() y httpResource hace el GET solo
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.tagsDropdownOpen()) return;
+    const dropdownEl = this.elementRef.nativeElement.querySelector('.tags-dropdown');
+    if (dropdownEl && !dropdownEl.contains(event.target as Node)) {
+      this.tagsDropdownOpen.set(false);
+    }
+  }
+
+  toggleTagsDropdown(): void {
+    this.tagsDropdownOpen.update((open) => !open);
+  }
+
   loadParties(): void {
     this.mutationError.set(null);
+    this.tagsDropdownOpen.set(false);
     const nextFilters: PartyFilters = {
       title: this.filterTitle(),
       city: this.filterCity(),
@@ -88,7 +113,6 @@ export class PartiesTable {
       to: this.filterTo(),
     };
 
-    // Si los filtros no cambiaron pero el usuario apretó "Buscar", forzamos recarga
     if (JSON.stringify(this.appliedFilters()) === JSON.stringify(nextFilters)) {
       this.partiesResource.reload();
     } else {
@@ -105,6 +129,8 @@ export class PartiesTable {
     this.filterTo.set('');
     this.filterStatus.set('ALL');
     this.filterVisibility.set('ALL');
+    this.filterTags.set([]);
+    this.tagsDropdownOpen.set(false);
     this.appliedFilters.set({});
   }
 
