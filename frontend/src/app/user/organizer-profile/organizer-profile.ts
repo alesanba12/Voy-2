@@ -156,26 +156,6 @@ export class OrganizerProfile implements OnInit {
     };
   }
 
-  //Organizer data
-  readonly myFollowersList = computed(() => {
-    const followers = this.myFollowers();
-    if (!followers || followers.length === 0) return [];
-
-    return [...followers].sort((a, b) =>
-      a.username.localeCompare(b.username, 'es', { sensitivity: 'base' }),
-    );
-  });
-
-  readonly myPartiesList = computed(() => {
-    const parties = this.myParties();
-    if (!parties || parties.length === 0) return [];
-
-    const upcoming = [...parties].sort(
-      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
-    );
-
-    return upcoming;
-  });
 
   // Helper para no repetir el filtro/orden/mapeo en los dos carruseles
   private toUpcomingPartyRes(parties: PartySummaryDto[]): PartyRes[] {
