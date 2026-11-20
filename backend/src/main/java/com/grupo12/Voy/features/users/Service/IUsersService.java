@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface IUsersService {
     UserDto findByExternalId(UUID userUuid);
-    List<UserDto> getAll(String username, String email);
+    List<UserDto> getAll(String username, String email, UUID externalId);
     void deleteUser(UUID externalId);
     UserDto newUser(NewUserDto newUserDto);
     UserDto updateUser(UUID userUuid, UserUpdateDto userUpdateDto);

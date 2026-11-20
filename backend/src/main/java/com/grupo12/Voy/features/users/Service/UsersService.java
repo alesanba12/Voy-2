@@ -69,14 +69,16 @@ public class UsersService implements IUsersService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getAll(String username, String email){
+    public List<UserDto> getAll(String username, String email, UUID externalId){
         PredicateSpecification<UserEntity> spec = PredicateSpecification.allOf(
                 UserSpecification.usernameContains(username),
-                UserSpecification.emailContains(email));
+                UserSpecification.emailContains(email),
+                UserSpecification.externalIdEquals(externalId));
 
         if (!isAdmin()) {
             spec = spec.and(UserSpecification.isOrganizer());
         }
+
 
         return userRepository.findAll(spec).stream().map(userMapper::userToDto).toList();
     }

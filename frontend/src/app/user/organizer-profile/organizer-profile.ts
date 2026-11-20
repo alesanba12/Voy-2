@@ -1,7 +1,7 @@
-import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, input, OnInit, signal } from '@angular/core';
 import { UserService } from '../user-service';
 import { PartySummaryDto, UserDto, UserFollowDto } from '../user';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PartyCard } from '../../parties/party-card/party-card';
 import { PartyRes } from '../../parties/party';
 import { AuthService } from '../../core/auth/auth.service';
@@ -14,10 +14,11 @@ import { AuthService } from '../../core/auth/auth.service';
 })
 export class OrganizerProfile implements OnInit {
   private readonly userService = inject(UserService);
+  private readonly  route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
 
-  private readonly currentUser = signal<UserDto | undefined>(undefined);
+  private readonly currentUser = signal<UserDto | null | undefined>(undefined);
   private readonly myParties = signal<PartySummaryDto[]>([]);
   private readonly myCoParties = signal<PartySummaryDto[]>([]);
   private readonly myFollowers = signal<UserFollowDto[]>([]);
@@ -26,16 +27,40 @@ export class OrganizerProfile implements OnInit {
   readonly isHost = computed(
     () => this.currentUser()?.username === this.auth.currentUser()?.username,
   );
+ 
 
-  ngOnInit(): void {
-    this.userService.getCurrentUser().subscribe({
-      next: (user) => this.currentUser.set(user),
-      error: (err) => console.error('Error al cargar el usuario', err),
+  async ngOnInit(): Promise<void> {
+    const externalId = this.route.snapshot.paramMap.get('externalId')??undefined;    
+    if (externalId) {
+      try {
+        this.userService.getAll(undefined,undefined,externalId).subscribe({
+          next:(user)=>{
+            this.currentUser.set(user[0]);
+          }
+        })
+      } catch (err) {
+        console.error('Error al cargar el usuario por email', err);
+        this.currentUser.set(undefined);
+      }
+    } else {
+      this.userService.getCurrentUser().subscribe({
+        next: (user) => this.currentUser.set(user),
+        error: (err) => console.error('Error al cargar el usuario', err),
+      });
+    }
+
+    this.userService.listMyParties(externalId).subscribe({
+      next: (parties) => {
+        this.myParties.set(parties)
+      },
+      error: () => alert('No hay fiestas cargadas'),
     });
 
-    this.userService.listMyParties().subscribe({
-      next: (parties) => this.myParties.set(parties),
-      error: () => alert('No hay fiestas cargadas'),
+    this.userService.listFollowersList(externalId).subscribe({
+      next: (followers) => {
+        this.myFollowers.set(followers)
+      },
+      error: () => alert('No hay seguidores'),
     });
 
     this.userService.listMyCoOrganizedParties().subscribe({
@@ -43,6 +68,7 @@ export class OrganizerProfile implements OnInit {
       error: (err) => console.error('Error al cargar fiestas como coorganizador', err),
     });
   }
+  
 
   goToUserProfile() {
     this.router.navigateByUrl('/profile/userProfile');
@@ -82,8 +108,31 @@ export class OrganizerProfile implements OnInit {
       this.nextSlide();
     }
   }
+
   readonly visible = signal<boolean>(true);
 
+  
+  //Organizer data
+  readonly myFollowersList = computed(() => {
+    const followers = this.myFollowers();
+    if (!followers || followers.length === 0) return [];
+    
+    return [...followers].sort((a, b) =>
+      a.username.localeCompare(b.username, 'es', { sensitivity: 'base' }),
+    );
+  });
+
+  readonly myPartiesList = computed(() => {
+    const parties = this.myParties();
+    if (!parties || parties.length === 0) return [];
+    
+    const upcoming = [...parties].sort(
+      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
+    );
+    
+    return upcoming;
+  });
+  
   mapSummaryToPartyRes(dto: PartySummaryDto): PartyRes {
     return {
       externalId: dto.externalId,
@@ -97,7 +146,7 @@ export class OrganizerProfile implements OnInit {
       guestLimit: 0,
       partyAccesibility: false,
       tickets: dto.price > 0,
-      state: true,
+      logicState: true,
       // Mapeo del organizador (prioriza username si existe, sino email)
       organizerName: dto.organizer?.username ?? dto.organizer?.email ?? '',
       coOrganizerName: [],

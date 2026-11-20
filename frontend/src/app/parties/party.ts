@@ -9,7 +9,7 @@ export interface PartyRes {
         "guestLimit": number,
         "partyAccesibility": boolean,
         "tickets": boolean,
-        "state": boolean,
+        "logicState": boolean,
         "organizerName": string,///deberia mostrar username no el email, pero por ahora dejo el email como identificador
         "coOrganizerName": string[],
         "tags": string[],
@@ -29,7 +29,7 @@ export interface PartyReq {
         "tagsList": string[],
         "imageUrl": File | null,
 }
-export type PartyFormModel = Omit<PartyReq,'externalId' | 'state' | 'organizerName' | 'coOrganizerName'>;
+export type PartyFormModel = Omit<PartyReq,'externalId' | 'logicState' | 'organizerName' | 'coOrganizerName'>;
 
 export function toFormModel(party: PartyRes): PartyFormModel {
   return {
@@ -52,4 +52,9 @@ export interface PartyFilters {
   city?: string;
   from?: string;
   to?: string;
+}
+
+export interface PartyAdminFilters extends PartyFilters {
+  logicState?: boolean;
+  isPublic?: boolean;
 }
