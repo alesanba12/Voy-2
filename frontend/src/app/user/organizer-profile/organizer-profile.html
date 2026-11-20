@@ -43,21 +43,20 @@
     @if (nextPartiesCount() > 0) {
       <div class="parties-carrusel">
         <button class="left" (click)="prevSlide()">&LeftArrow;</button>
-           <div class="parties">
-            @if (selectParty(); as party) {
+        <div class="parties">
+          @if (selectParty(); as party) {
             <app-party-card [party]="party"></app-party-card>
-             }
-           </div>
-          <button class="right"  (click)="nextSlide()" >&RightArrow;</button>
+          }
+        </div>
+        <button class="right" (click)="nextSlide()">&RightArrow;</button>
       </div>
-    }@else {
-            <div class="no-partis">
-                <h4>
-                    Todavia no hay eventos cargados...
-                </h4>
-            </div>
-        }
-    <!-- Bloque 3b: Eventos como Coorganizador -->
+    } @else {
+      <div class="no-partis">
+        <h4>Todavia no hay eventos cargados...</h4>
+      </div>
+    }
+  </div>
+  <!-- Bloque 3b: Eventos como Coorganizador -->
   <div class="third-block">
     <div class="title">
       <h3>Eventos como coorganizador</h3>
