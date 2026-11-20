@@ -1,7 +1,6 @@
 export type VerificationStatus = 'PENDING' | 'VERIFIED' | 'REJECTED';
 
 export interface OrganizerVerificationRes {
-  id: number;
   userExternalId: string;
   userEmail: string;
   status: VerificationStatus;
