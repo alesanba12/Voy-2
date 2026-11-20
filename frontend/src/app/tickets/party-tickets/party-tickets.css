@@ -309,3 +309,37 @@
 .qr-frame .muted {
   color: #555;
 }
+.ticket-qr {
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-qr.used img {
+  filter: blur(6px);
+  opacity: 0.5;
+}
+
+.ticket-used-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.35);
+}
+
+.ticket-used-stamp {
+  padding: 0.25rem 0.5rem;
+  border: 3px solid var(--color-peligro-fuerte);
+  border-radius: 6px;
+  color: var(--color-peligro-fuerte);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-align: center;
+  max-width: 110px;
+  text-transform: uppercase;
+  transform: rotate(-25deg);
+  background: rgb(255 255 255 / 0.85);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.85);
+}

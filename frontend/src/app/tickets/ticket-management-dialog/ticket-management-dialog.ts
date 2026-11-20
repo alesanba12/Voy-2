@@ -205,11 +205,21 @@ export class TicketManagementDialog implements OnInit, OnDestroy {
     const code = rawCode.trim();
     this.manualCode.set('');
 
-    const ticket = this.tickets().find((item) => item.idExternal.toLowerCase() === code.toLowerCase());
-    if (!ticket) {
+    const normalizedCode = code.toLocaleLowerCase('es-AR');
+    const matches = this.tickets().filter((item) => {
+      const ticketId = item.idExternal.toLocaleLowerCase('es-AR');
+      return ticketId === normalizedCode || ticketId.slice(0, 8) === normalizedCode;
+    });
+    if (matches.length === 0) {
       this.toastService.show('La entrada no pertenece a este evento.', 'error');
       return;
     }
+    if (matches.length > 1) {
+      this.toastService.show('El código coincide con más de una entrada.', 'error');
+      return;
+    }
+
+    const ticket = matches[0];
     if (!this.isApproved(ticket)) {
       this.toastService.show('La compra todavía no está confirmada.', 'warning');
       return;

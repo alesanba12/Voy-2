@@ -21,6 +21,13 @@
     }
   </header>
 
+  @if (errorMessage(); as error) {
+    <div class="error-banner">
+      <span>{{ error }}</span>
+      <button type="button" class="btn-close-error" (click)="errorMessage.set(null)">×</button>
+    </div>
+  }
+
   <!-- Formulario para crear nueva etiqueta -->
   <form class="add-tag-form" (submit)="onAddTag($event)">
     <input
@@ -29,7 +36,7 @@
       [value]="newTagName()"
       (input)="newTagName.set($any($event.target).value)"
     />
-    <button type="submit" class="btn-add" [disabled]="!newTagName().trim()">+ Agregar</button>
+    <button type="submit" class="btn-add" [disabled]="!newTagName().trim() || isSubmitting()">+ Agregar</button>
   </form>
 
   <!-- Listado de etiquetas -->
@@ -44,6 +51,7 @@
             type="button"
             class="tag-remove"
             [attr.aria-label]="'Eliminar ' + tag.name"
+            [disabled]="isDeleting()"
             (click)="onDeleteTag(tag.name)"
           >
             ×
@@ -52,4 +60,46 @@
       }
     </div>
   </div>
+
+  <!-- Modal de confirmación con etiqueta de reemplazo -->
+  @if (tagPendingDeletion(); as tagToDelete) {
+    <div class="modal-overlay" (click)="onCancelModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <h3>Reemplazo de Etiqueta Obligatorio</h3>
+          <button type="button" class="btn-close-modal" (click)="onCancelModal()">×</button>
+        </header>
+
+        <p class="modal-description">
+          Existen eventos donde <strong>{{ tagToDelete }}</strong> es la única etiqueta registrada. Para evitar que queden sin categoría, selecciona una etiqueta de reemplazo:
+        </p>
+
+        <div class="form-group">
+          <label for="replacementSelect">Etiqueta de reemplazo:</label>
+          <select
+            id="replacementSelect"
+            class="replacement-select"
+            [value]="selectedReplacementTag()"
+            (change)="selectedReplacementTag.set($any($event.target).value)"
+          >
+            @for (tag of availableReplacements(); track tag.name) {
+              <option [value]="tag.name">{{ tag.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="onCancelModal()">Cancelar</button>
+          <button
+            type="button"
+            class="btn-confirm-delete"
+            [disabled]="!selectedReplacementTag() || isDeleting()"
+            (click)="onConfirmReplacement()"
+          >
+            {{ isDeleting() ? 'Reasignando...' : 'Reemplazar y Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </section>

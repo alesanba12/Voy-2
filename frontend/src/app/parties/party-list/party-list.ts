@@ -8,6 +8,7 @@ import { debounceTime } from 'rxjs';
 import { PartyCard } from '../party-card/party-card';
 import { DateFilterComponent, DateRange } from '../../shared/components/date-filter/date-filter';
 import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
+import { TagsService } from '../../tags/tags.service';
 
 @Component({
   imports: [PartyCard, DateFilterComponent, LoadingSpinner],
@@ -18,6 +19,7 @@ import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-
 export class PartyList {
   private readonly client = inject(PartyClient);
   private readonly router = inject(Router);
+  private readonly tagsService = inject(TagsService);
 
   protected readonly filterById = signal<string | null>(null);
   protected readonly filterByOrganizerId = signal<string | null>(null);
@@ -107,15 +109,10 @@ export class PartyList {
     return d.toLocaleDateString('en-CA');
   }
 
-  protected readonly tags = [
-    'Gastronómico',
-    'Fiesta',
-    'Música',
-    'Teatro',
-    'Arte y cultura',
-    'Deporte',
-  ];
+  private readonly tagsResource = this.tagsService.getTagsResource();
 
+  protected readonly tags = computed(() => this.tagsResource.value().map((t) => t.name));
+  
   protected readonly ordenamiento = [
     'Fecha',
     'Precio: mayor a menor',

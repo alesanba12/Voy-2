@@ -21,4 +21,7 @@ public interface PartyRepository extends JpaRepository<PartyEntity,Long>, JpaSpe
 
     @Query("SELECT COUNT(p) FROM PartyEntity p WHERE p.logicState = true AND p.hasPassed = false")
     long countActiveParties();
+
+    @Query("SELECT DISTINCT p FROM PartyEntity p JOIN FETCH p.tagsList t WHERE :tagId IN (SELECT t2.tagsId FROM p.tagsList t2)")
+    List<PartyEntity> findAllPartiesByTagId(@Param("tagId") Long tagId);
 }

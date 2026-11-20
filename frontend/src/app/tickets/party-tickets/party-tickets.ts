@@ -51,20 +51,6 @@ export class PartyTickets implements OnInit {
       });
   }
 
-  // El QR contiene solo el id del ticket; quien escanea lo valida contra el back
-  private async generateQrCodes(tickets: TicketDto[]) {
-    const entries = await Promise.all(
-      tickets.map(
-        async (t) =>
-          [
-            t.ticketExternalId,
-            await toDataURL(t.ticketExternalId, { margin: 1, width: 180 }),
-          ] as const,
-      ),
-    );
-    this.qrCodes.set(Object.fromEntries(entries));
-  }
-
   protected isFree(ticket: TicketDto): boolean {
     return ticket.receipt.price === 0;
   }
@@ -88,7 +74,7 @@ export class PartyTickets implements OnInit {
 
     const confirmed = await this.modalService.open({
       variant: 'destructive-delete',
-      icon: 'user-remove', // cambialo por el ícono que corresponda en tu modal
+      icon: 'user-remove',
       title: 'Devolver entrada',
       description: `¿Devolver la entrada #${this.shortCode(ticket.ticketExternalId)}? Esta acción no se puede deshacer.`,
       cancelLabel: 'Cancelar',
@@ -143,6 +129,7 @@ export class PartyTickets implements OnInit {
   protected readonly bigQr = signal<string | null>(null);
 
   protected async showQr(ticket: TicketDto) {
+    if (ticket.checkedIn) return;
     this.qrTicket.set(ticket);
     this.bigQr.set(null);
 
@@ -165,27 +152,13 @@ export class PartyTickets implements OnInit {
     this.closeQr();
   }
 
-  protected canTransfer(ticket: TicketDto): boolean {
-    return ticket.confirmed;
-  }
-
-  // Devolver: gratis y con más de 24 hs de margen (misma regla que el back)
-  protected canReturn(ticket: TicketDto): boolean {
-    const msLeft = new Date(ticket.party.dateTime).getTime() - Date.now();
-    return ticket.receipt.price === 0 && msLeft >= 24 * 60 * 60 * 1000;
-  }
-
-  protected openTransfer(ticket: TicketDto) {
-    this.transferEmail.set('');
-    this.transferTicketId.set(ticket.ticketExternalId);
-  }
-
   protected cancelTransfer() {
     if (this.transferLoading()) return;
     this.transferTicketId.set(null);
   }
 
   protected transferTicket(ticket: TicketDto) {
+    if (!this.canTransfer(ticket)) return;
     const email = this.transferEmail().trim().toLowerCase();
     if (!email || this.transferLoading()) return;
 
@@ -220,5 +193,37 @@ export class PartyTickets implements OnInit {
   private removeTicket(id: string) {
     this.tickets.update((list) => list.filter((t) => t.ticketExternalId !== id));
     if (this.tickets().length === 0) this.router.navigate(['/tickets']);
+  }
+
+  private async generateQrCodes(tickets: TicketDto[]) {
+    const entries = await Promise.all(
+      tickets.map(
+        async (t) =>
+          [
+            t.ticketExternalId,
+            await toDataURL(t.checkedIn ? 'ENTRADA-UTILIZADA' : t.ticketExternalId, {
+              margin: 1,
+              width: 180,
+            }),
+          ] as const,
+      ),
+    );
+    this.qrCodes.set(Object.fromEntries(entries));
+  }
+
+  protected canTransfer(ticket: TicketDto): boolean {
+    return ticket.confirmed && !ticket.checkedIn;
+  }
+
+  // Opcional: una entrada ya usada tampoco debería poder devolverse
+  protected canReturn(ticket: TicketDto): boolean {
+    const msLeft = new Date(ticket.party.dateTime).getTime() - Date.now();
+    return !ticket.checkedIn && ticket.receipt.price === 0 && msLeft >= 24 * 60 * 60 * 1000;
+  }
+
+  protected openTransfer(ticket: TicketDto) {
+    if (!this.canTransfer(ticket)) return;
+    this.transferEmail.set('');
+    this.transferTicketId.set(ticket.ticketExternalId);
   }
 }
