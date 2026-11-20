@@ -1,69 +1,82 @@
 @let organizer = this.currentUser();
 
 @if (organizer) {
-    <!-- Bloque 1: Cabecera de Identidad -->
-    <div class="first-block">
-        <div class="name-photo">
-            <img [src]="organizer.imageUrl || defaulImage" class="profile-image" />
-            <div class="name">
-                <h2>{{ organizer.username }}</h2>
-                <p>{{ organizer.bio }}</p>
-            </div>
-        </div>
-
-        <div class="buttons">  
-            @if(isHost()){
-                <button class="organizer-profile" (click)="goToUserProfile()">
-                    Ir a mi perfil de Usuario
-                </button> 
-            }          
-        </div>        
-
+  <!-- Bloque 1: Cabecera de Identidad -->
+  <div class="first-block">
+    <div class="name-photo">
+      <img [src]="organizer.imageUrl || defaulImage" class="profile-image" />
+      <div class="name">
+        <h2>{{ organizer.username }}</h2>
+        <p>{{ organizer.bio }}</p>
+      </div>
     </div>
-    <!-- Bloque 2: Métricas de Confianza (Social Proof) -->
-     <div class="second-block">
-        <div class="total-events">
-            <h3>EVENTOS TOTALES</h3>
-            <p>{{myPartiesList().length}}</p>
-        </div>
-        <div class="total-followers">
-            <h3>SEGUIDORES TOTALES</h3>
-            <p>{{myFollowersList().length}}</p>
-        </div>
-        <div class="vito-work">
-            <img src="/VitoWork.png">
-        </div>
-     </div>
 
-    <!-- Bloque 3: Próximos Eventos -->
-    <div class="third-block">
-        <div class="title">
-            <h3>Próximos Eventos</h3>
-            <p>Eventos activos: {{nextPartiesCount()}}</p>
-        </div>
-        @if (nextPartiesCount() > 0) {
-            <div class="parties-carrusel">
-                <button class="left"  (click)="prevSlide()" >&LeftArrow;</button>
-                <div class="parties">                
-                    @if (selectParty(); as party) {
-                        <app-party-card [party]="party"></app-party-card>
-                    }                        
-                </div>
-                <button class="right"  (click)="nextSlide()" >&RightArrow;</button>
-    
-            </div>
-        }@else {
+    <div class="buttons">
+      @if (isHost()) {
+        <button class="organizer-profile" (click)="goToUserProfile()">
+          Ir a mi perfil de Usuario
+        </button>
+      }
+    </div>
+  </div>
+  <!-- Bloque 2: Métricas de Confianza (Social Proof) -->
+  <div class="second-block">
+    <div class="total-events">
+      <h3>EVENTOS TOTALES</h3>
+      <p>{{ myPartiesList().length }}</p>
+    </div>
+    <div class="total-followers">
+      <h3>SEGUIDORES TOTALES</h3>
+      <p>{{ myFollowersList().length }}</p>
+    </div>
+    <div class="vito-work">
+      <img src="/VitoWork.png" />
+    </div>
+  </div>
+
+  <!-- Bloque 3: Próximos Eventos -->
+  <div class="third-block">
+    <div class="title">
+      <h3>Próximos Eventos</h3>
+      <p>Eventos activos: {{ nextPartiesCount() }}</p>
+    </div>
+    @if (nextPartiesCount() > 0) {
+      <div class="parties-carrusel">
+        <button class="left" (click)="prevSlide()">&LeftArrow;</button>
+           <div class="parties">
+            @if (selectParty(); as party) {
+            <app-party-card [party]="party"></app-party-card>
+             }
+           </div>
+          <button class="right"  (click)="nextSlide()" >&RightArrow;</button>
+      </div>
+    }@else {
             <div class="no-partis">
                 <h4>
                     Todavia no hay eventos cargados...
                 </h4>
             </div>
         }
-    
+    <!-- Bloque 3b: Eventos como Coorganizador -->
+  <div class="third-block">
+    <div class="title">
+      <h3>Eventos como coorganizador</h3>
+      <p>Eventos activos: {{ nextCoPartiesCount() }}</p>
     </div>
+    @if (nextCoPartiesCount() > 0) {
+      <div class="parties-carrusel">
+        <button class="left" (click)="prevCoSlide()">&LeftArrow;</button>
+        <div class="parties">
+          @if (selectCoParty(); as party) {
+            <app-party-card [party]="party"></app-party-card>
+          }
+        </div>
+        <button class="right" (click)="nextCoSlide()">&RightArrow;</button>
+      </div>
+    } @else {
+      <p class="empty-message">No sos coorganizador de ningún evento próximo.</p>
+    }
+  </div>
 
-
-    <!--DESCOPE Bloque 4: Historial de Eventos Pasados -->
+  <!--DESCOPE Bloque 4: Historial de Eventos Pasados -->
 }
-
-

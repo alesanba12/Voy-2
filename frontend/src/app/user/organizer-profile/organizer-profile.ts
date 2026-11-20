@@ -20,6 +20,7 @@ export class OrganizerProfile implements OnInit {
 
   private readonly currentUser = signal<UserDto | null | undefined>(undefined);
   private readonly myParties = signal<PartySummaryDto[]>([]);
+  private readonly myCoParties = signal<PartySummaryDto[]>([]);
   private readonly myFollowers = signal<UserFollowDto[]>([]);
   readonly nextPartiesCount = computed(() => this.nextParties().length);
   readonly selectParty = computed(() => this.nextParties()[this.currentSlide()]);
@@ -62,6 +63,10 @@ export class OrganizerProfile implements OnInit {
       error: () => alert('No hay seguidores'),
     });
 
+    this.userService.listMyCoOrganizedParties().subscribe({
+      next: (parties) => this.myCoParties.set(parties),
+      error: (err) => console.error('Error al cargar fiestas como coorganizador', err),
+    });
   }
   
 
@@ -149,5 +154,51 @@ export class OrganizerProfile implements OnInit {
       tags: dto.tags ?? [],
       imageUrl: dto.imageUrl ?? '',
     };
+  }
+
+  //Organizer data
+  readonly myFollowersList = computed(() => {
+    const followers = this.myFollowers();
+    if (!followers || followers.length === 0) return [];
+
+    return [...followers].sort((a, b) =>
+      a.username.localeCompare(b.username, 'es', { sensitivity: 'base' }),
+    );
+  });
+
+  readonly myPartiesList = computed(() => {
+    const parties = this.myParties();
+    if (!parties || parties.length === 0) return [];
+
+    const upcoming = [...parties].sort(
+      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
+    );
+
+    return upcoming;
+  });
+
+  // Helper para no repetir el filtro/orden/mapeo en los dos carruseles
+  private toUpcomingPartyRes(parties: PartySummaryDto[]): PartyRes[] {
+    const now = new Date();
+    return [...parties]
+      .filter((p) => new Date(p.dateTime) >= now)
+      .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime())
+      .map((p) => this.mapSummaryToPartyRes(p));
+  }
+
+  // Carrusel 2: fiestas donde soy coorganizador
+  readonly nextCoParties = computed(() => this.toUpcomingPartyRes(this.myCoParties()));
+  readonly nextCoPartiesCount = computed(() => this.nextCoParties().length);
+  readonly coSlide = signal<number>(0);
+  readonly selectCoParty = computed(() => this.nextCoParties()[this.coSlide()]);
+
+  nextCoSlide(): void {
+    const total = this.nextCoPartiesCount();
+    this.coSlide.update((i) => (i < total - 1 ? i + 1 : 0));
+  }
+
+  prevCoSlide(): void {
+    const total = this.nextCoPartiesCount();
+    this.coSlide.update((i) => (i > 0 ? i - 1 : total - 1));
   }
 }

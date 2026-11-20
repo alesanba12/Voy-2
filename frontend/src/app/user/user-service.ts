@@ -103,5 +103,8 @@ listMyParties(externalId?: string) {
     return this.client.post<void>(`${this.OrganizerUrl}/verify`, formData);
   }
 
-  
+  // 16. Listar las fiestas en las que aparezco como coOrganizador
+  listMyCoOrganizedParties() {
+  return this.client.get<PartySummaryDto[]>(`${this.url}/partiesICoOrganize`);
+}
 }
