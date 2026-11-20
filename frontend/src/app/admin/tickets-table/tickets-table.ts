@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-spinner';
@@ -8,7 +8,7 @@ import { TicketAdminFilters, TicketResponseDto, TicketsService } from './service
 type ConfirmedFilter = '' | 'true' | 'false';
 
 @Component({
-  imports: [FormsModule, LoadingSpinner, CurrencyPipe, DatePipe],
+  imports: [FormsModule, LoadingSpinner, CurrencyPipe],
   selector: 'app-tickets-table',
   styleUrl: './tickets-table.css',
   templateUrl: './tickets-table.html',
