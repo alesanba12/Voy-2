@@ -99,6 +99,11 @@ export class PartyDetail {
     return !!user && !!party && user.email === party.organizerName;
   });
 
+ 
+   goToOrganizerProfile(idOrganizer:string){  
+      this.router.navigateByUrl(`/profile/organizerProfile/${idOrganizer}`);
+    }
+
   // ───────── Seguir evento (corazón y botón "Unirme") ─────────
   private readonly followedParties = signal<PartySummaryDto[]>([]);
   protected readonly followLoading = signal(false);
@@ -158,35 +163,35 @@ export class PartyDetail {
   }
 
   // Seguir coorganizadores (loading por usuario, para no bloquear los demás botones)
-protected readonly followingUserId = signal<string | null>(null);
+  protected readonly followingUserId = signal<string | null>(null);
 
-private readonly followedUserIds = computed(
-  () => new Set(this.followedUsers().map((u) => u.externalId)),
-);
+  private readonly followedUserIds = computed(
+    () => new Set(this.followedUsers().map((u) => u.externalId)),
+  );
 
-protected isFollowingUser(user: UserDto) {
-  return this.followedUserIds().has(user.externalId);
-}
+  protected isFollowingUser(user: UserDto) {
+    return this.followedUserIds().has(user.externalId);
+  }
 
-protected isCurrentUser(user: UserDto) {
-  return user.email === this.currentUser()?.email;
-}
+  protected isCurrentUser(user: UserDto) {
+    return user.email === this.currentUser()?.email;
+  }
 
-protected toggleFollowPartner(user: UserDto) {
-  if (this.followingUserId() || this.isCurrentUser(user)) return;
+  protected toggleFollowPartner(user: UserDto) {
+    if (this.followingUserId() || this.isCurrentUser(user)) return;
 
-  this.followingUserId.set(user.externalId);
-  this.userService.alterFollowUser(user.externalId).subscribe({
-    next: (list) => {
-      this.followedUsers.set(list);
-      this.followingUserId.set(null);
-    },
-    error: (err) => {
-      this.followingUserId.set(null);
-      this.handleFollowError(err);
-    },
-  });
-}
+    this.followingUserId.set(user.externalId);
+    this.userService.alterFollowUser(user.externalId).subscribe({
+      next: (list) => {
+        this.followedUsers.set(list);
+        this.followingUserId.set(null);
+      },
+      error: (err) => {
+        this.followingUserId.set(null);
+        this.handleFollowError(err);
+      },
+    });
+  }
 
   // ───────── Tickets ─────────
   protected readonly MIN_TICKETS = 1;

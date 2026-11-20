@@ -108,7 +108,7 @@
         </thead>
 
         <tbody>
-          @for (req of filteredRequests(); track req.id) {
+          @for (req of filteredRequests(); track $index) {
             <tr>
               <td>
                 <div class="requester-cell">
