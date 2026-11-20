@@ -3,11 +3,18 @@ package com.grupo12.Voy.features.users.specification;
 import com.grupo12.Voy.features.users.models.UserEntity;
 import org.springframework.data.jpa.domain.PredicateSpecification;
 
+import java.util.UUID;
+
 public class UserSpecification {
     public static PredicateSpecification<UserEntity> usernameContains(String username){
         return ((root,cb) -> username==null || username.isBlank() ?
                 cb.conjunction() :
                 cb.like(cb.lower(root.get("username")), "%" + username.toLowerCase() +"%"));
+    }
+    public static PredicateSpecification<UserEntity> externalIdEquals(UUID externalId){
+        return ((root, cb) -> externalId == null ?
+                cb.conjunction() :
+                cb.equal(root.get("externalId"), externalId));
     }
 
     public static PredicateSpecification<UserEntity> emailContains(String email){

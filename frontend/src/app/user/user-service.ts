@@ -16,10 +16,11 @@ export class UserService {
     this.profileRefreshVersion.update(version => version + 1);
   }
 
-  getAll(username?: string, email?: string) {
+  getAll(username?: string, email?: string, externalId?:string) {
     let params = new HttpParams();
     if (username) params = params.set('username', username);
     if (email) params = params.set('email', email);
+    if(externalId) params = params.set('externalId',externalId);
 
     return this.client.get<UserDto[]>(this.url, { params });
   }
@@ -54,15 +55,23 @@ export class UserService {
     return this.client.patch<UserFollowDto[]>(`${this.url}/follow/user/${idOtherUser}`, {});
   }
 
-  // 8. Listar seguidores
-  listFollowersList() {
-    return this.client.get<UserFollowDto[]>(`${this.url}/followers`);
+ // 8. Listar seguidores
+listFollowersList(externalId?: string) {
+  let params = new HttpParams();
+  if (externalId) {
+    params = params.set('otherExternalId', externalId);
   }
+  return this.client.get<UserFollowDto[]>(`${this.url}/followers`, { params });
+}
 
-  // 9. Listar mis eventos creados
-  listMyParties() {
-    return this.client.get<PartySummaryDto[]>(`${this.url}/myParties`);
+// 9. Listar mis eventos creados
+listMyParties(externalId?: string) {
+  let params = new HttpParams();
+  if (externalId) {
+    params = params.set('otherExternalId', externalId);
   }
+  return this.client.get<PartySummaryDto[]>(`${this.url}/myParties`, { params });
+}
 
   // 10. Listar eventos seguidos
   listFollowedParties() {

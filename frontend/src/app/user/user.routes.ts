@@ -13,6 +13,9 @@ export const PROFILE_ROUTES : Routes = [
      {
         path:'organizerProfile',
         loadComponent:()=>import('./organizer-profile/organizer-profile').then(m =>m.OrganizerProfile)
+    },{
+        path:'organizerProfile/:externalId',
+        loadComponent:()=>import('./organizer-profile/organizer-profile').then(m =>m.OrganizerProfile)
     },
     {
         path: '**',

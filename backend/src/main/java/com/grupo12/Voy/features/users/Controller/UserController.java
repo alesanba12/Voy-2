@@ -47,9 +47,10 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     ResponseEntity<List<UserDto>> getAll(
             @RequestParam(required = false) String username,
-            @RequestParam(required = false) String email
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) UUID externalId
     ){
-        return ResponseEntity.ok(userService.getAll(username,email));
+        return ResponseEntity.ok(userService.getAll(username,email,externalId));
     }
 
     @Operation(summary = "Obtener perfil propio", description = "Retorna los datos del usuario autenticado, incluida su foto de perfil.")
@@ -134,8 +135,11 @@ public class UserController {
     })
     @GetMapping("/followers")
     @PreAuthorize("hasRole('USER')")
-    ResponseEntity<List<UserFollowDto>> listFollowersList(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal){
-       return ResponseEntity.ok(userService.listFollowersList(idExternal));
+    ResponseEntity<List<UserFollowDto>> listFollowersList(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal,
+                                                          @RequestParam(required = false) UUID otherExternalId
+    ){
+        UUID targetId = otherExternalId != null ? otherExternalId : idExternal;
+        return ResponseEntity.ok(userService.listFollowersList(targetId));
     }
 
     @Operation(summary = "Listar mis eventos", description = "Retorna la lista de eventos creados por el usuario autenticado.")
@@ -148,8 +152,11 @@ public class UserController {
     })
     @GetMapping("/myParties")
     @PreAuthorize("hasRole('USER')")
-    ResponseEntity<List<PartyUsersDto>> listMyParties(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal){
-        return ResponseEntity.ok(userService.listMyParties(idExternal));
+    ResponseEntity<List<PartyUsersDto>> listMyParties(@AuthenticationPrincipal(expression = "usuario.externalId") UUID idExternal,
+                                                      @RequestParam(required = false) UUID otherExternalId
+    ) {
+        UUID targetId = otherExternalId != null ? otherExternalId : idExternal;
+        return ResponseEntity.ok(userService.listMyParties(targetId));
     }
 
     @Operation(summary = "Listar eventos seguidos", description = "Retorna la lista de eventos que sigue el usuario autenticado.")
