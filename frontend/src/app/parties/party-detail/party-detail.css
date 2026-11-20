@@ -138,11 +138,18 @@ ul {
     display: flex;
     align-items: center;
     gap: 1rem;
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   img {
-    height: 50px;
-    width: 50px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1.5px solid var(--color-primario);
   }
 
   h3 {
@@ -398,7 +405,7 @@ ul {
   color: var(--texto-muteado);
   text-align: center;
 }
-.mensaje{
+.mensaje {
   margin-bottom: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -410,11 +417,10 @@ ul {
     line-height: 1.2;
     margin: 1rem 0;
   }
-  small{
+  small {
     align-self: flex-end;
     color: var(--texto-muteado);
   }
-
 }
 
 .partner .follow {
