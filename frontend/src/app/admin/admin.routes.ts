@@ -31,8 +31,8 @@ export const ADMIN_ROUTES : Routes = [
                 loadComponent: () => import('./parties-table/parties-table').then(m=>m.PartiesTable),
             },
             {
-                path: 'etiquetas',
-                loadComponent: () => import('./tags-table/tags-table').then(m=>m.TagsTable),
+                path: 'tickets',
+                loadComponent: () => import('./tickets-table/tickets-table').then(m=>m.TicketsTable),
             },
         ]
     },

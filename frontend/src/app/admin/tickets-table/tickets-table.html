@@ -1,0 +1,312 @@
+<section class="tickets-panel">
+  <!-- Cabecera de la Card -->
+  <header class="panel-header">
+    <div class="panel-title-group">
+      <div class="panel-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+          <path d="M13 5v2" />
+          <path d="M13 17v2" />
+          <path d="M13 11v2" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="panel-title">Gestión de Tickets y Compras</h2>
+        <p class="panel-subtitle">
+          Supervisa las entradas emitidas, valida comprobantes pendientes o rechaza compras.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-badges">
+      <span class="badge-pill badge-warning">{{ pendingCount() }} pendientes</span>
+      <span class="badge-pill badge-primary">{{ totalCount() }} totales</span>
+    </div>
+  </header>
+
+  <!-- Alerta de feedback -->
+  @if (feedbackMessage(); as msg) {
+    <div class="feedback-banner" [class.is-error]="msg.type === 'error'">
+      <span>{{ msg.text }}</span>
+      <button type="button" class="btn-close-banner" (click)="feedbackMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- Barra de búsqueda y filtros -->
+  <div class="filters-bar">
+    <div class="search-inputs">
+      <div class="input-wrapper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Buscar por evento..."
+          [ngModel]="searchTitle()"
+          (ngModelChange)="searchTitle.set($event)"
+        />
+      </div>
+
+      <div class="input-wrapper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Username comprador..."
+          [ngModel]="searchUser()"
+          (ngModelChange)="searchUser.set($event)"
+        />
+      </div>
+
+      <div class="input-wrapper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Username organizador..."
+          [ngModel]="searchOrganizer()"
+          (ngModelChange)="searchOrganizer.set($event)"
+        />
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <select
+        aria-label="Filtrar por estado"
+        [ngModel]="confirmedFilter()"
+        (ngModelChange)="confirmedFilter.set($event)"
+      >
+        <option value="">Todos los estados</option>
+        <option value="false">Pendientes de aprobación</option>
+        <option value="true">Confirmados</option>
+      </select>
+
+      <button
+        type="button"
+        class="btn-ghost"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor de Tabla -->
+  <div class="table-container">
+    @if (ticketsResource.isLoading()) {
+      <div class="empty-state">
+        <app-loading-spinner />
+        <p>Cargando tickets del sistema...</p>
+      </div>
+    } @else if (ticketsResource.error()) {
+      <div class="empty-state is-error">
+        <p>Ocurrió un error al cargar los tickets. Verifica tu sesión de administrador.</p>
+        <button type="button" class="btn-ghost" (click)="ticketsResource.reload()">
+          Reintentar
+        </button>
+      </div>
+    } @else if (tickets().length === 0) {
+      <div class="empty-state">
+        <p>No se encontraron tickets con los criterios aplicados.</p>
+      </div>
+    } @else {
+      <table class="tickets-table">
+        <colgroup>
+          <col class="col-ticket" />
+          <col class="col-party" />
+          <col class="col-buyer" />
+          <col class="col-receipt" />
+          <col class="col-status" />
+          <col class="col-actions" />
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>TICKET / RECIBO</th>
+            <th>EVENTO</th>
+            <th>COMPRADOR</th>
+            <th>PAGO</th>
+            <th>ESTADO</th>
+            <th class="align-right">ACCIONES</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (ticket of tickets(); track ticket.idExternal) {
+            <tr>
+              <!-- Ticket & Recibo IDs -->
+              <td>
+                <div class="stack-cell">
+                  <span class="primary-mono" [title]="ticket.idExternal">
+                    TKT #{{ ticket.idExternal.slice(0, 8) }}
+                  </span>
+                  @if (ticket.receipt) {
+                    <span class="secondary-mono" [title]="ticket.receipt.externalId">
+                      REC #{{ ticket.receipt.externalId.slice(0, 8) }}
+                    </span>
+                  } @else {
+                    <span class="secondary-muted">Sin recibo</span>
+                  }
+                </div>
+              </td>
+
+              <!-- Evento + Organizador -->
+              <td>
+                <div class="stack-cell">
+                  <span class="cell-strong" [title]="ticket.party.title">
+                    {{ ticket.party.title }}
+                  </span>
+                  <span class="secondary-text" [title]="ticket.party.organizerName">
+                    Org: {{ ticket.party.organizerName }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Comprador -->
+              <td>
+                <div class="stack-cell">
+                  <span class="cell-strong" [title]="ticket.userEmail">
+                    {{ ticket.userEmail }}
+                  </span>
+                  @if (ticket.receipt?.user?.username) {
+                    <span class="secondary-text">
+                      @{{ ticket.receipt?.user?.username }}
+                    </span>
+                  }
+                </div>
+              </td>
+
+              <!-- Detalle de Pago -->
+              <td>
+                @if (ticket.receipt) {
+                  <div class="stack-cell">
+                    <span class="cell-strong">
+                      {{ ticket.receipt.finalPrice | currency:'ARS':'symbol-narrow':'1.0-0' }}
+                      <small class="qty-tag">({{ ticket.receipt.quantity }}u)</small>
+                    </span>
+                    <span class="secondary-text">
+                      {{ formatPaymentMethod(ticket.receipt.paymentMethod) }}
+                    </span>
+                  </div>
+                } @else {
+                  <span class="secondary-muted">—</span>
+                }
+              </td>
+
+              <!-- Estado de Confirmación + Check-in -->
+              <td>
+                <div class="status-stack">
+                  <span class="status-badge" [class.is-confirmed]="ticket.confirmed">
+                    {{ ticket.confirmed ? 'Confirmado' : 'Pendiente' }}
+                  </span>
+                  @if (ticket.checkedIn) {
+                    <span class="checkin-badge">Ingresó</span>
+                  }
+                </div>
+              </td>
+
+              <!-- Acciones Admin (sobre el recibo) -->
+              <td class="align-right">
+                <div class="actions-group">
+                  @if (canManageReceipt(ticket)) {
+                    <button
+                      type="button"
+                      class="btn-approve"
+                      [disabled]="isProcessing(ticket.receipt?.externalId)"
+                      (click)="openConfirmModal(ticket)"
+                      title="Confirmar compra del recibo completo"
+                    >
+                      Confirmar
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-delete"
+                      [disabled]="isProcessing(ticket.receipt?.externalId)"
+                      (click)="openRejectModal(ticket)"
+                      title="Rechazar compra y eliminar tickets del recibo"
+                    >
+                      Rechazar
+                    </button>
+                  } @else {
+                    <span class="action-done">
+                      {{ ticket.confirmed ? 'Aprobado' : 'No editable' }}
+                    </span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>
+
+<!-- Modal de Confirmación de Compra -->
+@if (ticketToConfirm(); as target) {
+  <div class="modal-backdrop" (click)="closeConfirmModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>Confirmar compra</h3>
+      <p class="modal-body">
+        ¿Deseas aprobar el recibo
+        <strong>#{{ target.receipt?.externalId?.slice(0, 8) }}</strong>
+        de <strong>{{ target.userEmail }}</strong> para el evento
+        <strong>{{ target.party.title }}</strong>?
+        @if ((target.receipt?.quantity ?? 1) > 1) {
+          <br />
+          <span class="modal-hint">
+            Nota: Esta acción confirmará los {{ target.receipt?.quantity }} tickets asociados a este recibo.
+          </span>
+        }
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="closeConfirmModal()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn-primary-solid"
+          [disabled]="isProcessing(target.receipt?.externalId)"
+          (click)="confirmPurchaseAction()"
+        >
+          {{ isProcessing(target.receipt?.externalId) ? 'Confirmando...' : 'Sí, confirmar compra' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de Rechazo de Compra -->
+@if (ticketToReject(); as target) {
+  <div class="modal-backdrop" (click)="closeRejectModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>Rechazar compra</h3>
+      <p class="modal-body">
+        ¿Estás seguro de que deseas rechazar el recibo
+        <strong>#{{ target.receipt?.externalId?.slice(0, 8) }}</strong>
+        de <strong>{{ target.userEmail }}</strong>? Se eliminarán todos los tickets asociados a esta compra y no se podrá deshacer.
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="closeRejectModal()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn-danger-solid"
+          [disabled]="isProcessing(target.receipt?.externalId)"
+          (click)="rejectPurchaseAction()"
+        >
+          {{ isProcessing(target.receipt?.externalId) ? 'Rechazando...' : 'Sí, rechazar compra' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
