@@ -12,8 +12,6 @@ import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-
 import { ConfirmModalService } from '../../shared/components/modal-dialog/modal-dialog-service';
 import { ToastService } from '../../shared/components/toast/toast-service';
 import { TicketClient } from '../../tickets/ticket-service';
-import { OrganizerProfile } from '../../user/organizer-profile/organizer-profile';
-import { email } from '@angular/forms/signals';
 
 @Component({
   imports: [RouterLink, EventDatePipe, PartyCard, LoadingSpinner],
