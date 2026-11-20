@@ -1,495 +1,449 @@
-<section class="admin-parties-page">
-  <!-- Panel Principal -->
-  <div class="panel-card">
-    <header class="panel-header">
-      <div class="header-title-group">
-        <div class="header-icon">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"
-            />
-            <path d="M13 5v2" />
-            <path d="M13 17v2" />
-            <path d="M13 11v2" />
-          </svg>
-        </div>
-        <div>
-          <h1 class="panel-title">Gestión de Eventos</h1>
-          <p class="panel-subtitle">
-            Supervisa la cartelera, modera etiquetas y controla la visibilidad de eventos públicos y
-            privados.
-          </p>
-        </div>
+<section class="parties-panel">
+  <!-- Cabecera -->
+  <header class="panel-header">
+    <div class="panel-title-group">
+      <div class="panel-icon" aria-hidden="true">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
       </div>
-
-      <div class="header-badges">
-        <span class="badge-pill badge-success">{{ activeCount() }} en cartelera</span>
-        <span class="badge-pill badge-primary">{{ publicCount() }} públicos</span>
-        <span class="badge-pill badge-neutral">{{ parties().length }} totales</span>
+      <div>
+        <h2 class="panel-title">Gestión de Eventos</h2>
+        <p class="panel-subtitle">
+          Administra los eventos publicados, controla su estado lógico, etiquetas y visibilidad.
+        </p>
       </div>
-    </header>
+    </div>
 
-    <!-- Barra de Filtros -->
-    <form class="filters-bar" (ngSubmit)="loadParties()">
-      <div class="filter-field filter-search">
+    <div class="panel-badges">
+      <span class="badge-pill badge-success">{{ activeCount() }} activos</span>
+      <span class="badge-pill badge-neutral">{{ inactiveCount() }} inactivos</span>
+      <span class="badge-pill badge-primary">{{ publicCount() }} públicos</span>
+    </div>
+  </header>
+
+  <!-- Alerta de error -->
+  @if (errorMessage(); as err) {
+    <div class="feedback-banner is-error">
+      <span>{{ err }}</span>
+      <button type="button" class="btn-close-banner" (click)="mutationError.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- Barra de filtros (2 filas para evitar recortes en fechas) -->
+  <form class="filters-section" (ngSubmit)="loadParties()">
+    <!-- Fila 1: Inputs de servidor -->
+    <div class="filters-row-inputs">
+      <div class="input-group input-title">
         <label for="filter-title">Título</label>
         <input
           id="filter-title"
           type="text"
-          placeholder="Buscar por nombre..."
+          placeholder="Buscar por título..."
           [ngModel]="filterTitle()"
           (ngModelChange)="filterTitle.set($event)"
           name="title"
         />
       </div>
 
-      <div class="filter-field">
+      <div class="input-group input-city">
         <label for="filter-city">Ciudad</label>
         <input
           id="filter-city"
           type="text"
-          placeholder="Ej. Mar del Plata"
+          placeholder="Ej: Mar del Plata"
           [ngModel]="filterCity()"
           (ngModelChange)="filterCity.set($event)"
           name="city"
         />
       </div>
 
-      <div class="filter-field">
+      <div class="input-group input-date">
         <label for="filter-from">Desde</label>
         <input
           id="filter-from"
-          type="date"
+          type="datetime-local"
           [ngModel]="filterFrom()"
           (ngModelChange)="filterFrom.set($event)"
           name="from"
         />
       </div>
 
-      <div class="filter-field">
+      <div class="input-group input-date">
         <label for="filter-to">Hasta</label>
         <input
           id="filter-to"
-          type="date"
+          type="datetime-local"
           [ngModel]="filterTo()"
           (ngModelChange)="filterTo.set($event)"
           name="to"
         />
       </div>
+    </div>
 
-      <div class="filter-field">
-        <label for="filter-status">Estado</label>
+    <!-- Fila 2: Filtros rápidos en memoria + Acciones de búsqueda -->
+    <div class="filters-row-actions">
+      <div class="quick-filters">
         <select
-          id="filter-status"
+          aria-label="Filtrar por estado"
           [ngModel]="filterStatus()"
-          (ngModelChange)="filterStatus.set($event)"
+          (ngModelChange)="onStatusFilterChange($event)"
           name="status"
         >
-          <option value="ALL">Todos</option>
-          <option value="ACTIVE">Activos</option>
-          <option value="INACTIVE">Inactivos</option>
+          <option value="ALL">Todos los estados</option>
+          <option value="ACTIVE">Solo Activos</option>
+          <option value="INACTIVE">Solo Inactivos</option>
         </select>
-      </div>
 
-      <div class="filter-field">
-        <label for="filter-visibility">Acceso</label>
         <select
-          id="filter-visibility"
+          aria-label="Filtrar por visibilidad"
           [ngModel]="filterVisibility()"
-          (ngModelChange)="filterVisibility.set($event)"
+          (ngModelChange)="onVisibilityFilterChange($event)"
           name="visibility"
         >
-          <option value="ALL">Todos</option>
-          <option value="PUBLIC">Públicos</option>
-          <option value="PRIVATE">Privados</option>
+          <option value="ALL">Toda visibilidad</option>
+          <option value="PUBLIC">Solo Públicos</option>
+          <option value="PRIVATE">Solo Privados</option>
         </select>
-      </div>
 
-      <div class="filter-field tags-dropdown">
-        <label>Etiquetas</label>
-        <button
-          type="button"
-          class="tags-dropdown-trigger"
-          [class.is-open]="tagsDropdownOpen()"
-          (click)="toggleTagsDropdown()"
-        >
-          <span class="tags-trigger-text">
-            @if (filterTags().length === 0) {
-              Todas
-            } @else if (filterTags().length === 1) {
-              {{ filterTags()[0] }}
-            } @else {
-              {{ filterTags().length }} seleccionadas
-            }
-          </span>
-          <svg
-            class="tags-chevron"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
+        <!-- Dropdown de etiquetas con app-tag-list -->
+        <div class="tags-dropdown">
+          <button type="button" class="btn-tags-trigger" (click)="toggleTagsDropdown()">
+            <span>
+              {{
+                filterTags().length > 0
+                  ? 'Etiquetas (' + filterTags().length + ')'
+                  : 'Filtrar etiquetas'
+              }}
+            </span>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
 
-        @if (tagsDropdownOpen()) {
-          <div class="tags-dropdown-menu" (click)="$event.stopPropagation()">
-            <div class="tags-dropdown-header">
-              <span>Filtrar por etiquetas</span>
-              @if (filterTags().length > 0) {
-                <button type="button" class="tags-clear-btn" (click)="filterTags.set([])">
-                  Limpiar ({{ filterTags().length }})
-                </button>
-              }
-            </div>
-
-            <div class="tags-search-box">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
+          @if (tagsDropdownOpen()) {
+            <div class="tags-dropdown-menu" (click)="$event.stopPropagation()">
               <input
                 type="text"
+                class="tag-search-input"
                 placeholder="Buscar etiqueta..."
                 [ngModel]="tagSearchQuery()"
                 (ngModelChange)="tagSearchQuery.set($event)"
                 name="tagSearch"
               />
+              <app-tag-list [(selectedTags)]="filterTags" [searchQuery]="tagSearchQuery()" />
             </div>
-
-            <app-tag-list [(selectedTags)]="filterTags" [searchQuery]="tagSearchQuery()" />
-          </div>
-        }
+          }
+        </div>
       </div>
 
-      <div class="filter-actions">
-        <button type="submit" class="btn-primary">Buscar</button>
+      <div class="search-buttons">
         <button
           type="button"
-          class="btn-secondary"
+          class="btn-ghost"
           [disabled]="!hasActiveFilters()"
           (click)="resetFilters()"
         >
           Limpiar
         </button>
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">Buscar</button>
       </div>
-    </form>
+    </div>
+  </form>
 
-    @if (errorMessage()) {
-      <div class="error-banner">
-        <span>{{ errorMessage() }}</span>
-        <button type="button" class="btn-ghost-sm" (click)="mutationError.set(null)">✕</button>
+  <!-- Contenedor de Tabla -->
+  <div class="table-container">
+    @if (isLoading()) {
+      <div class="empty-state">
+        <app-loading-spinner />
+        <p>Cargando eventos...</p>
       </div>
-    }
-
-    <!-- Tabla de Eventos -->
-    <div class="table-wrapper">
+    } @else if (filteredParties().length === 0) {
+      <div class="empty-state">
+        <p>No se encontraron eventos con los criterios seleccionados.</p>
+      </div>
+    } @else {
       <table class="parties-table">
+        <colgroup>
+          <col class="col-event" />
+          <col class="col-location" />
+          <col class="col-date" />
+          <col class="col-price" />
+          <col class="col-badges" />
+          <col class="col-actions" />
+        </colgroup>
+
         <thead>
           <tr>
-            <th class="col-event">EVENTO</th>
-            <th class="col-organizer">ORGANIZADOR</th>
-            <th class="col-location">UBICACIÓN</th>
-            <th class="col-date">FECHA Y HORA</th>
-            <th class="col-price">PRECIO / CUPO</th>
-            <th class="col-access">ACCESO</th>
-            <th class="col-state">ESTADO</th>
-            <th class="col-actions">ACCIONES</th>
+            <th>EVENTO / ORGANIZADOR</th>
+            <th>UBICACIÓN</th>
+            <th>FECHA Y HORA</th>
+            <th>PRECIO / CUPO</th>
+            <th>ESTADO</th>
+            <th class="align-right">ACCIONES</th>
           </tr>
         </thead>
+
         <tbody>
-          @if (isLoading()) {
-            <tr>
-              <td colspan="8" class="empty-state-cell"><app-loading-spinner /></td>
-            </tr>
-          } @else if (filteredParties().length === 0) {
-            <tr>
-              <td colspan="8" class="empty-state-cell">
-                No se encontraron eventos con los criterios seleccionados.
-              </td>
-            </tr>
-          } @else {
-            @for (party of filteredParties(); track party.externalId) {
-              <tr>
-                <td class="col-event">
-                  <div class="event-cell">
-                    @if (party.imageUrl) {
-                      <img [src]="party.imageUrl" [alt]="party.title" class="event-thumb" />
-                    } @else {
-                      <div class="event-thumb-placeholder">V.</div>
-                    }
-                    <div class="event-info">
-                      <span class="event-title" [title]="party.title">{{ party.title }}</span>
-                      <div class="event-tags-mini">
-                        @for (tag of party.tags.slice(0, 2); track tag) {
-                          <span class="mini-tag">{{ tag }}</span>
-                        }
-                        @if (party.tags.length > 2) {
-                          <span class="mini-tag">+{{ party.tags.length - 2 }}</span>
-                        }
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <td class="col-organizer">
-                  <span class="cell-primary-text" [title]="party.organizerName">{{
-                    party.organizerName
-                  }}</span>
-                  @if (party.coOrganizerName.length > 0) {
-                    <span class="cell-secondary-text"
-                      >+{{ party.coOrganizerName.length }} co-org.</span
-                    >
+          @for (party of filteredParties(); track party.externalId) {
+            <tr [class.is-deleted-row]="!party.logicState">
+              <!-- Evento + Imagen + Organizador -->
+              <td>
+                <div class="event-cell">
+                  @if (party.imageUrl) {
+                    <img [src]="party.imageUrl" [alt]="party.title" class="event-thumb" />
+                  } @else {
+                    <div class="event-thumb is-fallback">EV</div>
                   }
-                </td>
+                  <div class="event-info">
+                    <span class="event-title" [title]="party.title">{{ party.title }}</span>
+                    <span class="event-organizer" [title]="party.organizerName">
+                      {{ party.organizerName }}
+                    </span>
+                  </div>
+                </div>
+              </td>
 
-                <td class="col-location">
-                  <span class="cell-primary-text">{{ party.city }}</span>
-                  <span class="cell-secondary-text" [title]="party.adress">{{ party.adress }}</span>
-                </td>
+              <!-- Ubicación -->
+              <td>
+                <div class="location-cell">
+                  <span class="location-city" [title]="party.city">{{ party.city }}</span>
+                  <span class="location-address" [title]="party.adress">{{ party.adress }}</span>
+                </div>
+              </td>
 
-                <td class="col-date">
-                  <span class="cell-primary-text">{{ party.dateTime | date: 'dd/MM/yyyy' }}</span>
-                  <span class="cell-secondary-text">{{ party.dateTime | date: 'HH:mm' }} hs</span>
-                </td>
+              <!-- Fecha -->
+              <td class="cell-muted">
+                {{ party.dateTime | date: 'dd/MM/yyyy HH:mm' }}
+              </td>
 
-                <td class="col-price">
-                  <span class="cell-primary-text">
+              <!-- Precio y cupo -->
+              <td>
+                <div class="price-cell">
+                  <span class="price-value">
                     {{
                       party.price === 0
                         ? 'Gratis'
                         : (party.price | currency: 'ARS' : 'symbol-narrow' : '1.0-0')
                     }}
                   </span>
-                  <span class="cell-secondary-text">Máx. {{ party.guestLimit }}</span>
-                </td>
+                  <span class="guest-limit">Cupo: {{ party.guestLimit }}</span>
+                </div>
+              </td>
 
-                <td class="col-access">
-                  @if (party.partyAccesibility) {
-                    <span class="status-badge badge-public">Público</span>
-                  } @else {
-                    <span class="status-badge badge-private">Privado</span>
-                  }
-                </td>
+              <!-- Estado lógico y Visibilidad -->
+              <td>
+                <div class="badges-stack">
+                  <span
+                    class="status-badge"
+                    [class.is-active]="party.logicState"
+                    [class.is-deleted]="!party.logicState"
+                  >
+                    {{ party.logicState ? 'Activo' : 'Eliminado' }}
+                  </span>
+                  <span class="visibility-badge" [class.is-public]="party.partyAccesibility">
+                    {{ party.partyAccesibility ? 'Público' : 'Privado' }}
+                  </span>
+                </div>
+              </td>
+              <!-- Acciones -->
+              <td class="align-right">
+                <div class="actions-group">
+                  <button
+                    type="button"
+                    class="btn-detail"
+                    (click)="openDetailModal(party)"
+                    title="Ver detalle y etiquetas"
+                  >
+                    Detalle
+                  </button>
 
-                <td class="col-state">
-                  @if (party.state) {
-                    <span class="status-badge badge-active">Activo</span>
-                  } @else {
-                    <span class="status-badge badge-inactive">Inactivo</span>
-                  }
-                </td>
-
-                <td class="col-actions">
-                  <div class="actions-group">
+                  @if (party.logicState) {
                     <button
                       type="button"
-                      class="btn-icon"
-                      title="Ver detalle y moderar etiquetas"
-                      (click)="openDetailModal(party)"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </button>
-
-                    <button
-                      type="button"
-                      class="btn-icon"
-                      [class.btn-icon-warning]="party.state"
-                      [class.btn-icon-success]="!party.state"
+                      class="btn-delete"
                       [disabled]="actionLoadingId() === party.externalId"
-                      [title]="party.state ? 'Pausar evento' : 'Activar evento'"
+                      (click)="confirmDeleteParty(party)"
+                    >
+                      Eliminar
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="btn-toggle"
+                      [disabled]="actionLoadingId() === party.externalId"
                       (click)="onToggleState(party)"
                     >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-                        <line x1="12" y1="2" x2="12" y2="12" />
-                      </svg>
+                      Restaurar
                     </button>
-
-                    <button
-                      type="button"
-                      class="btn-icon btn-icon-danger"
-                      [disabled]="actionLoadingId() === party.externalId"
-                      title="Eliminar evento"
-                      (click)="confirmDelete(party)"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="M3 6h18" />
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            }
+                  }
+                </div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>
-    </div>
+    }
   </div>
+</section>
 
-  <!-- Modal de Detalle y Moderación de Etiquetas -->
-  @if (selectedParty(); as party) {
-    <div class="modal-backdrop" (click)="closeDetailModal()">
-      <div class="modal-card" (click)="$event.stopPropagation()">
-        <header class="modal-header">
-          <div>
-            <h2 class="modal-title">{{ party.title }}</h2>
-            <span class="modal-id">ID: {{ party.externalId }}</span>
-          </div>
-          <button type="button" class="btn-icon" (click)="closeDetailModal()">✕</button>
-        </header>
-
-        <div class="modal-body">
-          @if (party.imageUrl) {
-            <img [src]="party.imageUrl" [alt]="party.title" class="modal-banner" />
-          }
-
-          <p class="modal-description">
-            {{ party.description || 'Sin descripción proporcionada.' }}
+<!-- Modal de Detalle y Gestión de Etiquetas -->
+@if (selectedParty(); as party) {
+  <div class="modal-backdrop" (click)="closeDetailModal()">
+    <div class="modal-card modal-wide" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3>{{ party.title }}</h3>
+          <p class="modal-subtitle">
+            Organizado por {{ party.organizerName }} · #{{ party.externalId.slice(0, 8) }}
           </p>
+        </div>
 
-          <div class="detail-grid">
-            <div class="detail-box">
-              <span class="detail-label">ORGANIZADOR</span>
-              <span class="detail-value">{{ party.organizerName }}</span>
-            </div>
-            <div class="detail-box">
-              <span class="detail-label">DIRECCIÓN</span>
-              <span class="detail-value">{{ party.adress }}, {{ party.city }}</span>
-            </div>
-            <div class="detail-box">
-              <span class="detail-label">FECHA Y HORA</span>
-              <span class="detail-value">{{ party.dateTime | date: 'dd/MM/yyyy HH:mm' }} hs</span>
-            </div>
-            <div class="detail-box">
-              <span class="detail-label">ENTRADA Y CUPO</span>
-              <span class="detail-value">
-                {{
-                  party.price === 0 ? 'Gratis' : (party.price | currency: 'ARS' : 'symbol-narrow')
-                }}
-                · {{ party.guestLimit }} pers.
-              </span>
-            </div>
-          </div>
+        <div class="modal-header-badges">
+          <span
+            class="status-badge"
+            [class.is-active]="party.logicState"
+            [class.is-deleted]="!party.logicState"
+          >
+            {{ party.logicState ? 'Activo' : 'Eliminado' }}
+          </span>
+          <span class="visibility-badge" [class.is-public]="party.partyAccesibility">
+            {{ party.partyAccesibility ? 'Público' : 'Privado' }}
+          </span>
+        </div>
+      </div>
 
-          @if (party.coOrganizerName.length > 0) {
-            <div class="modal-section">
-              <span class="detail-label">CO-ORGANIZADORES</span>
-              <div class="chips-list">
-                @for (coOrg of party.coOrganizerName; track coOrg) {
-                  <span class="chip-neutral">{{ coOrg }}</span>
-                }
-              </div>
-            </div>
-          }
+      @if (party.imageUrl) {
+        <img [src]="party.imageUrl" [alt]="party.title" class="modal-banner-img" />
+      }
 
-          <!-- Moderación de Etiquetas del Evento -->
-          <div class="modal-section">
-            <span class="detail-label">ETIQUETAS ASIGNADAS</span>
-            <div class="tag-add-row">
-              <input
-                type="text"
-                placeholder="Nombre de etiqueta existente..."
-                [ngModel]="newTagInput()"
-                (ngModelChange)="newTagInput.set($event)"
-                (keydown.enter)="onAddTag()"
-              />
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Fecha y hora</span>
+          <span>{{ party.dateTime | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Ubicación</span>
+          <span>{{ party.city }} — {{ party.adress }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Entrada / Cupo</span>
+          <span>
+            {{
+              party.price === 0
+                ? 'Gratis'
+                : (party.price | currency: 'ARS' : 'symbol-narrow' : '1.0-0')
+            }}
+            · {{ party.guestLimit }} personas
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Emisión de tickets</span>
+          <span>{{ party.tickets ? 'Habilitada' : 'Sin tickets' }}</span>
+        </div>
+      </div>
+
+      @if (party.description) {
+        <div class="detail-box">
+          <span class="detail-label">Descripción</span>
+          <p>{{ party.description }}</p>
+        </div>
+      }
+
+      @if (party.coOrganizerName.length > 0) {
+        <div class="detail-box">
+          <span class="detail-label">Co-organizadores</span>
+          <p>{{ party.coOrganizerName.join(', ') }}</p>
+        </div>
+      }
+
+      <!-- Gestión de etiquetas del evento -->
+      <div class="detail-box">
+        <span class="detail-label">Etiquetas asociadas ({{ party.tags.length }})</span>
+
+        <div class="party-tags-list">
+          @for (tag of party.tags; track tag) {
+            <span class="tag-chip">
+              {{ tag }}
               <button
                 type="button"
-                class="btn-primary"
-                [disabled]="!newTagInput().trim()"
-                (click)="onAddTag()"
+                class="btn-remove-tag"
+                [disabled]="actionLoadingId() === party.externalId"
+                (click)="onRemoveTagFromParty(party.externalId, tag)"
+                aria-label="Quitar etiqueta"
               >
-                + Asignar
+                ✕
               </button>
-            </div>
-
-            <div class="chips-list">
-              @for (tag of party.tags; track tag) {
-                <span class="chip-tag">
-                  {{ tag }}
-                  <button type="button" class="chip-remove" (click)="onRemoveTag(tag)">×</button>
-                </span>
-              } @empty {
-                <span class="cell-secondary-text">Este evento no tiene etiquetas asignadas.</span>
-              }
-            </div>
-          </div>
+            </span>
+          } @empty {
+            <span class="empty-tags-text">Este evento aún no tiene etiquetas asignadas.</span>
+          }
         </div>
 
-        <footer class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="onToggleState(party)">
-            {{ party.state ? 'Desactivar evento' : 'Activar evento' }}
+        <div class="add-tag-row">
+          <input
+            type="text"
+            placeholder="Nombre de la etiqueta a agregar..."
+            [ngModel]="newTagInput()"
+            (ngModelChange)="newTagInput.set($event)"
+            (keydown.enter)="$event.preventDefault(); onAddTagToParty(party.externalId)"
+          />
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="!newTagInput().trim() || actionLoadingId() === party.externalId"
+            (click)="onAddTagToParty(party.externalId)"
+          >
+            Agregar
           </button>
-          <button type="button" class="btn-primary" (click)="closeDetailModal()">Cerrar</button>
-        </footer>
-      </div>
-    </div>
-  }
-
-  <!-- Modal de Confirmación de Eliminación -->
-  @if (partyToDelete(); as target) {
-    <div class="modal-backdrop" (click)="cancelDelete()">
-      <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
-        <header class="modal-header">
-          <h2 class="modal-title">Eliminar evento</h2>
-          <button type="button" class="btn-icon" (click)="cancelDelete()">✕</button>
-        </header>
-        <div class="modal-body">
-          <p class="modal-description">
-            ¿Estás seguro de que deseas dar de baja lógica el evento
-            <strong>{{ target.title }}</strong
-            >? Dejará de mostrarse en la cartelera pública.
-          </p>
         </div>
-        <footer class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="cancelDelete()">Cancelar</button>
-          <button type="button" class="btn-danger" (click)="executeDelete()">Sí, eliminar</button>
-        </footer>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="closeDetailModal()">Cerrar</button>
       </div>
     </div>
-  }
-</section>
+  </div>
+}
+
+<!-- Modal de confirmación de eliminación -->
+@if (partyToDelete(); as target) {
+  <div class="modal-backdrop" (click)="cancelDelete()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>Eliminar evento</h3>
+      <p class="modal-body">
+        ¿Estás seguro de que deseas eliminar permanentemente el evento
+        <strong>{{ target.title }}</strong
+        >? Esta acción no se puede deshacer.
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="cancelDelete()">Cancelar</button>
+        <button
+          type="button"
+          class="btn-danger-solid"
+          [disabled]="actionLoadingId() === target.externalId"
+          (click)="executeDeleteParty()"
+        >
+          {{ actionLoadingId() === target.externalId ? 'Eliminando...' : 'Sí, eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

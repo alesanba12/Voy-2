@@ -6,7 +6,7 @@ import { LoadingSpinner } from '../../shared/components/loading-spinner/loading-
   selector: 'app-tag-list',
   templateUrl: './tag-list.html',
   styleUrl: './tag-list.css',
-  imports: [LoadingSpinner]
+  imports: []
 })
 export class TagList {
   private readonly tagsService = inject(TagsService);
