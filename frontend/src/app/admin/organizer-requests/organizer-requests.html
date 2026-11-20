@@ -30,7 +30,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (req of requests(); track req.id) {
+        @for (req of requests(); track $index) {
           <tr>
             <td>
               <div class="user-cell">
