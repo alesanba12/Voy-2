@@ -4,7 +4,6 @@ import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-organizer-requests',
-  standalone: true,
   imports: [DatePipe],
   templateUrl: './organizer-requests.html',
   styleUrl: './organizer-requests.css'

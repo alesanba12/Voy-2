@@ -1,0 +1,325 @@
+<section class="verifications-panel">
+  <!-- Cabecera -->
+  <header class="panel-header">
+    <div class="panel-title-group">
+      <div class="panel-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="panel-title">Solicitudes de Organizadores</h2>
+        <p class="panel-subtitle">
+          Revisa la documentación de identidad enviada por los usuarios y aprueba o rechaza su verificación.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-badges">
+      <span class="badge-pill badge-primary">{{ totalElements() }} solicitudes</span>
+    </div>
+  </header>
+
+  <!-- Alerta de feedback -->
+  @if (feedbackMessage(); as msg) {
+    <div class="feedback-banner" [class.is-error]="msg.type === 'error'">
+      <span>{{ msg.text }}</span>
+      <button type="button" class="btn-close-banner" (click)="feedbackMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- Barra de búsqueda y filtros -->
+  <div class="filters-bar">
+    <div class="search-inputs">
+      <div class="input-wrapper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect width="20" height="16" x="2" y="4" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Filtrar por email en esta página..."
+          [ngModel]="searchEmail()"
+          (ngModelChange)="searchEmail.set($event)"
+        />
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <select
+        aria-label="Filtrar por estado"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="onStatusChange($event)"
+      >
+        <option value="PENDING">Pendientes</option>
+        <option value="VERIFIED">Verificados</option>
+        <option value="REJECTED">Rechazados</option>
+        <option value="ALL">Todos los estados</option>
+      </select>
+
+      <button
+        type="button"
+        class="btn-ghost"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-container">
+    @if (verificationsResource.isLoading()) {
+      <div class="empty-state">
+        <app-loading-spinner />
+        <p>Cargando solicitudes de verificación...</p>
+      </div>
+    } @else if (verificationsResource.error()) {
+      <div class="empty-state is-error">
+        <p>Ocurrió un error al cargar las solicitudes. Verifica tu sesión de administrador.</p>
+        <button type="button" class="btn-ghost" (click)="verificationsResource.reload()">
+          Reintentar
+        </button>
+      </div>
+    } @else if (filteredRequests().length === 0) {
+      <div class="empty-state">
+        <p>No se encontraron solicitudes con los filtros aplicados.</p>
+      </div>
+    } @else {
+      <table class="verifications-table">
+        <colgroup>
+          <col class="col-user" />
+          <col class="col-date" />
+          <col class="col-info" />
+          <col class="col-status" />
+          <col class="col-actions" />
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>SOLICITANTE</th>
+            <th>FECHA</th>
+            <th>INFORMACIÓN / MOTIVO</th>
+            <th>ESTADO</th>
+            <th class="align-right">ACCIONES</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (req of filteredRequests(); track req.id) {
+            <tr>
+              <td>
+                <div class="requester-cell">
+                  <span class="requester-email" [title]="req.userEmail">{{ req.userEmail }}</span>
+                  <span class="requester-id" [title]="req.userExternalId">
+                    #{{ req.userExternalId.slice(0, 8) }}
+                  </span>
+                </div>
+              </td>
+
+              <td class="cell-muted">
+                {{ req.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+              </td>
+
+              <td>
+                @if (req.status === 'REJECTED' && req.rejectionReason) {
+                  <span class="rejection-text" [title]="req.rejectionReason">
+                    Motivo: {{ req.rejectionReason }}
+                  </span>
+                } @else if (req.additionalInfo) {
+                  <span class="info-text" [title]="req.additionalInfo">{{ req.additionalInfo }}</span>
+                } @else {
+                  <span class="info-empty">Sin observaciones</span>
+                }
+              </td>
+
+              <td>
+                <span
+                  class="status-badge"
+                  [class.is-pending]="req.status === 'PENDING'"
+                  [class.is-verified]="req.status === 'VERIFIED'"
+                  [class.is-rejected]="req.status === 'REJECTED'"
+                >
+                  {{ getStatusLabel(req.status) }}
+                </span>
+              </td>
+
+              <td class="align-right">
+                <div class="actions-group">
+                  <button
+                    type="button"
+                    class="btn-inspect"
+                    (click)="openDetailModal(req)"
+                    title="Ver documentación DNI"
+                  >
+                    Ver DNI
+                  </button>
+
+                  @if (req.status === 'PENDING') {
+                    <button
+                      type="button"
+                      class="btn-approve"
+                      [disabled]="isProcessing(req.userExternalId)"
+                      (click)="approveRequest(req)"
+                    >
+                      Aprobar
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-reject"
+                      [disabled]="isProcessing(req.userExternalId)"
+                      (click)="openRejectModal(req)"
+                    >
+                      Rechazar
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Paginación -->
+  @if (totalPages() > 1) {
+    <footer class="pagination-bar">
+      <span class="pagination-info">
+        Página {{ currentPage() + 1 }} de {{ totalPages() }} ({{ totalElements() }} registros)
+      </span>
+
+      <div class="pagination-controls">
+        <button
+          type="button"
+          class="btn-ghost"
+          [disabled]="pageData()?.first"
+          (click)="goToPage(currentPage() - 1)"
+        >
+          Anterior
+        </button>
+        <button
+          type="button"
+          class="btn-ghost"
+          [disabled]="pageData()?.last"
+          (click)="goToPage(currentPage() + 1)"
+        >
+          Siguiente
+        </button>
+      </div>
+    </footer>
+  }
+</section>
+
+<!-- Modal de inspección de DNI y detalle -->
+@if (selectedRequest(); as item) {
+  <div class="modal-backdrop" (click)="closeDetailModal()">
+    <div class="modal-card modal-wide" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3>Documentación de Verificación</h3>
+          <p class="modal-subtitle">{{ item.userEmail }} · #{{ item.userExternalId.slice(0, 8) }}</p>
+        </div>
+        <span
+          class="status-badge"
+          [class.is-pending]="item.status === 'PENDING'"
+          [class.is-verified]="item.status === 'VERIFIED'"
+          [class.is-rejected]="item.status === 'REJECTED'"
+        >
+          {{ getStatusLabel(item.status) }}
+        </span>
+      </div>
+
+      <div class="dni-grid">
+        <figure class="dni-card">
+          <figcaption>DNI — Frente</figcaption>
+          <a [href]="item.dniFrontUrl" target="_blank" rel="noopener noreferrer">
+            <img [src]="item.dniFrontUrl" alt="Frente del DNI" />
+          </a>
+        </figure>
+
+        <figure class="dni-card">
+          <figcaption>DNI — Dorso</figcaption>
+          <a [href]="item.dniBackUrl" target="_blank" rel="noopener noreferrer">
+            <img [src]="item.dniBackUrl" alt="Dorso del DNI" />
+          </a>
+        </figure>
+      </div>
+
+      @if (item.additionalInfo) {
+        <div class="detail-box">
+          <span class="detail-label">Información adicional del solicitante</span>
+          <p>{{ item.additionalInfo }}</p>
+        </div>
+      }
+
+      @if (item.rejectionReason) {
+        <div class="detail-box is-rejected">
+          <span class="detail-label">Motivo de rechazo registrado</span>
+          <p>{{ item.rejectionReason }}</p>
+        </div>
+      }
+
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="closeDetailModal()">
+          Cerrar
+        </button>
+
+        @if (item.status === 'PENDING') {
+          <button
+            type="button"
+            class="btn-reject"
+            [disabled]="isProcessing(item.userExternalId)"
+            (click)="openRejectModal(item)"
+          >
+            Rechazar
+          </button>
+          <button
+            type="button"
+            class="btn-approve"
+            [disabled]="isProcessing(item.userExternalId)"
+            (click)="approveRequest(item)"
+          >
+            {{ isProcessing(item.userExternalId) ? 'Procesando...' : 'Aprobar solicitud' }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de rechazo con motivo obligatorio -->
+@if (requestToReject(); as target) {
+  <div class="modal-backdrop" (click)="closeRejectModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>Rechazar solicitud</h3>
+      <p class="modal-body">
+        Indica el motivo del rechazo para <strong>{{ target.userEmail }}</strong>. Este mensaje será visible para el usuario.
+      </p>
+
+      <textarea
+        rows="3"
+        placeholder="Ej: La foto del dorso del DNI se encuentra borrosa o ilegible..."
+        [ngModel]="rejectionReason()"
+        (ngModelChange)="rejectionReason.set($event)"
+      ></textarea>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="closeRejectModal()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn-danger-solid"
+          [disabled]="!rejectionReason().trim() || isProcessing(target.userExternalId)"
+          (click)="confirmReject()"
+        >
+          {{ isProcessing(target.userExternalId) ? 'Rechazando...' : 'Confirmar rechazo' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
